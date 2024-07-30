@@ -43,9 +43,16 @@ McElreath, [Statistical Rethinking](https://github.com/rmcelreath/stat_rethinkin
 1. Download R and R Studio. If you need detailed instructions click here.  
 1A. Already downloaded but it’s been a while? Time to update R and R studio  
 https://www.r-bloggers.com/2022/01/how-to-install-and-update-r-and-rstudio/  
-2. If you are totally new to the R language please try one or more of these tutorials to get acquainted with how it works:  
+2. If you are totally new to the R language please try one or both of these tutorials to get acquainted with how it works:  
 https://swirlstats.com/  
-https://stat545.com/r-basics.html  
-https://datacarpentry.org/R-ecology-lesson/  
+https://moderndive.com/1-getting-started.html#nycflights13
 
-### [Download the full syllabus here]
+
+### How do I actually download stuff from Github?  
+We'll get to working with Git in Week 3. Until then here are two methods:  
+1. Navigate to the file in the github repo. In the top right corner there is a 
+a little download icon underneath the word "History"  
+2. Download a whole directory using its url here https://download-directory.github.io/
+
+### [Download the full syllabus here](Data_science_syllabus_mcnew.pdf)
+

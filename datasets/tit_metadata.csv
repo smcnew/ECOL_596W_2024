@@ -1,0 +1,20 @@
+Variable.name,Variable.description
+hatch_year,Year the nestling hatched
+hatch_mom_Ring,Unique alpha numeric code on the aluminimum ring (band) fitted to the leg of the adult female attending to the nest in which the chick hatched. This female can be assumed to have laid the eggs in this nest and thus to be the mother of this chick.
+hatch_nest_LD,The date of the first egg was laid ('lay date') in the clutch from which the chick hatched. 1 = April 1. 
+hatch_nest_CS,The size of the clutch (number of eggs) from which the chick hatched.
+rear_nest_breed_ID,"Unique numeric code corresponding to the brood of chick with which this row's chick was reared. Each time a single clutch of eggs were laid in a given nest box, that clutch was assigned a breeding ID. "
+rear_area,Letter code corresponding to the area (a.k.a. 'compartment') of the study site in which the chick was reared
+rear_Box,Alpha numeric code corresponding to the individual nest box in which the chick was reared. The code consists of the area code followed by the number of the nest box within that area.
+rear_mom_Ring,Unique alpha numeric code on the aluminimum ring (band) fitted to the leg of the adult female attending to the nest in which the chick was reared.
+rear_dad_Ring,Unique alpha numeric code on the aluminimum ring (band) fitted to the leg of the adult male attending to the nest in which the chick was reared. 
+rear_nest_trt,"Nest experimental manipulation treatment code for the nest in which the chick was reared. '5' indicates a net increase in the number of chicks (brood size increased), '6' indicates a net decrease in the number of chicks (brood size decreased), '7' indicates no manipulation (no chicks added or removed). "
+home_or_away,Indicates whether the chick was reared in the nest in which it hatched or had been moved by an experimenter to another nest. 1 = home (reared in nest of hatching); 2 = away (reared in transplanted nest)
+net_rearing_manipulation,Net change in chick number in nest where chick reared
+rear_Cs_at_start_of_rearing,Number of chicks in nest of rearing immediately following experimental chick removals and additions
+d14_rear_nest_brood_size,"In the nest where the chick was reared, the number of live chicks in the nest at day 14 after hatching"
+number_chicks_fledged_from_rear_nest,"In the nest where the chick was reared, the number of chicks that survived to leave the nest"
+day_14_tarsus_length,Length of chick tarsometatarus in mm at day 14 after hatching
+day_14_weight,mass of chick in grams at day 14 after hatching
+chick_sex_molec,Sex of the chick based on molecular genetic analysis. 1 = female; 2 = male.  Not all chicks were sexed.
+chick_survival_to_first_breed_season,Indicates whether the chick was documented as attempting to breed on the study site in any subsequent year

@@ -1,0 +1,14 @@
+"List of variables in the dataset ""bromeliad_insect_abd.csv""",
+,
+Variable,Description
+brom_ID,Unique identifyer of each bromeliad that was sampled
+date_sampled,Date bromeliad was sampled
+side,The side of Monteverde Mountain (Pacific slope or Atlantic slope)
+site_ID,"Identifyer for each study site (AL: Aleman, BR: Brillantes, DA: Dos Ases, EL: Eladios, EV: El Valle, PS: Poco Sol, RT: Research Trail, SG: San Gerardo, SL: San Luis)"
+site_elevation,Mean elevation (in meters) of each study site
+Max_vol,Maximum water holding capacity of bromeliad
+FPOM,Fine Particulate Organic Matter: organic particles in the size range of >150 to <850 ?m inside bromeliad
+Detritus,Organic matter of size > 850 ?m inside bromeliad
+tot_abd_brom,Total number of all focal species (taxa) combined inside bromeliad
+taxa,Scientific name (to finest taxonomic level possible) of focal taxa in our study
+abundance,Number of focal taxon inside bromeliad
