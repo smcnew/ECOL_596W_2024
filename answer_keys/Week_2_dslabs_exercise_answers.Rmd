@@ -1,0 +1,231 @@
+---
+title: "Dslabs Answer Key Ch. 4"
+author: "Sabrina McNew"
+date: "2023-09-07"
+output: html_document
+---
+## Dslabs: Introduction to Data Science Book First edition
+### Rafael Irizarry
+
+## Chapter 4 Exercises  
+
+### Load our libraries
+```{r, warning = FALSE, message = FALSE}
+# install.packages("NHANES")
+library(dslabs)
+library(dplyr)
+library(NHANES)
+
+```
+
+
+1. Examine the built-in dataset co2. Which of the following is true:
+2. Examine the built-in dataset ChickWeight. Which of the following is true:
+3. Examine the built-in dataset BOD. Which of the following is true:
+4. Which of the following built-in datasets is tidy (you can pick more than one):
+
+```{r}
+head(co2) # vector of numbers
+head(ChickWeight)
+head(BOD)
+
+```
+Sabrina's notes:  
+1. I guess this is *b*; it's just a vector so I wouldn't say it's "tidy." 
+I don't think you really need a character column to be tidy, but if it were 
+a dataframe it might be tidier. Not sure about this q tbh.  
+
+2. *b* This seems pretty tidy. It's ok that individual chicks have more than one
+measurement.  
+
+3. *c* looks fine  
+
+4. Ones that are not tidy:  
+BJSales, is just a vector, not sure what other data relate to it. 
+EuStockMarkets: some sort of strange class ("time series") seems more like 
+a matrix. I'm going with untidy, though probably someone wanted it in this format
+UCBAdmissions: terrible format; List of tables, not good. 
+
+5. Use the function mutate to add a murders column named rate with the per 100,000 murder rate as in the example code above. Make sure you redefine murders as done in the example code above (murders <- [your code]) so we can keep using this variable.
+```{r}
+murders <- mutate(murders, rate = total / (population/100000))
+```
+
+6. If rank(x) gives you the ranks of x from lowest to highest, rank(-x) gives you the ranks from highest to lowest. Use the function mutate to add a column rank containing the rank of murder rate from highest to lowest. Make sure you redefine murders so we can keep using this variable.
+```{r}
+murders <- mutate(murders, rank = rank(-rate))
+
+```
+
+7. Use select to show the state names and abbreviations in murders. Do not redefine murders, just show the results.
+
+```{r}
+murders |> select(state, abb) |> head()
+```
+
+8. Use filter to show the top 5 states with the highest murder rates. After we add murder rate and rank, do not change the murders dataset, just show the result. Remember that you can filter based on the rank column.
+```{r}
+murders |> filter(rank %in% c(1:5))
+```
+
+9. Create a new data frame called no_south that removes states from the South region. How many states are in this category? You can use the function nrow for this.
+
+```{r}
+# Sabrina Note: to save time/coding lines I'm opting just to pipe the result to nrow()
+# to get the number rather than creating a new data frame and assigning it to the namespace
+murders |> filter(region != "South") |> nrow()
+```
+
+10. Create a new data frame called murders_nw with only the states from the Northeast and the West. How many states are in this category?
+```{r}
+murders_nw <- murders |> 
+  filter(region %in% c("Northwest", "West"))
+nrow(murders_nw)
+```
+
+11. Create a table called my_states that contains rows for states satisfying both the conditions: it is in the Northeast or West and the murder rate is less than 1. Use select to show only the state name, the rate, and the rank.
+```{r}
+murders |> 
+  filter(region %in% c("Northwest", "West")) |>
+  filter(rate < 1) |> 
+  select(state, rate, rank)
+```
+
+12. Repeat the previous exercise, but now instead of creating a new object, show the result and only include the state, rate, and rank columns. Use a pipe |> to do this in just one line. (Answer: see above, already piped for convenience)
+
+2. Reset murders to the original table by using data(murders). Use a pipe to create a new data frame called my_states that considers only states in the Northeast or West which have a murder rate lower than 1, and contains only the state, rate and rank columns. The pipe should also have four components separated by three |>. The code should look something like this:
+```{r}
+data(murders)
+my_states <- murders |> 
+  mutate(rate = total / (population/100000),
+         rank = rank(-rate)) |> 
+  filter(region %in% c("Northeast", "West")) |> 
+  filter(rate < 1) |> 
+  select(state, rate, rank)
+# Sabrina note, I personally like to separate my filters but YMMV
+```
+
+
+13. We will provide some basic facts about blood pressure. First let’s select a group to set the standard. We will use 20-to-29-year-old females. AgeDecade is a categorical variable with these ages. Note that the category is coded like ” 20-29”, with a space in front! What is the average and standard deviation of systolic blood pressure as saved in the BPSysAve variable? Save it to a variable called ref.
+
+```{r}
+# Sabrina's notes: I interpreted ref should be the systolic blood pressure vector
+head(NHANES) #let's have a look 
+ref <- NHANES |> 
+      filter(AgeDecade == " 20-29" & Gender == "female")  |> 
+      pull(BPSysAve)
+mean(ref, na.rm = T)
+sd(ref, na.rm = T)
+```
+
+14. Using a pipe, assign the average to a numeric variable ref_avg. Hint: Use the code similar to above and then pull.
+```{r}
+ref_avg <- NHANES |> 
+      filter(AgeDecade == " 20-29" & Gender == "female")  |> 
+      pull(BPSysAve) |> 
+      mean(na.rm = T)
+ref_avg
+```
+
+15. Now report the min and max values for the same group.
+```{r}
+NHANES |> 
+      filter(AgeDecade == " 20-29" & Gender == "female")  |> 
+      pull(BPSysAve) |> range(na.rm = T)
+```
+
+16. Compute the average and standard deviation for females, but for each age group separately rather than a selected decade as in question 1. Note that the age groups are defined by AgeDecade. Hint: rather than filtering by age and gender, filter by Gender and then use group_by.
+```{r}
+NHANES |> 
+  filter(Gender == "female") |> 
+  group_by(AgeDecade) |> 
+  summarize(mean_bps = mean(BPSysAve, na.rm = T),
+            sd_bps = sd(BPSysAve, na.rm = T))
+```
+
+17. Repeat exercise 4 for males.
+```{r}
+NHANES |> 
+  filter(Gender == "male") |> 
+  group_by(AgeDecade) |> 
+  summarize(mean_bps = mean(BPSysAve, na.rm = T),
+            sd_bps = sd(BPSysAve, na.rm = T))
+```
+
+We can actually combine both summaries for exercises 16 and 17 to one line of code. This is because group_by permits us to group by more than one variable. Obtain one big summary table using group_by(AgeDecade, Gender).
+```{r}
+NHANES |> 
+  group_by(AgeDecade, Gender) |> 
+  summarize(mean_bps = mean(BPSysAve, na.rm = T),
+            sd_bps = sd(BPSysAve, na.rm = T))
+```
+
+19. For males between the ages of 40-49, compare systolic blood pressure across race as reported in the Race1 variable. Order the resulting table from lowest to highest average systolic blood pressure.
+```{r}
+# SMM notes: 
+# First, the jerks put a space in front of the AgeDecade levels so "40-49" does
+# not work but " 40-49" does. 
+# Second, I want to acknowledge some qualms about this dataset including but not limited to: 
+# 1. This dataset seems like it may be conflating sex with gender
+# 2. The Race1 categories are sort of bizarre. I don't like presenting data without 
+# context but until I write a stats book let's consider this an example dataset 
+# and not an endorsement of whatever study produced these data. 
+head(NHANES)
+levels(NHANES$AgeDecade)
+NHANES |> 
+  filter(Gender == "male") |> 
+  filter(AgeDecade ==" 40-49") |> 
+  group_by(Race1) |> 
+  summarize(meanbp = mean(BPSysAve, na.rm = T))
+```
+
+20. Load the murders dataset. Which of the following is true?
+```{r}
+# Answer: this is a tidy data frame 
+head(murders)
+
+```
+21. Use as_tibble to convert the murders data table into a tibble and save it in an object called murders_tibble.
+
+```{r}
+#SMM note: I actually don't like tibbles but ymmv. 
+murders_tibble <- as_tibble(murders)
+```
+
+22. Use the group_by function to convert murders into a tibble that is grouped by region.
+```{r}
+murders_tibble |> group_by(region) |> head() #just using head to peek at data 
+
+```
+23. Write tidyverse code that is equivalent to this code:
+```{r}
+# Original
+o <- exp(mean(log(murders$population)))
+
+#Piped
+p <- murders |> pull(population) |> log() |> mean() |> exp ()
+
+o==p # Check if they're equivalent; should be TRUE 
+
+# SMM note: ok here's an opportunity to get into some pipe nitpicky stuff. 
+# Pipes use a symbol to indicate where the previous output is being piped "to." 
+# In many cases you don't need it, but for some functions it's important to 
+# specify what argument will received the piped stuff. There are two almost equivalent
+# pipe symbols. %>% is the original tidyverse/magrittr one, |> is now a new 
+# pipe symbol in base r. Unfortunately, they have slightly different behavior, 
+# most notably in the placeholder symbol. I (SMM) hate this. But so it goes. An illustration 
+
+murders |> pull(population) |> log() |> mean() |> exp () # works 
+murders %>% pull(population) %>% log() %>% mean() %>% exp () # works 
+
+# note to use the "_" you have to specify the argument
+murders |> pull(population) |> log(x = _) |> mean(x =_) |> exp (x = _) 
+
+# The %>% pipe has very convenient . placeholder 
+murders %>% pull(population) %>% log(.) %>% mean(.) %>% exp (.) # works 
+
+# One more note, %>% will work even if you don't put () on the functions 
+murders %>% pull(population) %>% log %>% mean %>% exp
+
+```
+
