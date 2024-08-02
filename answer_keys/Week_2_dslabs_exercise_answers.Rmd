@@ -8,7 +8,7 @@ output: html_document
 ### Rafael Irizarry
 
 ## Chapter 4 Exercises  
-
+https://rafalab.dfci.harvard.edu/dsbook-part-1/R/tidyverse.html#sec-tidy-data
 ### Load our libraries
 ```{r, warning = FALSE, message = FALSE}
 # install.packages("NHANES")
@@ -228,4 +228,10 @@ murders %>% pull(population) %>% log(.) %>% mean(.) %>% exp (.) # works
 murders %>% pull(population) %>% log %>% mean %>% exp
 
 ```
-
+24. Use the map_df to create a data frame with three columns named n, s_n, and s_n_2. The first column should contain the numbers 1 through 100. The second and third columns should each contain the sum of 1 through n
+with n = the row number.
+ 
+```{r}
+map_df <- data.frame(n = 1:100, s_n = )
+```
+ 

@@ -1,0 +1,192 @@
+---
+title: "Week 2 medium/spicy answers"
+format: html
+editor: visual
+---
+
+
+```{r}
+#| warning: false
+#| message: false
+# Load libraries 
+library(dslabs)
+library(dplyr)
+
+# Feel free to set a seed if you'd like to replicate results exactly
+set.seed(1999)
+```
+
+```{r}
+# 1. Calculate the mean and sd murder rates for each region using only base r
+murders <- murders
+murders$rate <- murders$total / (murders$population/100000)
+mean_rate <- aggregate(rate ~ region, data = murders, 
+                       FUN = function (x) c(mean_rate = mean(x), sd_rate = sd(x)))
+mean_rate
+
+# 2. Calculate the mean and sd murder rates for each region using tidy/dplyr syntax
+mean_rate <- murders %>% 
+  mutate(rate = total / (population/100000)) %>% 
+  group_by(region) %>% 
+  summarize(mean_rate = mean(rate), sd_rate = sd(rate))
+mean_rate
+
+```
+3. BASE R: filter the murders dataset to only include states with murder 
+rates in the top 25% percentile (high murder states). Produce a data frame with
+just the state, population, and rate, sorted from largest to smallest pop. 
+
+```{r}
+rate_cutoff <- fivenum(murders$rate)[4] # easy but not only way to get upper quartile
+high_murders <- murders[murders$rate > rate_cutoff, ] # rows, columns
+high_murders <- high_murders[,c("state", "population", "rate")]
+high_murders <- high_murders[order(-high_murders$rate),]
+```
+
+4. Dplyr: filter the murders dataset to only include states with murder 
+rates in the top 25% percentile (high murder states). Produce a data frame with
+just the state, population, and rate, sorted from largest to smallest pop. 
+
+```{r}
+top_murders <- quantile(murders$rate, .75) #another way to get upper quartile
+murders %>% 
+  filter(rate > top_murders) %>% 
+  select(state, population, rate) %>%
+  arrange(desc(rate))
+```
+
+5. Add a column in the murders dataset that creates categories of 
+low, medium, high, and very high murders. Describe how you came up 
+with reasonable categorization. 
+
+```{r}
+# one option
+murders <- murders %>% 
+    mutate(cut_cat = cut(rate, breaks = 4, 
+                         labels = c("low", "medium","high","very high")))
+```
+
+6. Simulate some data. Create a data frame with some data from a hypothetical experiment. Your data should include three treatments, A, B, and C, each with 50 individuals per treatment. The mean height of plants in group C is 50 cm, the plants in Group B are on average 5 cm taller than those in group C, and the plants in group A are on average 3 cm taller than group B, but have a higher variance. Use case_when() in your answer. 
+
+```{r}
+Ns <- 50
+data <- data.frame(treatment = c(rep("A", Ns), rep("B", Ns), rep("C", Ns)),
+                   height = rep(NA, Ns*3))
+
+# Base R solution 
+data$height[data$treatment=="C"] <- rnorm(Ns, mean = 50, sd = 4)
+data$height[data$treatment=="B"] <- rnorm(Ns, mean = 55, sd = 4)
+data$height[data$treatment=="A"] <- rnorm(Ns, mean = 58, sd = 10)
+
+# Tidy R 
+Ns <- 50
+data <- data.frame(treatment = c(rep("A", Ns), rep("B", Ns), rep("C", Ns)),
+                   height = rep(NA, Ns*3))
+data <- data %>% 
+  mutate(height = case_when(treatment == "C" ~ rnorm(n(), mean = 50, sd = 4),
+                            treatment == "B" ~ rnorm(n(), mean = 55, sd = 4),
+                            treatment == "A" ~ rnorm(n(), mean = 58, sd = 10)))
+```
+
+7. Calculate the mean and standard variation of heights for each of your three groups
+and verify they match the simulated estimates.
+
+```{r}
+aggregate(height ~ treatment, data = data, FUN = function (x) c(mean = mean(x), sd = sd(x)))
+
+# Tidy R
+data %>% 
+  group_by(treatment) %>% 
+  summarize(mean = mean(height), sd = sd(height))
+```
+
+8. Add a column to your data called "combined group" where all individuals in 
+treatment "C" are called "control" and all individuals in treatments A and B
+are lumped into a "fertilizer" category. Use case_when() 
+
+```{r}
+data <- data %>% 
+  mutate(combined_group = case_when(treatment == "C" ~ "control",
+                                    treatment == "B" ~ "fertilizer",
+                                    treatment == "A" ~ "fertilizer"))
+```
+
+9. Find a way to verify that your treatment and combined group columns coincide
+```{r}
+table(data$treatment, data$combined_group)
+```
+
+10. Add a column called abbreviated "lll" that stands for "longest leaf length."
+The values in this column should be drawn from a normal distribution with mean of 5
+and sd of .6 and the values do not depend on treatment 
+
+```{r}
+data <- data %>% 
+  mutate(lll = rnorm(n = nrow(data), mean = 5, sd = 6))
+```
+
+11. Use across () to scale the height and lll columns. What does scale() do? 
+```{r}
+data <- data %>% mutate(across(where(is.numeric), ~ scale(.)))
+```
+
+12. You realized that the undergrad who entered the second half of this
+experiment's data into excel used a combination of upper and lower case
+for treatment ("As" and "as" and "fertilizer" and "Fertilizer"). Use
+across() and tolower() to mutate all the character columns to lowercase.
+```{r}
+data <- data %>% mutate(across(where(is.character), ~ tolower(.)))
+```
+
+13. You have a list of sample names stored as a character vector.
+Split them up based on the "_" delimiter and store the results in a data
+frame that has a sample column (numeric) and a date column (character)
+Use the package stringr, the function str_split(), and the function sapply().
+Need a hint? Scroll to the bottom.
+
+```{r}
+library(stringr)
+sample_names <- c("254_july-12", "4850_july-12", "128_july-14", "472_july-15")
+
+# str_split is a very handy function that splits strings based on a delimiter, e.g, "_"
+split_names <- str_split(sample_names, "_")
+
+# have a look at the output. It's a list, which can be frightening 
+split_names 
+str(split_names)
+
+# how do we get items from lists? 
+split_names[[1]] # first object in list. This item is a character vector with two things
+split_names[[1]][1] #first item (sample) in first object in list 
+split_names[[1]][2] # second item (date) in first object in list 
+
+# so what we need to do is go through each object in the list, and pull all
+# the 1st items (samples) and put them together, and then pull all the second items
+# (dates). applys are good for this because apply functions apply a thing to multiple 
+# object in sequence. 
+
+# first list in split_names 
+# Create a data frame to store results, I added a little placeholder column
+names_data <- data.frame(n = 1:4)
+
+# use sapply to extract the first item from each list (the sample)
+names_data$sample <- sapply(split_names, FUN = function(x) x[1])
+
+# use sapply to extract the second item from each list (the date) 
+names_data$date <- sapply(split_names, FUN = function(x) x[2])
+
+
+# Alternative option, use a for loop. More intuitive to some, a little wordier.
+# Note, in a for loop, in each "round" of the loop, the i gets replaced with 
+# the next value in the "in" sequence (here, 1, then 2, then 3, then 4.)
+samples <- NULL
+dates <- NULL
+for (i in 1:4){
+  samples[i] <- split_names[[i]][1]
+  dates[i] <- split_names[[i]][2]
+}
+
+samples
+dates
+```
+
