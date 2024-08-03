@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Week 3 Answers</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Week_3_answers_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Week_3_answers_files/libs/quarto-html/quarto.js"></script>
+<script src="Week_3_answers_files/libs/quarto-html/popper.min.js"></script>
+<script src="Week_3_answers_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Week_3_answers_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Week_3_answers_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Week_3_answers_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Week_3_answers_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Week_3_answers_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Week_3_answers_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Week 3 Answers</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="week-3-problem-set-answers" class="level2">
+<h2 class="anchored" data-anchor-id="week-3-problem-set-answers">Week 3 Problem Set Answers</h2>
+<p>The goal for these exercises is to get acquainted with some more advanced data wrangling. You already know how to manipulate the columns and rows in a data frame through dplyr verbs and base R operators. Here we work with two common scenarios:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(tidyr)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dslabs)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="scenario-1-reshaping-data" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-1-reshaping-data">Scenario 1: Reshaping data</h3>
+<p>You may hear about wanting to reshape your data into “wide” or “long” format. These actions are somewhat analagous to situations in which you’d use a pivot table in Excel. Most commonly you’ll be pivoting longer, because long data is more useful for analysis in R. SMM note: I always have to look up the syntax for pivot_wider and pivot_longer; I just can’t remember the arguments.</p>
+<ol type="1">
+<li>Create a test “wide” dataset. This is “wide” because months are spread out over 12 different columns. What are the dimensions of the dataset?</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>co2_wide <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(co2, <span class="at">ncol =</span> <span class="dv">12</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.character</span>(<span class="dv">1959</span><span class="sc">:</span><span class="dv">1997</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(co2_wide)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       1      2      3      4      5      6      7      8      9     10     11
+1 315.42 316.31 316.50 317.56 318.13 318.00 316.39 314.65 313.68 313.18 314.66
+2 316.27 316.81 317.42 318.87 319.87 319.43 318.01 315.74 314.00 313.68 314.84
+3 316.73 317.54 318.38 319.31 320.42 319.61 318.42 316.63 314.83 315.16 315.94
+4 317.78 318.40 319.53 320.42 320.85 320.45 319.45 317.25 316.11 315.27 316.53
+5 318.58 318.92 319.70 321.22 322.08 321.31 319.58 317.61 316.05 315.83 316.91
+6 319.41 320.07 320.74 321.40 322.06 321.73 320.27 318.54 316.54 316.71 317.53
+      12 year
+1 315.43 1959
+2 316.03 1960
+3 316.85 1961
+4 317.53 1962
+5 318.20 1963
+6 318.55 1964</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(co2_wide) <span class="co"># Note its 39 rows by 13 columns</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 39 13</code></pre>
+</div>
+</div>
+<ol start="2" type="1">
+<li>Reshape this dataset using pivot_longer() to wrangle this into “long” format. Name the new object “co2_tidy”. Your new data frame should have three columns: year, month, and co2. What are the new dimensions of this data frame?</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>co2_tidy <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(<span class="at">data =</span> co2_wide,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">cols =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">names_to =</span> <span class="st">"month"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">values_to =</span> <span class="st">"co2"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(co2_tidy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  year  month   co2
+  &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
+1 1959  1      315.
+2 1959  2      316.
+3 1959  3      316.
+4 1959  4      318.
+5 1959  5      318.
+6 1959  6      318 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note, now its 468 rows long with just 3 columns</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(co2_tidy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 468   3</code></pre>
+</div>
+</div>
+<ol start="3" type="1">
+<li>Load the admissions data set which contains admissions information for men and women across six majors, keeping only the admitted number column. Irizarry says this is “not tidy” because we want a row for each major. SMM note: I think whether or not a data set is “tidy” depends on your goals. So let’s not get too hung up on that. Let’s just see if we can pivot this wider so that we have columns “major,” “admitted_men” and “admitted_women”</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> admissions <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>applicants)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  major gender admitted
+1     A    men       62
+2     B    men       63
+3     C    men       37
+4     D    men       33
+5     E    men       28
+6     F    men        6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">data =</span> ., </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_from =</span> gender,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_from =</span> admitted,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_prefix =</span> <span class="st">"admitted_"</span>) <span class="sc">%&gt;%</span> head</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  major admitted_men admitted_women
+  &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt;
+1 A               62             82
+2 B               63             68
+3 C               37             34
+4 D               33             35
+5 E               28             24
+6 F                6              7</code></pre>
+</div>
+</div>
+</section>
+<section id="spicy-reshaping-optional" class="level3">
+<h3 class="anchored" data-anchor-id="spicy-reshaping-optional">Spicy reshaping (optional)</h3>
+<ol start="4" type="1">
+<li>We want to wrangle the admissions data so that for each major we have 4 observations: admitted_men, admitted_women, applicants_men and applicants_women. The trick we perform here is actually quite common: first use pivot_longer to generate an intermediate data frame and then pivot_wider to obtain the tidy data we want.</li>
+</ol>
+</section>
+<section id="note-now-lets-work-with-the-admissions-data-directly" class="level3">
+<h3 class="anchored" data-anchor-id="note-now-lets-work-with-the-admissions-data-directly">Note: now let’s work with the admissions data directly</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>admissions <span class="sc">%&gt;%</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">data =</span> .,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"admitted"</span>, <span class="st">"applicants"</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_to =</span> <span class="st">"name"</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(<span class="at">col =</span> <span class="st">"column_name"</span>, gender, name) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">data =</span> .,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_from =</span> <span class="st">"column_name"</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_from =</span> <span class="st">"value"</span>) <span class="sc">%&gt;%</span> head</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  major men_admitted men_applicants women_admitted women_applicants
+  &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt;            &lt;dbl&gt;
+1 A               62            825             82              108
+2 B               63            560             68               25
+3 C               37            325             34              593
+4 D               33            417             35              375
+5 E               28            191             24              393
+6 F                6            373              7              341</code></pre>
+</div>
+</div>
+</section>
+<section id="scenario-2.-joins" class="level3">
+<h3 class="anchored" data-anchor-id="scenario-2.-joins">Scenario 2. Joins</h3>
+<p>SMM note: I use joins all the time. It’s very common for you to need to combine two datasets based on a common column. You can do this by hand, or in Excel, but this is a fraught operation prone to error. Much better is to do it programmatically.</p>
+<p>Despite how useful joins are, they can cause headaches. Two tips to make them work well for you:</p>
+<ol type="1">
+<li><p>Make sure that you have your <em>key</em> column or columns identified. These are the columns that have shared data between your two data frames. For instance, a sample number. These columns need to have the same name, and they need to be formatted similarly. It’s often wise to check and make sure that the values in key column 1 are found in key column 2 before you start joining.</p></li>
+<li><p>Know the dimensions of your resulting data frame in advance, and check them after. R will do strange things if it can’t find a match, or if it find multiple matches in your key column. You may end up with more or fewer rows than you intend. Let’s look at it in action.</p></li>
+<li><p>Imagine you have another data frame of information about majors and their graduation rates. It looks like this:</p></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>majors <span class="ot">&lt;-</span> <span class="fu">data.frame</span> (<span class="at">major_code =</span> <span class="fu">c</span>(<span class="st">"A"</span>,<span class="st">"B"</span>,<span class="st">"C"</span>,<span class="st">"D"</span>,<span class="st">"E"</span>,<span class="st">"F"</span>),</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">major_name =</span> <span class="fu">c</span>(<span class="st">"Anthro"</span>, <span class="st">"Bio"</span>, <span class="st">"Chem"</span>, <span class="st">"Dentistry"</span>, <span class="st">"Econ"</span>, <span class="st">"French"</span>),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">grad_rate =</span> <span class="fu">c</span>(<span class="dv">79</span>, <span class="dv">83</span>, <span class="dv">40</span>, <span class="dv">48</span>, <span class="dv">55</span>, <span class="dv">90</span>))</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(majors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  major_code major_name grad_rate
+1          A     Anthro        79
+2          B        Bio        83
+3          C       Chem        40
+4          D  Dentistry        48
+5          E       Econ        55
+6          F     French        90</code></pre>
+</div>
+</div>
+<p>Now, we would like to add the information from “majors” onto the admissions df. We want the resulting data frame to have the same information as admissions but with the additional columns of the major name and graduation rate. Let’s try just using left_join(). Note the data frame that we want to add stuff to comes first.</p>
+<p>Why did you get an error? Parse the error message.<br>
+Answer: the column names need to be the same for R to know that’s your “key” column.</p>
+<ol start="6" type="1">
+<li>Rename the column “major_code” in the df majors to be “major” instead</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>majors <span class="ot">&lt;-</span> majors <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">major =</span> major_code)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="7" type="1">
+<li>Now we have a <em>key</em> column that is common to both dfs that we can use to add the info from majors onto admissions. Find a way to verify that all the values in the major column in admission are found in major</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>admissions<span class="sc">$</span>major <span class="sc">%in%</span> majors<span class="sc">$</span>major <span class="co"># all TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>majors<span class="sc">$</span>major <span class="sc">%in%</span> admissions<span class="sc">$</span>major <span class="co"># also all TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE TRUE TRUE TRUE TRUE TRUE</code></pre>
+</div>
+</div>
+<ol start="8" type="1">
+<li>Try to join your dfs again. Before you assign the output, verify that the dimensions of the resulting data frame are the size that you expected.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(admissions) <span class="co"># starts as 12 rows, 4 columns. We plan to add 2 more columns.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12  4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(admissions, majors) <span class="sc">%&gt;%</span> dim <span class="co"># Note, the rows stays the same, col is now 14 as expected</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining, by = "major"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12  6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Great, we've checked that we're getting what we want, so let's assign it.</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>combined <span class="ot">&lt;-</span> <span class="fu">left_join</span>(admissions, majors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining, by = "major"</code></pre>
+</div>
+</div>
+<ol start="9" type="1">
+<li>Trouble shooting joins. Potential Problem 1: the values in your key column don’t exactly match. Let’s modify the majors df:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>majors <span class="ot">&lt;-</span> <span class="fu">data.frame</span> (<span class="at">major_code =</span> <span class="fu">c</span>(<span class="st">"A"</span>,<span class="st">"B"</span>,<span class="st">"C"</span>,<span class="st">"D"</span>,<span class="st">"E"</span>,<span class="st">"G"</span>),</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">major_name =</span> <span class="fu">c</span>(<span class="st">"Anthro"</span>, <span class="st">"Bio"</span>, <span class="st">"Chem"</span>, <span class="st">"Dentistry"</span>, <span class="st">"Econ"</span>, <span class="st">"Geol"</span>),</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">grad_rate =</span> <span class="fu">c</span>(<span class="dv">79</span>, <span class="dv">83</span>, <span class="dv">40</span>, <span class="dv">48</span>, <span class="dv">55</span>, <span class="dv">30</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">rename</span>(<span class="at">major =</span> major_code)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now which values overlap in the key columns and which do not?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>admissions<span class="sc">$</span>major <span class="sc">%in%</span> majors<span class="sc">$</span>major <span class="co"># Two falses </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>admissions <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span>major <span class="sc">%in%</span> majors<span class="sc">$</span>major) <span class="co"># "F" major no longer there. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  major gender admitted applicants
+1     F    men        6        373
+2     F  women        7        341</code></pre>
+</div>
+</div>
+<ol start="10" type="1">
+<li>If you add majors to admissions now, what will happen with the F major? Explain the result.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note the NAs that get added to "major name" and "grad rate" for major</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># F because it's no longer in the other data frame. </span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(admissions, majors) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining, by = "major"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   major gender admitted applicants major_name grad_rate
+1      A    men       62        825     Anthro        79
+2      B    men       63        560        Bio        83
+3      C    men       37        325       Chem        40
+4      D    men       33        417  Dentistry        48
+5      E    men       28        191       Econ        55
+6      F    men        6        373       &lt;NA&gt;        NA
+7      A  women       82        108     Anthro        79
+8      B  women       68         25        Bio        83
+9      C  women       34        593       Chem        40
+10     D  women       35        375  Dentistry        48
+11     E  women       24        393       Econ        55
+12     F  women        7        341       &lt;NA&gt;        NA</code></pre>
+</div>
+</div>
+<ol start="11" type="1">
+<li>Trouble shooting joins. Potential Problem 2: there are duplicate values in your key column. Let’s modify the majors df:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>majors <span class="ot">&lt;-</span> <span class="fu">data.frame</span> (<span class="at">major_code =</span> <span class="fu">c</span>(<span class="st">"A"</span>,<span class="st">"B"</span>,<span class="st">"B"</span>,<span class="st">"C"</span>,<span class="st">"D"</span>,<span class="st">"E"</span>,<span class="st">"F"</span>),</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">major_name =</span> <span class="fu">c</span>(<span class="st">"Anthro"</span>, <span class="st">"Bio"</span>, <span class="st">"Botany"</span>, <span class="st">"Chem"</span>, <span class="st">"Dentistry"</span>, <span class="st">"Econ"</span>, <span class="st">"French"</span>),</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">grad_rate =</span> <span class="fu">c</span>(<span class="dv">79</span>, <span class="dv">83</span>, <span class="dv">46</span>, <span class="dv">40</span>, <span class="dv">48</span>, <span class="dv">55</span>, <span class="dv">80</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">major =</span> major_code)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Left join major and admissions again. What happened? What do you notice about the length of the resulting df?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note that it now duplicates the rows 2 and 3 from admissions to add </span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Bio and Botany, which both have major code "B" </span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(admissions, majors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining, by = "major"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   major gender admitted applicants major_name grad_rate
+1      A    men       62        825     Anthro        79
+2      B    men       63        560        Bio        83
+3      B    men       63        560     Botany        46
+4      C    men       37        325       Chem        40
+5      D    men       33        417  Dentistry        48
+6      E    men       28        191       Econ        55
+7      F    men        6        373     French        80
+8      A  women       82        108     Anthro        79
+9      B  women       68         25        Bio        83
+10     B  women       68         25     Botany        46
+11     C  women       34        593       Chem        40
+12     D  women       35        375  Dentistry        48
+13     E  women       24        393       Econ        55
+14     F  women        7        341     French        80</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if you check the dimensions, you'll notice that your df is now two rows longer,</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># which should be a red flag. </span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(admissions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12  4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(admissions, majors) <span class="sc">%&gt;%</span> dim</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining, by = "major"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14  6</code></pre>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

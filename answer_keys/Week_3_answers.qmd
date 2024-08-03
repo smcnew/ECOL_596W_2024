@@ -1,0 +1,218 @@
+---
+title: "Week 3 Answers"
+format: html
+editor: visual
+---
+
+## Week 3 Problem Set Answers 
+
+The goal for these exercises is to get acquainted with some more advanced 
+data wrangling. You already know how to manipulate the columns and rows 
+in a data frame through dplyr verbs and base R operators. Here we work with 
+two common scenarios: 
+
+```{r}
+#| warning: false
+#| message: false
+# install.packages(tidyr)
+
+library(dslabs)
+library(tidyr)
+library(dplyr)
+```
+
+
+### Scenario 1: Reshaping data 
+You may hear about wanting to reshape your data into "wide" or "long" format.
+These actions are somewhat analagous to situations in which you'd use a pivot 
+table in Excel. Most commonly you'll be pivoting longer, because long data 
+is more useful for analysis in R. SMM note: I always have to look up the syntax
+for pivot_wider and pivot_longer; I just can't remember the arguments. 
+
+
+1. Create a test "wide" dataset.
+This is "wide" because months are spread out over 12 different columns. What 
+are the dimensions of the dataset? 
+```{r}
+co2_wide <- data.frame(matrix(co2, ncol = 12, byrow = TRUE)) |> 
+  setNames(1:12) |>
+  mutate(year = as.character(1959:1997))
+head(co2_wide)
+dim(co2_wide) # Note its 39 rows by 13 columns
+```
+
+2. Reshape this dataset using pivot_longer() to wrangle this into "long" format.
+Name the new object "co2_tidy". Your new data frame should have three columns:
+year, month, and co2. What are the new dimensions of this data frame? 
+
+```{r}
+
+co2_tidy <- pivot_longer(data = co2_wide,
+             cols = 1:12,
+             names_to = "month",
+             values_to = "co2")
+head(co2_tidy)
+
+# Note, now its 468 rows long with just 3 columns
+dim(co2_tidy)
+
+
+```
+3. Load the admissions data set which contains admissions information
+for men and women across six majors, keeping only the admitted number column.
+Irizarry says this is "not tidy" because we want a row for each major. SMM note: 
+I think whether or not a data set is "tidy" depends on your goals. So let's not get 
+too hung up on that. Let's just see if we can pivot this wider so that 
+we have columns "major," "admitted_men" and "admitted_women" 
+
+```{r}
+dat <- admissions %>% select(-applicants)
+head(dat)
+
+dat %>% 
+  pivot_wider(data = ., 
+              names_from = gender,
+              values_from = admitted,
+              names_prefix = "admitted_") %>% head
+```
+
+
+### Spicy reshaping (optional) 
+4. We want to wrangle the admissions data so that for each major we have 4 observations: 
+admitted_men, admitted_women, applicants_men and applicants_women. 
+The trick we perform here is actually quite common: 
+first use pivot_longer to generate an intermediate data frame and then pivot_wider 
+to obtain the tidy data we want.
+ 
+### Note: now let's work with the admissions data directly
+
+```{r}
+admissions %>% 
+  pivot_longer(data = .,
+              cols = c("admitted", "applicants"),
+              names_to = "name",
+              values_to = "value") %>%
+  unite(col = "column_name", gender, name) %>% 
+  pivot_wider(data = .,
+              names_from = "column_name",
+              values_from = "value") %>% head
+```
+
+### Scenario 2. Joins
+SMM note: I use joins all the time. It's very common for you to need to combine
+two datasets based on a common column. You can do this by hand, or in Excel, 
+but this is a fraught operation prone to error. Much better is to do it programmatically. 
+
+Despite how useful joins are, they can cause headaches. Two tips to make them work well for you:  
+
+1. Make sure that you have your *key* column or columns identified. These are the columns
+that have shared data between your two data frames. For instance, a sample number.
+These columns need to have the same name, and they need to be formatted similarly. 
+It's often wise to check and make sure that the values in key column 1 are found in key column 2 
+before you start joining.  
+
+2. Know the dimensions of your resulting data frame in advance, and check them after. 
+R will do strange things if it can't find a match, or if it find multiple matches 
+in your key column. You may end up with more or fewer rows than you intend. Let's look at it in action. 
+
+
+
+5. Imagine you have another data frame of information about majors and 
+their graduation rates. It looks like this: 
+
+```{r}
+majors <- data.frame (major_code = c("A","B","C","D","E","F"),
+                      major_name = c("Anthro", "Bio", "Chem", "Dentistry", "Econ", "French"),
+                      grad_rate = c(79, 83, 40, 48, 55, 90))
+
+head(majors)
+```
+
+Now, we would like to add the information from "majors" onto the admissions
+df. We want the resulting data frame to have the same information as admissions
+but with the additional columns of the major name and graduation rate. 
+Let's try just using left_join(). Note the data frame that we want to add stuff 
+to comes first. 
+
+Why did you get an error? Parse the error message.  
+Answer: the column names need to be the same for R to know that's your "key" column.
+
+6. Rename the column "major_code" in the df majors to be "major" instead
+```{r}
+majors <- majors %>% rename(major = major_code)
+```
+
+7. Now we have a *key* column that is common to both dfs that we can use 
+to add the info from majors onto admissions. Find a way to verify that all
+ the values in the major column in admission are found in major 
+ 
+```{r}
+admissions$major %in% majors$major # all TRUE
+majors$major %in% admissions$major # also all TRUE
+```
+
+8. Try to join your dfs again. Before you assign the output, verify that 
+the dimensions of the resulting data frame are the size that you expected. 
+
+```{r}
+dim(admissions) # starts as 12 rows, 4 columns. We plan to add 2 more columns.
+left_join(admissions, majors) %>% dim # Note, the rows stays the same, col is now 14 as expected
+
+# Great, we've checked that we're getting what we want, so let's assign it.
+combined <- left_join(admissions, majors)
+```
+
+9. Trouble shooting joins. Potential Problem 1: the values in your key 
+column don't exactly match. Let's modify the majors df: 
+
+```{r}
+majors <- data.frame (major_code = c("A","B","C","D","E","G"),
+                      major_name = c("Anthro", "Bio", "Chem", "Dentistry", "Econ", "Geol"),
+                      grad_rate = c(79, 83, 40, 48, 55, 30)) %>% 
+                      rename(major = major_code)
+```
+
+Now which values overlap in the key columns and which do not? 
+
+```{r}
+admissions$major %in% majors$major # Two falses 
+admissions %>% filter(!major %in% majors$major) # "F" major no longer there. 
+
+```
+
+10. If you add majors to admissions now, what will happen with the F major? Explain the result. 
+
+```{r}
+# Note the NAs that get added to "major name" and "grad rate" for major
+# F because it's no longer in the other data frame. 
+left_join(admissions, majors) 
+```
+
+11.  Trouble shooting joins. Potential Problem 2: there are duplicate 
+values in your key column. Let's modify the majors df: 
+```{r}
+majors <- data.frame (major_code = c("A","B","B","C","D","E","F"),
+                      major_name = c("Anthro", "Bio", "Botany", "Chem", "Dentistry", "Econ", "French"),
+                      grad_rate = c(79, 83, 46, 40, 48, 55, 80)) %>% 
+  rename(major = major_code)
+```
+
+Left join major and admissions again. What happened? What do you notice 
+about the length of the resulting df? 
+
+```{r}
+# Note that it now duplicates the rows 2 and 3 from admissions to add 
+# Bio and Botany, which both have major code "B" 
+left_join(admissions, majors)
+
+# if you check the dimensions, you'll notice that your df is now two rows longer,
+# which should be a red flag. 
+dim(admissions)
+left_join(admissions, majors) %>% dim
+
+
+```
+
+
+
+
