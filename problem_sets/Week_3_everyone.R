@@ -1,0 +1,54 @@
+# ECOL 596
+# Week 3
+# Advanced Data Wrangling
+#
+# Goals: understanding joins and reshaping of data.
+#
+#
+
+# Packages ----------------------------------------------------------------
+install.packages("Lahman") # new package to get some test data
+library(Lahman)
+library(dslabs)
+library(dplyr)
+
+
+# Joins -------------------------------------------------------------------
+# Refer to Irizarry ch. 12 for more info
+# https://rafalab.dfci.harvard.edu/dsbook-part-1/wrangling/joining-tables.html
+
+
+# 1. Install and load the Lahman library. This database includes data related to baseball teams. It includes summary statistics about how the players performed on offense and defense for several years. It also includes personal information about the players.
+#
+# The Batting data frame contains the offensive statistics for all players for many years. You can see, for example, the top 10 hitters by running this code:
+#
+#   library(Lahman)
+#
+# top <- Batting |>
+#   filter(yearID == 2016) |>
+#   arrange(desc(HR)) |>
+#   slice(1:10)
+#
+# top |> as_tibble()
+#
+# But who are these players? We see an ID, but not the names. The player names are in this table
+#
+# People |> as_tibble()
+#
+# We can see column names nameFirst and nameLast. Use the left_join function to create a table of the top home run hitters. The table should have playerID, first name, last name, and number of home runs (HR). Rewrite the object top with this new table.
+#
+# 2. Now use the Salaries data frame to add each player’s salary to the table you created in exercise 1. Note that salaries are different every year so make sure to filter for the year 2016, then use right_join. This time show first name, last name, team, HR, and salary.
+#
+# 3. In a previous exercise, we created a tidy version of the co2 dataset:
+#
+#   co2_wide <- data.frame(matrix(co2, ncol = 12, byrow = TRUE)) |>
+#   setNames(1:12) |>
+#   mutate(year = 1959:1997) |>
+#   pivot_longer(-year, names_to = "month", values_to = "co2") |>
+#   mutate(month = as.numeric(month))
+#
+# We want to see if the monthly trend is changing, so we are going to remove the year effects and then plot the results. We will first compute the year averages. Use the group_by and summarize to compute the average co2 for each year. Save in an object called yearly_avg.
+#
+# 4. Now use the left_join function to add the yearly average to the co2_wide dataset. Then compute the residuals: observed co2 measure - yearly average.
+#
+# 5. Make a plot of the seasonal trends by year but only after removing the year effect.

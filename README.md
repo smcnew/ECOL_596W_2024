@@ -54,5 +54,9 @@ We'll get to working with Git in Week 3. Until then here are two methods:
 a little download icon underneath the word "History"  
 2. Download a whole directory using its url here https://download-directory.github.io/
 
+
+### Github resources: 
+
+https://happygitwithr.com/
 ### [Download the full syllabus here](Data_science_syllabus_mcnew.pdf)
 
