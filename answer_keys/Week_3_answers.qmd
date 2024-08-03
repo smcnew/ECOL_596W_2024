@@ -2,6 +2,7 @@
 title: "Week 3 Answers"
 format: html
 editor: visual
+embed-resources: true
 ---
 
 ## Week 3 Problem Set Answers 
