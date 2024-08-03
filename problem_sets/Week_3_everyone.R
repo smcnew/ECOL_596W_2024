@@ -19,10 +19,9 @@ library(dplyr)
 
 
 # 1. Install and load the Lahman library. This database includes data related to baseball teams. It includes summary statistics about how the players performed on offense and defense for several years. It also includes personal information about the players.
-#
 # The Batting data frame contains the offensive statistics for all players for many years. You can see, for example, the top 10 hitters by running this code:
 #
-#   library(Lahman)
+library(Lahman)
 #
 # top <- Batting |>
 #   filter(yearID == 2016) |>
