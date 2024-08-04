@@ -1,0 +1,133 @@
+---
+title: "Week_4_medium"
+format: html
+editor: visual
+embed-resources: true
+css: |
+      <style>
+        body { font-family: Arial, sans-serif; }
+      </style>
+js: |
+      <script>
+        console.log('Custom JavaScript loaded.');
+      </script>
+---
+```{r}
+#| warning: false
+#| message: false
+# install.packages(tidyr)
+
+library(dslabs)
+library(ggplot2)
+library(dplyr)
+
+```
+
+Medium ------------------------------------------------------------------
+
+One problem with ggplots defaults themes is that they're kind of ugly
+and the text is usually too small to read. You can customize your theme in
+each plot but it becomes kind of wordy.
+
+Create a custom theme that sets parameters the way you'd like them to be.
+At a minimum set your axis, legend, and other text to size 14, and get rid
+of the background grid. Find a way to save this theme to your environment
+so you can apply it easily to the rest of your plots
+
+Check out theme info here: 
+https://ggplot2.tidyverse.org/reference/ggtheme.html
+```{r}
+my_theme <- function() {
+  theme_classic() + # What I consider nice base theme
+    theme(
+      text = element_text(size = 14),          # Larger font size
+      axis.title = element_text(size = 22),    # Larger axis titles
+      axis.text = element_text(size = 18),     # Larger axis text
+      legend.title = element_text(size = 18),  # Larger legend titles
+      legend.text = element_text(size = 16),   # Larger legend text
+      panel.grid.major = element_blank(),       # No major grid lines
+      panel.grid.minor = element_blank(),       # No minor grid lines
+    )
+}
+
+# Put it into action 
+heights %>% 
+  ggplot(aes(x = height)) + 
+  geom_density() + 
+  my_theme()
+
+
+# Note: if you really settle on a theme you like you can be extra cool 
+# and set your theme function into a separate R script that you source() 
+# at the beginning of scripts. That way you can easily import your bespoke
+# theme into multiple scripts. 
+```
+
+
+Explore color options. There are lots of packages out there that help choose colors
+Find ones that you like that are: aesthetically pleasing, color blind friendly,
+and play well in black and white. Find a palette that would work well for
+continuous data and one that would work better for categorical data.
+
+### Need ideas? Check these out 
+https://cran.r-project.org/web/packages/khroma/vignettes/tol.html
+https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html
+https://github.com/karthik/wesanderson
+
+### SMM note: 
+My current favorite way to set my theme is using ggthemr
+```{r}
+# devtools::install_github('Mikata-Project/ggthemr')
+library(ggthemr)
+ggthemr(palette = "pale", layout = "clean", text_size = 18)
+
+```
+
+
+Let's start by using the diamonds dataset in R. This lists information
+on nearly 60,000 diamonds More info here: https://rpubs.com/Davo2812/1102821
+
+```{r}
+diamonds <- diamonds 
+head(diamonds)
+```
+
+1. Create a scatterplot showing the relationship between carat (x) and price (y)
+```{r}
+diamonds %>% 
+  ggplot(aes(x = carat, y = price)) + 
+  geom_point()
+```
+
+2. Interesting, there's some strange structure to the data. Add a color aesthetic 
+to visualize other columns and identify one that also seems to have a strong 
+relationship with carat x price 
+
+```{r}
+# One answer: the color of a diamond has a large effect on its price. 
+# Diamonds are graded from D (colorless) to J/K/M which have progressively
+# more yellow in their color. More colorless diamonds are more valuable.  
+diamonds %>% 
+  ggplot(aes(x = carat, y = price, color = color)) + 
+  geom_point()
+
+# One answer: the color of a diamond has a large effect on its price. 
+# Diamonds are graded from D (colorless) to J/K/M which have progressively
+# more yellow in their color. More colorless diamonds are more valuable.  
+diamonds %>% 
+  ggplot(aes(x = carat, y = price, color = color)) + 
+  geom_point()
+
+# Another answer: the clarity of the diamond also matters. Notice here 
+# that the clarity is very helpfully ordered from IF (internally flawless, best), 
+# to I1 (Included 1, i.e. visibly included). 
+diamonds %>% 
+  ggplot(aes(x = carat, y = price, color = clarity)) + 
+  geom_point()
+
+# note that the clarity categories are *not* in alphabetical order. If we look
+# at this factor, we'll see that its an "ordered factor," which helps with the display 
+str(diamonds$clarity)
+```
+
+
