@@ -1,5 +1,5 @@
 ---
-title: "Week_4_medium"
+title: "Week 4 medium answers"
 format: html
 editor: visual
 embed-resources: true
@@ -12,30 +12,28 @@ js: |
         console.log('Custom JavaScript loaded.');
       </script>
 ---
+
 ```{r}
 #| warning: false
 #| message: false
-# install.packages(tidyr)
 
+# Libraries used 
 library(dslabs)
 library(ggplot2)
+library(stringr) # for text manipulation (optional)
+library(plotrix) # for calculating standard error (optional)
 library(dplyr)
 
 ```
 
-Medium ------------------------------------------------------------------
+### Answers to medium problem set
 
-One problem with ggplots defaults themes is that they're kind of ugly
-and the text is usually too small to read. You can customize your theme in
-each plot but it becomes kind of wordy.
+One problem with ggplots defaults themes is that they're kind of ugly and the text is usually too small to read. You can customize your theme in each plot but it becomes kind of wordy.
 
-Create a custom theme that sets parameters the way you'd like them to be.
-At a minimum set your axis, legend, and other text to size 14, and get rid
-of the background grid. Find a way to save this theme to your environment
-so you can apply it easily to the rest of your plots
+Create a custom theme that sets parameters the way you'd like them to be. At a minimum set your axis, legend, and other text to size 14, and get rid of the background grid. Find a way to save this theme to your environment so you can apply it easily to the rest of your plots
 
-Check out theme info here: 
-https://ggplot2.tidyverse.org/reference/ggtheme.html
+Check out theme info here: https://ggplot2.tidyverse.org/reference/ggtheme.html
+
 ```{r}
 my_theme <- function() {
   theme_classic() + # What I consider nice base theme
@@ -63,19 +61,16 @@ heights %>%
 # theme into multiple scripts. 
 ```
 
+Explore color options. There are lots of packages out there that help choose colors Find ones that you like that are: aesthetically pleasing, color blind friendly, and play well in black and white. Find a palette that would work well for continuous data and one that would work better for categorical data.
 
-Explore color options. There are lots of packages out there that help choose colors
-Find ones that you like that are: aesthetically pleasing, color blind friendly,
-and play well in black and white. Find a palette that would work well for
-continuous data and one that would work better for categorical data.
+### Need ideas? Check these out
 
-### Need ideas? Check these out 
-https://cran.r-project.org/web/packages/khroma/vignettes/tol.html
-https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html
-https://github.com/karthik/wesanderson
+https://cran.r-project.org/web/packages/khroma/vignettes/tol.html https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html https://github.com/karthik/wesanderson
 
-### SMM note: 
+### SMM note:
+
 My current favorite way to set my theme is using ggthemr
+
 ```{r}
 # devtools::install_github('Mikata-Project/ggthemr')
 library(ggthemr)
@@ -83,34 +78,24 @@ ggthemr(palette = "pale", layout = "clean", text_size = 18)
 
 ```
 
-
-Let's start by using the diamonds dataset in R. This lists information
-on nearly 60,000 diamonds More info here: https://rpubs.com/Davo2812/1102821
+Let's start by using the diamonds dataset in ggplot. This lists information on nearly 60,000 diamonds More info here: https://rpubs.com/Davo2812/1102821
 
 ```{r}
 diamonds <- diamonds 
 head(diamonds)
 ```
 
-1. Create a scatterplot showing the relationship between carat (x) and price (y)
+1.  Create a scatterplot showing the relationship between carat (x) and price (y)
+
 ```{r}
 diamonds %>% 
   ggplot(aes(x = carat, y = price)) + 
   geom_point()
 ```
 
-2. Interesting, there's some strange structure to the data. Add a color aesthetic 
-to visualize other columns and identify one that also seems to have a strong 
-relationship with carat x price 
+2.  Interesting, there's some strange structure to the data. Add a color aesthetic to visualize other columns and identify one that also seems to have a strong relationship with carat x price
 
 ```{r}
-# One answer: the color of a diamond has a large effect on its price. 
-# Diamonds are graded from D (colorless) to J/K/M which have progressively
-# more yellow in their color. More colorless diamonds are more valuable.  
-diamonds %>% 
-  ggplot(aes(x = carat, y = price, color = color)) + 
-  geom_point()
-
 # One answer: the color of a diamond has a large effect on its price. 
 # Diamonds are graded from D (colorless) to J/K/M which have progressively
 # more yellow in their color. More colorless diamonds are more valuable.  
@@ -130,4 +115,126 @@ diamonds %>%
 str(diamonds$clarity)
 ```
 
+3. The majority (~75%) of diamonds are smaller than what size? Create a df
+called most_diamonds filtered just to include diamonds smaller than this size.
 
+```{r}
+fivenum(diamonds$carat)
+quantile(diamonds$carat, probs = 0.75)
+
+# Answer: most are less than 1.04 carats. I'm going to round down to 1 carat 
+most_diamonds <- filter(diamonds, carat <= 1.00)
+```
+
+4. Using your subsetted dataframe, create three or four ways of displaying the 
+price per diamond across different cut categories. Use your preferred method to display them as 
+a single, multi-panel figure. Explain which method best displays the data 
+and why. 
+
+```{r}
+# Violin plot, good for non-normal distributed data 
+p1 <- most_diamonds %>% 
+  ggplot(aes(x = cut, y = price)) + geom_violin() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Maybe it'll look better on log y? with colors? 
+p1a <- most_diamonds %>% 
+  ggplot(aes(x = cut, y = log10(price), fill = cut)) + geom_violin() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Classic Box plot
+p2 <- most_diamonds %>% 
+  ggplot(aes(x = cut, y = price)) + geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# How about a super classic bar plot? This takes more work. 
+library(plotrix)
+agg_data <- most_diamonds %>% 
+  group_by(cut) %>% 
+  summarize(mean = mean(price), se = std.error(price))
+
+p3 <- agg_data %>% 
+  ggplot(aes(x = cut, y = mean)) + 
+  geom_col() +
+  geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.5, color = "black") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+library(patchwork) # sabrina's current preferred multi-panel package
+
+(p1 + p1a) / (p2 + p3)  
+```
+#### SMM notes: 
+
+I don't think there are any "wrong" plots here. The violin plots are useful
+because they show the density of the data, and you can see that they're very not 
+normally distributed. Most of the observations have a pretty low value, but there's 
+a long tail that goes up in price quickly. The bar plot is the worst because it 
+doesn't show all that skewness in the data. The barplot additionally is a little
+harder to make. Boxplots are usually a good place to start, and these ones do show
+the tails in the data. Violin plots are good if you have lots of data (like we have here),
+less good if you don't. YMMV with log axes, they may help show the data when you have 
+really long tails like we have here, but they can be harder for the reader to interpret. 
+
+
+5. Explain the difference between geom_bar and geom_col. Show an example 
+of when you'd use each. 
+
+```{r}
+# Shortish answer: geom_bar() is good when you'd like R to tabulate up your data.
+# If you have counts of things, you can use it to efficently show the relative 
+# proportions of different groups. geom_col() is what you use when you have calculated 
+# summary statistics, (e.g., a mean value for different groups) that you'd like to display. 
+# In geom_col, you have to aggregate or summarize the data yourself, (and you set the x =
+# and y aesthetics). In geom_bar() R does the aggregating and you just give it the x. 
+
+diamonds %>% 
+  ggplot(aes(x = cut, fill = color)) + 
+  geom_bar()
+
+diamonds %>% 
+  group_by(cut) %>% 
+  summarize(mean = mean(price)) %>% 
+  ggplot(aes(x = cut, y = mean)) + 
+  geom_col()
+
+```
+
+6. In data visualization it's pretty easy to display the relationship 
+between two variables (i.e., we put one on the x axis and one on the y). Usually,
+we can visualize a third variable by adding a color aesthestic. However, beyond 
+that it gets tricky. What is the best method you can come up with for showing
+the relationship between carat, color, clarity, and price for ideal diamonds? 
+
+Let's assume you're trying to figure out how to shop for the biggest diamond
+at the lowest price. 
+
+```{r}
+# Here's one option: split up the plots using facet_wrap, and create separate
+# plots for clarity. Note, I decided to combine the clarity categories slightly
+# to see if it was simpler to look at. 
+
+diamonds %>% 
+  mutate(combined_clarity = case_when(clarity == "I1" ~ "included",
+                                      str_detect(clarity, "SI") ~ "slightly_included",
+                                      str_detect(clarity, "VS") ~ "very_slightly_included",
+                                      clarity == "IF" ~ "flawless")) %>% 
+  filter (cut == "Ideal") %>% 
+  ggplot(aes(x = carat, y = price, color = color)) +
+  geom_point() +
+  facet_wrap(~ combined_clarity)
+```
+7. Plot the relationship between carat and price for included (clarity == "I1") diamonds. 
+Add a regression line. 
+```{r}
+diamonds %>% 
+  filter(clarity == "I1") %>% 
+  ggplot(aes(x = carat, y = price)) + 
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+Explore the documentation for geom_smooth. What do you interpret about the different methods? 
+Figure out what the shaded area around the line means when you plot geom_smooth(method = "lm").
+
+SMM: read the documentation for geom_smooth and have a google. We'll be discussing regression
+in more detail soon. 
