@@ -1,0 +1,63 @@
+---
+title: "Quiz 1 Study guide"
+format: html
+editor: visual
+---
+
+## Format of the quiz
+
+### Part 1: Reading Comprehension 
+You will get a paper document with R language on it, you will be asked to 
+interpret and explain in plain English what the code means. No use of Google or
+R help pages please. 
+
+
+### Study guide: 
+
+Base R Operators 
+
+```{r, eval = F}
+# Know what the following mean
+<-
+()
+[]
+:
+!
+-
+$
+```
+
+* Understand how to select and add columns to a data frame 
+* How to select particular rows and columns in a data frame 
+* The common functions that we use to do sanity checks on data 
+(e.g., table(), str(), summary())
+* Common classes of variables 
+* The order in which functions are evaluated in R
+
+Dplyr operators 
+```{r, eval = F}
+# Know the following in dplyr/tidyverse
+# Pipes and how they work 
+%>% and |> 
+
+```
+
+* Understand how the major dplyr wrangling functions work (mutate, filter,
+select, pull, summarize)
+* Understand how expressions are evaluated using pipes 
+
+
+### Part 2: Coding in action
+The quiz will be posted in ECOL_596W_2024/Assignments. It will be a quarto document
+that you should download and modify on your own computer. Submit your answers 
+via a pull request or email. 
+
+### Study guide: 
+
+Be able to load, wrangle, summarize, and plot data. 
+
+* Everything in the quiz you've done multiple times in problem sets
+* You can use base R or tidyverse syntax 
+* Definitely (always) use the help files
+* Google and ChatGPT are allowed, but *please* disclose if you use them 
+

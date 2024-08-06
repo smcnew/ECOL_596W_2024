@@ -1,0 +1,185 @@
+---
+title: "Week 6 distributions"
+format: html
+editor: visual
+embed-resources: true
+---
+
+# Let's get to know some common distributions of data
+
+## Part 1: Collect some Data
+
+Get in a group of \~4 and select one or more data collection activities. Collect
+data for approximately 10 minutes (aim for at least 20 data points as a team) 
+and then find a way to get your data into R.
+
+### Activities
+
+1.  Find a window or view onto campus. Count how many people walk by in a set period of time (3-5 min). Each team member try and pick a different vantage spot and combine your data at the end.
+2.  Measure the distance between people's thumb and pinky when the fingers are fully outstreched.\
+3.  Go find a tree and measure some leaves on it.\
+4.  Pull some coins out of this bag. Count the frequency of green chips.\
+5.  Survey people to find out if they're right or left handed
+6.  Roll the die and count the frequency of each number that pops up.
+7.  Go for a walk and for each sidewalk square count the number of gum spots/trash on it.
+8.  Clairvoyance rate: Take a deck of cards and draw cards without looking. For every 10 cards, record how many cards you successfully predicted the suite of in advance of looking at it. (can do this in pairs)
+
+## Part 2: Plot and inspect your data
+
+Enter your data in R and plot their frequency distribution using either hist() or geom_histogram()
+
+```{r, message= F, warning = F}
+# Load up some packages
+library(dplyr)
+library(ggplot2)
+
+```
+
+```{r}
+## Plot those data here! 
+
+```
+
+### Get to know your data by answering these questions:
+
+1.  What is the general shape of the data?
+2.  Are the data bounded (e.g., percents, non-negative)?
+3.  Are the data continuous, categorical, binary, or what?
+
+### Discuss with your group: What distribution do your data follow?
+
+Are they normal? If not, what are they?
+
+Next, let's get to know some of the most common distributions in Ecology and Evo bio:
+
+## Part 3: The Big Three Distributions
+
+### Gaussian (a.k.a. Normal)
+
+```{r}
+# Let's look at one in R 
+rnorm(1000) %>% hist(main = "1000 values drawn from normal dist with mean = 0, sd = 1")
+
+```
+
+#### Gaussian Characteristics:
+
+-   Continuous values
+-   Most values lie close to the mean
+-   Finite variance
+-   Described by two *parameters*: the mean and the variance
+-   95% of observations fall within 2 sd of the mean
+
+#### The Gaussian probability density function is given [here](https://wikimedia.org/api/rest_v1/media/math/render/svg/00a16950e196e687d94280c388c4fb7f71481d3c):
+
+Where sigma \^2 = the variance and mu = the mean
+
+You can use this equation to calculate the probability of drawing a certain value (x) from this distribution given a certain variance and mean.
+
+### Poisson
+
+```{r}
+# Let's look at one in R 
+rpois(1000, lambda = 4) %>% hist(main = "1000 values from a poisson distribution with mean = 4")
+```
+
+#### Poisson Characteristics:
+
+-   Describes the number of events/occurrences in a fixed interval
+-   Discrete, positive numbers, usually with a long tail
+-   Described with one parameter: the mean
+-   Assumes the variance equals the mean.
+-   As lambda increases, it starts to look more normal (but it's not!)
+
+#### The Poisson probability density function is given [here](https://wikimedia.org/api/rest_v1/media/math/render/svg/75b15a85051528f8722d2b676a557f6c22bf85c4):
+
+Using this equation you can calculate the probability of drawing a value k from a Poisson distribution given a mean of lambda.
+
+### Binomial
+
+```{r}
+# Let's look at one in R. If our data only have two options, aka, "success"
+# and "failure" the data will look like this.
+rbinom(n = 1000, size = 1, prob = .3) %>% hist (main = "1000 success/failures where prob of success = .3")
+
+```
+
+Note, however, that a lot of things are "sneaky" binomials. For instance, 
+if we study the proportion or percent of students who pass courses across the U
+of A this semester, those data are also binomial (# failed vs. # passed). But,
+the data might look more like this: 
+```{r}
+n_pass <- rbinom(n = 1000, size = 50, prob = .7) # class size 50, passing rate 70%, 1000 courses
+prop_pass <- n_pass/50
+hist(prop_pass, main = "Distribution of proportion passed")  
+```
+
+#### Binomial Characteristics:  
+- For binomial data, when there are two discrete outcomes 
+- Describes the probability of observing X outcomes in N trials
+- The probability is the same in each trial. 
+
+#### The Binomial probability density function is given [here](https://miro.medium.com/v2/resize:fit:1286/1*p7TNkAqyDf14jQEE1qi2vA.png)
+Using this equation you can calculate the probability of getting x successes 
+in n trials, given a probability of success p. 
+
+## Part 4. Put these density distribution functions to work.
+
+#### What distribution do you think your data follow? 
+
+
+#### Calculate the relevant parameters for estimating your distribution: 
+(e.g., mean, standard deviation, or probability of success)
+
+```{r}
+# do your calculations here 
+
+```
+
+#### Simulate the same number of data points as you have from a random distribution with the same parameters as the ones you estimated. 
+Plot a frequency distribution of these simulated data.
+```{r}
+# E.g., You collected data from 35 leaves and their mean length was 6 and sd was .2
+# rnorm(N = 35, mean = 6, sd = .2)
+
+```
+
+Do the simulated data look like yours? Why or why not? 
+
+#### Repeat as above but simulate 1000 points. 
+
+```{r}
+# do your calculations here 
+```
+
+#### Calculating probabilties from density functions: 
+Choose three values within your data: a common one, a less common one, and 
+a value that you did not observe at all. Using the probability density functions
+linked above, calculate the probability of observing each of those values assuming 
+the parameters you estimated are the true ones. 
+
+```{r}
+# example: what's the probability of observing 7 snakes on a hike 
+# when the typical hike has 5 snake sightings?
+l = 5 # lambda
+k = 7 # observed value
+
+(l^k)*(exp(-l))/(factorial(k))
+
+
+```
+
+
+#### Calculating probabilities in R
+R has functions that will do this calculation for you. They're dpois(), 
+dnorm(), dbinom() etc. Use these functions to verify your work. 
+```{r}
+# example: what's the probability of observing 7 snakes on a hike 
+# when the typical hike has 5 snake sightings?
+dpois(7, lambda = 5)
+
+
+
+```
+
+
