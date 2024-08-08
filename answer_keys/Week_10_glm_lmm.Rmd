@@ -1,0 +1,308 @@
+---
+title: 'Week 8 Exercises: GLM, LMM, and GLMM'
+author: "Sabrina McNew"
+date: "2023-10-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r, message = F}
+# Packages used (install as needed)
+library(ggplot2)
+library(ggthemr)
+library(lmerTest) # for extracting p vals from mixed models
+library(lme4) # mixed models
+library(dplyr)
+```
+```{r}
+# datasets used
+nestlings <- read.csv("../datasets/nestlings.csv")
+swallows <- read.csv("../datasets/swallows.csv")
+
+# optional set theme
+ggthemr(palette = "flat dark", layout = "clean", text_size = 18)
+```
+
+###Question 1:  
+In the swallows dataset, each row is a breeding female tree swallow
+and the columns tell you her brightness, which treatment she was in, her brood size,
+and her breeding success. There are two ways to consider breeding success:
+either as a binary "did she fledge any young or not?" encoded in the "success"
+column, or by considering the number of nestlings that lived and died per female
+("nestlings_lived" and "nestlings_died" columns).
+
+1a. Create a plot of the proportion of successful breeders in the predation
+group and in the control group.
+```{r}
+swallows %>% 
+  ggplot(aes(x = treatment, fill = as.factor(success))) + 
+  geom_bar(position = "fill")
+
+# another option if we just want to visualize success:
+swallows %>% 
+group_by(treatment) %>% 
+summarize(proportion = mean(success)) %>% 
+  ggplot(aes(x= treatment, y = proportion)) + 
+  geom_col()
+
+```
+
+
+1b. Create a plot of the overall percentage of nestlings that fledged in
+the predator and control groups.
+
+```{r}
+head(swallows)
+
+#I'm old so I'm going to use aggregate in base r. summarize in dplyr will also work
+bird_sums <- aggregate(cbind(nestlings_lived, brood_size) ~ treatment, data = swallows, FUN = sum)
+
+bird_sums %>% 
+  mutate(percent_fledge = nestlings_lived/brood_size) %>% 
+  ggplot(aes(x = treatment, y = percent_fledge)) +
+  geom_col()
+```
+
+1c. Use a generalized linear model (aka logistic regression) to test whether
+breeding success differed between predator and control groups using "success"
+as a response variable.
+```{r}
+glm(success ~ treatment, data = swallows, family = "binomial") %>% summary()
+```
+Sabrina's note: See that this will run, and it will give you the "right" 
+answer. It's pretty easy to draw a line through things and it is interpreting
+that there's more "1s" in the control group than in the treatment group. R 
+is not going to tell you that you're using the "wrong" model, that's up to you.
+But, it is reassuring to know that different models will come to the same 
+conclusion.
+
+1d. Use a generalized linear model (aka logistic regression) to test whether
+the proportion of nestlings that fledged from each nest differed between
+treatments. How do you interpret the output?
+
+```{r}
+glm(cbind(nestlings_lived, nestlings_died) ~ treatment, data  = swallows, 
+    family = "binomial") %>% summary()
+```
+
+
+1e. Use a generalized linear model to test whether the total number of
+offspring that females succesfully produced differed between treatment and control groups.
+What glm family should you use?
+
+```{r}
+glm(nestlings_lived ~ treatment, data = swallows, family = "quasipoisson") %>% summary()
+
+mean(swallows$nestlings_lived)
+var(swallows$nestlings_lived)
+```
+Sabrina's notes: Number of fledglings per nest is something that might feel pretty poisson-y. Again, beause I know it's never poisson, I'm going to use a relative, in this case "quasipoisson." In this case, when we look at the mean vs. var of nestlings_lived, it's not *that* over-dispersed. But, there's no real harm here in using an alternative.
+
+One other thing to maybe note: in cases like this we may run into what's called "zero inflated data." That's when we have more zeros than we'd expect, 
+for example, because some biological process is generating complete nest failures (like predation). Then, a separate process generates variation fledging success among those nests pass the baseline of "not failing." There are some other packages that are useful for modeling zero inflated data and other flavors of not-poisson. But save that for another day... 
+
+1f: Considering your approaches in 1c - 1e: what is the "best" way to answer
+the question: "Did predation affect breeding success of swallows?" Why?
+
+?????? Up to you! They arguably measure different things:  
+1) Did a female bird have any reproductive success or not (success ~ treatment)  
+2) What proportion of nestlings fledged in each treatment? (cbind(lived,died) ~ treatment)   
+3) Did total fitness depend on treatment? (lived ~ treatment)
+
+### Question 2:   
+You also have data from each nestling in this experiment in the
+"nestlings" dataframe, which includes measurements at 12 days of age of their
+mass and their wing length. You want to determine whether being in a "predation" or "control" treatment had an effect on individual nestling mass. So you set out to model the effect of treatment on nestling mass using lm(). "HOLD UP" your advisor says, that's pseudoreplication, because each nestling is not independent. "What you need to do is take the average mass for each nest and then model average mass based on treatment"
+"But," you say, "that will sacrifice a lot of power! Maybe there's another way..."
+
+2a. Make a plot of mean mass for the predator and control treatments
+```{r}
+nestlings |> ggplot(aes(x = treatment, y = mass)) + geom_boxplot()
+```
+
+2b. Make a lm that tests the effect of treatment on nestling size. How do you
+interpret the coefficients and p vals?
+```{r}
+lm(mass ~ treatment, data = nestlings) |> summary()
+```
+The bare-bones lm is pretty confident that nestlings in the Predation 
+treatment were smaller than the Controls (P = 0.0085). Specifically, nestlings
+in the control group weighed ~ 18g (on day 12) while nestlings in the predation
+group weighed ~ 17g (18.5 - 1.09) at the same age. 
+
+2c. Make a lmm that tests the effects of treatment on nestling size, properly
+accounting for the interdependence of nestlings within the same nest. (hint: lmer()).
+Compare and contrast the results of your lm and lmm. How do the coefficients and
+p values differ?
+
+```{r}
+lmer(mass ~ treatment + (1|nest), data = nestlings) |> summary()
+```
+### Semi-important note I didn't say in class: 
+It is very hard to calculate p values for LMMs because it's hard to decide what 
+the dfs are. Our rule of thumb is that dfs = N - number of estimated parameters. 
+But what is N for a mixed model? It is not the number of nestlings (because of 
+pseudoreplication), and it's not exactly number of nests either (because we do 
+have more information in our data set). It's somewhere in the middle. 
+
+In order to extract P values, you have to make a decision about these dfs, and lme4 
+won't do it on its own, because it does require some assumptions and is somewhat 
+subjective. What lmerTest does is chooses a way to get a P value (the Satterthwaite method)
+and it runs it. But the writers of lmer4 didn't want you sail by that point and they wanted you
+to realize it's not trivial. In practice, using lmerTest is fairly common, 
+and if you were using another stats program (SPSS etc.) in the fine print you'd read
+that they're also using an "approximation" of some sort to get to the p vals for LMM. 
+
+###Question 3:  
+Test for effects of treatment on individual nestling fledging success
+3a: Make a plot showing the differences in percent fledging success for nestlings
+in the control vs. predator treatment
+
+```{r}
+nestlings %>% ggplot(aes(x = treatment, fill = nestling_fate)) + geom_bar(position = "fill")
+```
+
+
+3b: Use a normal lm to model the effects of treatment on fledging success (yes this isn't the best approach). You'll first want to create a new vector that codes nestling fate as a numeric
+value. How do you interpret these coefficients? Do they make sense?
+```{r}
+# note this way of adding a column isn't super readable but it works just fine. 
+# Another way to do it could be mutate(fledge_numeric = case_when(nestling_fate == "Fledged" ~ 1))
+nestlings |> 
+  mutate (fledge_numeric = as.numeric(as.factor(nestling_fate))) %>% 
+  lm(fledge_numeric ~ treatment, data = .) %>%
+  summary()
+
+# another note: because I'm moving quickly and not interested in saving 
+# a bunch of new objects to my environment I'm just going to pipe these things together. 
+# writing it this way will not preserve the new column, but that's ok with me. 
+```
+## Super annoying and concerning error:  
+I've been trying to force myself to use the native pipe |> instead of the tidyverse
+pipe %>% recently because it seems like the new cool thing. However, I just found 
+an example of where the |> pipe throws an unexpected error: 
+```{r, eval=FALSE}
+# New pipe
+nestlings |> 
+  mutate (fledge_numeric = as.numeric(as.factor(nestling_fate))) |>
+  lm(fledge_numeric ~ treatment, data = _) # destination indicated by _
+
+# Old pipe
+nestlings |> 
+  mutate (fledge_numeric = as.numeric(as.factor(nestling_fate))) %>%
+  lm(fledge_numeric ~ treatment, data = .) # destination indicated by .
+```
+Thanks to google I realized that if you want to set a destination 
+for your piped object in old piping you use "." and in new piping you use "_". So that's super annoying to me but now we know. It also appears that %>% can do a few things 
+that |> cannot. Read more here: https://www.tidyverse.org/blog/2023/04/base-vs-magrittr-pipe/
+It is generally good practice to use Base R functions when you can, because 
+dependencies make things more complicated. However, ymmv with pipes- do what makes sense 
+for your workflow. 
+
+3c: Use a generalized linear model aka logistic regression (glm(family = "binomial)) to model the effect of treatment on nestling fledging success. How do you interpret the coefficients?
+
+Tip: R will not allow a character vector as a response in a logistic regression.
+however, it will take a 0 or 1 number, and it will take a vector encoded as a two-level factor
+
+### going back to my old pipe 
+```{r}
+glm(as.factor(nestling_fate) ~ treatment, data = nestlings, family = "binomial") %>%
+  summary
+```
+
+The p value here (0.034) tells us that the probability than an 
+individual nestling fledges is smaller in the predation group. 
+
+3d: Use a generalized linear mixed effects model to model the effect of treatment on nestling fledging success, accounting for the interdependence of nestlings. Interpret these results. Compare the results of the lm, glm, and glmm.
+
+```{r}
+glmer(as.factor(nestling_fate) ~ treatment + (1|nest), data = nestlings, family = "binomial") %>%
+  summary()
+```
+Once we make the "right" model R is pretty confident that the mass
+of nestlings is smaller in the predation treatment. 
+
+
+### Question 4:   
+The swallow nestlings were studied at 5 different sites, which varied in temperature, proximity to food sources, and overall quality. Site therefore may be an important random effect to consider in our analysis.
+
+4a: Inspect nestlings$site. How many sites are there? How many nests were in each site? Make a plot of average nestling mass at each site. How does it vary?
+
+Sabrina's note: sorry, should have said "how many nestlings at each site." 
+```{r}
+table(nestlings$site) # five sites, most nestlings at unit 4
+nestlings %>% 
+  ggplot(aes(x = site, y = mass)) + geom_boxplot() 
+```
+Interesting, nestling mass seems to vary quite a bit among sites 
+4b: Create a plot of the relationship between wing length and mass, coloring
+points by site. Add a simple regression line for the points of each site on top
+of your graph.
+```{r, warning = F}
+nestlings %>% 
+  ggplot(aes(x = wing, y = mass, color = site)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+
+4c: Model the relationship between wing length and mass using a simple lm
+```{r}
+lm(mass ~ wing, data = nestlings) %>% summary() # super significant
+```
+
+4d: Model the relationship between wing length and mass using the random effect
+of site.
+
+```{r}
+lmer(mass ~ wing + (1|site), data = nestlings) %>% summary
+
+```
+Site does explain some variation in mass, but wing still explains a lot. 
+
+4e: What other random effects should you consider? Experiment with adding the random
+effect of nest. How should you add it? For a nice explanation of nested vs.
+crossed random effects read here: https://stats.stackexchange.com/questions/228800/crossed-vs-nested-random-effects-how-do-they-differ-and-how-are-they-specified
+```{r}
+mod1 <- lmer(mass ~ wing+ (1|year) + (1|site/nest), data = nestlings)
+summary(mod1)
+plot(mod1) #Plot of residuals looks basically fine
+
+# See if a random slope will work. I won't do it for year, bc only two years. 
+# By putting "wing" in front of our random effects, we are asking R to say not only
+# could the intercept (i.e. average mass) differ among sites and/or nests 
+# But the relationship betwene wing and mass (i.e. the slope) may also 
+# vary among sites and nests. 
+mod2 <- lmer(mass ~ wing+ (1|year) + (wing|site/nest), data = nestlings)
+summary(mod2)
+```
+
+Note, this does give a convergence warning (boundary (singular) fit). This error
+is common as your random effects become more complex. It doesn't mean that your 
+model is wrong per se, but it does suggest that you don't have quite enough
+data to parameterize it. If you get a convergence error, common guidance is to 
+simplify your random effects structure. 
+
+### Final notes: 
+Random effects models can get tricky, especially when you start specifying 
+slopes and intercepts, and especially if you get into the weeds of p values. 
+
+**If this is your first rodeo with GLMs LMMS: ** Try to familiarize yourself 
+with how the models run and how they're interpreted. Try to understand when you'd 
+use a glm vs. a lmm, and how the syntax works. If you are having trouble with 
+any of that talk to Sabrina. 
+
+**If you feel pretty confident with GLMs LMMs:** Expand your knowledge 
+by reading up on some of the technical details and in-depth considerations 
+
+Ben Bolker is the LMM god, so read his stuff and listen to whatever he says 
+on Stack Overflow. 
+https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#what-are-the-p-values-listed-by-summaryglmerfit-etc.-are-they-reliable
+
+Other stats people's explanation of random effects: 
+https://bookdown.org/steve_midway/DAR/random-effects.html
+https://m-clark.github.io/mixed-models-with-R/random_slopes.html
+
+

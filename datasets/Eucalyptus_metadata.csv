@@ -1,0 +1,28 @@
+Variable name,Variable description (missing data coded as NA)
+SurveyID,Unique ID for each survey
+Date,Date: DD/MM/YYYY
+Season,Season
+Property,The site that the surveys are associated with (identified by land owner's surname)
+Quadrat no,At each property/site in each sampling season the quadrats are numbered 1-n where n is the total number of quadrats/transects/sampling units undertaken at a site. N is dictated by the amount of relevant vegetation at each property. 
+Landscape position,"Is the quadrat located on a slope, on the flat, at the crest of a hill, at the toe of the slope (where the slope levels out)"
+ExoticAnnualGrass_cover,Percentage cover of exotic annual grass per quadrat
+ExoticAnnualHerb_cover,Percentage cover of exotic annual herbacious plants per quadrat
+ExoticPerennialHerb_cover,Percentage cover of exotic perennial herbacious plants per quadrat
+ExoticPerennialGrass_cover,Percentage cover of exotic perennial grass per quadrat
+ExoticShrub_cover,Percentage cover of woody plants less than 2m tall per quadrat
+NativePerennialFern_cover,Percentage cover of native perennial ferns per quadrat
+NativePerennialGrass_cover,Percentage cover of native perennial grasses per quadrat
+NativePerennialHerb_cover,Percentage cover of native perennial herbs per quadrat
+NativePerennialGraminoid_cover,Percentage cover of native perennial grasslike species that are not technically grasses (e.g. lilies) per quadrat
+NativeShrub_cover,Percentage cover of native woodland plants less than 2m tall per quadrat
+BareGround_cover,Percentage cover of bare ground (ground not covered by plants of leaf litter) per quadrat
+Litter_cover,Percentage cover of leaf litter per quadrat
+MossLichen_cover,Percentage cover of moss and lichen per quadrat
+Rock_cover,"Percentage cover of rock (as a substrate, not including small, moveable pebbles on soil etc) per quadrat"
+Euc_canopy_cover,Percentage foliage projective cover by eucalypt canopy per quadrat
+Distance_to_Eucalypt_canopy(m),Distance between the quadrat and the closest edge of the nearest eucalypt canopy in meters
+euc_sdlgs0_50cm,The number of eucalypt seedlings between 0 and 50cm tall per quadrat
+euc_sdlgs50cm-2m,The number of eucalypt seedlings between 50cm and 2m tall per quadrat
+euc_sdlgs>2m,The number of eucalypt seedlings greater than 2m tall per quadrat
+annual_precipitation,Total annual precipitation at the quadrat easting and northing in the sample year. Derived from Bureau of Meteorology data
+SRad_Jan,Incoming solar radiation (WH/m2) to quadrat easting and northing in January of the sample year. Computed using the solar radiation analysis tools in the Spatial Analyst extension for ArcGIS 9.2 Desktop.

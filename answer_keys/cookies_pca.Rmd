@@ -1,0 +1,75 @@
+---
+title: "cookie PCAs"
+author: "Sabrina McNew"
+date: "2023-11-21"
+output: html_document
+---
+# Coookie stuff
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load packages and data
+```{r, echo=FALSE}
+devtools::install_github("vqv/ggbiplot")
+library(ggbiplot)
+library(dplyr)
+cookies <- read.csv("datasets/cookies.csv")
+```
+
+The cookies dataset has 214 recipes. I cleaned it up so that just the main/common
+ingredients are represented. Obviously there are other sources of variation that 
+affect cookie product (preparation method, cook time, elevation, etc) but let's 
+just look at variation among ingredients. 
+
+```{r}
+head(cookies)
+```
+
+Can we use a PCA to identify emergent properties of these different recipes? 
+Create the PCA object. Remember that you need to only include numeric columns in the PCA
+```{r}
+pca1 <- cookies %>% select(-c(X, Recipe_Index)) %>% 
+                             prcomp(x = ., center = TRUE, scale = TRUE)
+```
+
+What's in the PCA object? lots of stuff
+```{r}
+str(pca1)
+
+```
+Let's look at the summary. There are 13 ingredients so there are 13 PCs. 
+PC1 explains 32% of overall variation
+```{r}
+summary(pca1)
+```
+
+What about the ingredients? How do they "load" onto the PCs?
+```{r}
+pca1$rotation
+```
+### Let's make a plot
+This is sort of hard to parse, because the vectors are going all over the place. 
+Can we label the recipes we made? 
+```{r}
+ggbiplot(pca1,
+         obs.scale = 1,
+         var.scale = 1)
+```
+```{r}
+# I'm going to add PC1 and PC2 back on to my original dataframe 
+pca_values <- pca1$x %>% as.data.frame# this is a dataframe containing the PC values
+str(pca_values)
+cookies <- cookies %>% mutate(PC1 = pca_values$PC1,
+                              PC2 = pca_values$PC2)
+
+# I am going to plot PC1 vs. PC2, and then label just the recipes we focused on
+cookies %>% ggplot(aes(x = PC1, y = PC2)) +
+  geom_point() +
+  geom_text(data = filter(cookies, Recipe_Index %in% c("Bon_appetit", "joy", "betty", "H_A", "yum")),
+            aes(PC1, PC2, label = Recipe_Index, color = "red", size = 14))
+
+```
+
+\
