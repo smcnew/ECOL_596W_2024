@@ -60,3 +60,4 @@ a little download icon underneath the word "History"
 https://happygitwithr.com/
 ### [Download the full syllabus here](Data_science_syllabus_mcnew.pdf)
 
+This is Natalie Morris
