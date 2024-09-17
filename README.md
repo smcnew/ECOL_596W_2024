@@ -60,4 +60,5 @@ a little download icon underneath the word "History"
 https://happygitwithr.com/
 ### [Download the full syllabus here](Data_science_syllabus_mcnew.pdf)
 
-This is Natalie Morris
+This is Natalie Morris!!!
+How I feel right now: https://xkcd.com/1597/
