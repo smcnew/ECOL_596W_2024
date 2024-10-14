@@ -9,20 +9,17 @@ embed-resources: true
 
 ## Part 1: Collect some Data
 
-Get in a group of \~4 and select one or more data collection activities. Collect
-data for approximately 10 minutes (aim for at least 20 data points as a team) 
-and then find a way to get your data into R.
+Get in a group of \~2 and select one or more data collection activities. Collect data for approximately 10 minutes (aim for at least 20 data points as a team) and then find a way to get your data into R.
 
 ### Activities
 
 1.  Find a window or view onto campus. Count how many people walk by in a set period of time (3-5 min). Each team member try and pick a different vantage spot and combine your data at the end.
-2.  Measure the distance between people's thumb and pinky when the fingers are fully outstreched.\
-3.  Go find a tree and measure some leaves on it.\
-4.  Pull some coins out of this bag. Count the frequency of green chips.\
-5.  Survey people to find out if they're right or left handed
-6.  Roll the die and count the frequency of each number that pops up.
-7.  Go for a walk and for each sidewalk square count the number of gum spots/trash on it.
-8.  Clairvoyance rate: Take a deck of cards and draw cards without looking. For every 10 cards, record how many cards you successfully predicted the suite of in advance of looking at it. (can do this in pairs)
+2.  Measure the distance between people's thumb and pinky when the fingers are fully outstretched.
+3.  Go find a tree and measure some leaves on it.
+4.  Pull some coins out of this bag. Count the frequency of green chips.
+5.  Roll the die and count the frequency of each number that pops up.
+6.  Go for a walk and for each sidewalk square count the number of gum spots/trash on it.
+7.  Clairvoyance rate: Take a deck of cards and draw cards without looking. For every 10 cards, record how many cards you successfully predicted the suite of in advance of looking at it. (can do this in pairs)
 
 ## Part 2: Plot and inspect your data
 
@@ -104,31 +101,30 @@ rbinom(n = 1000, size = 1, prob = .3) %>% hist (main = "1000 success/failures wh
 
 ```
 
-Note, however, that a lot of things are "sneaky" binomials. For instance, 
-if we study the proportion or percent of students who pass courses across the U
-of A this semester, those data are also binomial (# failed vs. # passed). But,
-the data might look more like this: 
+Note, however, that a lot of things are "sneaky" binomials. For instance, if we study the proportion or percent of students who pass courses across the U of A this semester, those data are also binomial (# failed vs. \# passed). But, the data might look more like this:
+
 ```{r}
 n_pass <- rbinom(n = 1000, size = 50, prob = .7) # class size 50, passing rate 70%, 1000 courses
 prop_pass <- n_pass/50
 hist(prop_pass, main = "Distribution of proportion passed")  
 ```
 
-#### Binomial Characteristics:  
-- For binomial data, when there are two discrete outcomes 
-- Describes the probability of observing X outcomes in N trials
-- The probability is the same in each trial. 
+#### Binomial Characteristics:
+
+-   For binomial data, when there are two discrete outcomes
+-   Describes the probability of observing X outcomes in N trials
+-   The probability is the same in each trial.
 
 #### The Binomial probability density function is given [here](https://miro.medium.com/v2/resize:fit:1286/1*p7TNkAqyDf14jQEE1qi2vA.png)
-Using this equation you can calculate the probability of getting x successes 
-in n trials, given a probability of success p. 
+
+Using this equation you can calculate the probability of getting x successes in n trials, given a probability of success p.
 
 ## Part 4. Put these density distribution functions to work.
 
-#### What distribution do you think your data follow? 
+#### What distribution do you think your data follow?
 
+#### Calculate the relevant parameters for estimating your distribution:
 
-#### Calculate the relevant parameters for estimating your distribution: 
 (e.g., mean, standard deviation, or probability of success)
 
 ```{r}
@@ -136,27 +132,27 @@ in n trials, given a probability of success p.
 
 ```
 
-#### Simulate the same number of data points as you have from a random distribution with the same parameters as the ones you estimated. 
+#### Simulate the same number of data points as you have from a random distribution with the same parameters as the ones you estimated.
+
 Plot a frequency distribution of these simulated data.
+
 ```{r}
 # E.g., You collected data from 35 leaves and their mean length was 6 and sd was .2
 # rnorm(N = 35, mean = 6, sd = .2)
 
 ```
 
-Do the simulated data look like yours? Why or why not? 
+Do the simulated data look like yours? Why or why not?
 
-#### Repeat as above but simulate 1000 points. 
+#### Repeat as above but simulate 1000 points.
 
 ```{r}
 # do your calculations here 
 ```
 
-#### Calculating probabilties from density functions: 
-Choose three values within your data: a common one, a less common one, and 
-a value that you did not observe at all. Using the probability density functions
-linked above, calculate the probability of observing each of those values assuming 
-the parameters you estimated are the true ones. 
+#### Calculating probabilties from density functions:
+
+Choose three values within your data: a common one, a less common one, and a value that you did not observe at all. Using the probability density functions linked above, calculate the probability of observing each of those values assuming the parameters you estimated are the true ones.
 
 ```{r}
 # example: what's the probability of observing 7 snakes on a hike 
@@ -169,10 +165,10 @@ k = 7 # observed value
 
 ```
 
-
 #### Calculating probabilities in R
-R has functions that will do this calculation for you. They're dpois(), 
-dnorm(), dbinom() etc. Use these functions to verify your work. 
+
+R has functions that will do this calculation for you. They're dpois(), dnorm(), dbinom() etc. Use these functions to verify your work.
+
 ```{r}
 # example: what's the probability of observing 7 snakes on a hike 
 # when the typical hike has 5 snake sightings?
@@ -181,5 +177,3 @@ dpois(7, lambda = 5)
 
 
 ```
-
-
