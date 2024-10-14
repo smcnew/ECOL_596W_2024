@@ -32,19 +32,10 @@ Load the *swallows.csv* into R, call it swallows. This data frame lists results 
 You also have a separate data frame called *brightness.csv* where each row lists the plumage brightness (a sexual signal) for the female at each nest. Load this one up too.
 
 ```{r}
-<<<<<<< HEAD
 # Answer 
-swallows <- read.csv("swallows.csv")
-brightness <- read.csv("brightness.csv")
 
 # Google? N
-=======
-# Answer
-#I used the "open data" function on R
- 
 
-
->>>>>>> 26677ef8a1d7fa4dde9984fd3d518fc73b6a0600
 ```
 
 #### Wrangle your data
@@ -53,50 +44,25 @@ You realize that you want to add brightness information onto your main swallows 
 
 ```{r}
 #Answer
-<<<<<<< HEAD
-swallows_updated <- merge(swallows, brightness, by = "nestbox")
-#I would check for any NAs (if for whatever reason the dimensions didn't line up, due to the original df or something I did). Additionally, I can manually check a sample of rows, comparing between _updated and the two original to ensure everything worked as expected.
-# Google? Y
-#I initially tried in tidyverse with mutate (hence Googling), but got nowhere fast, so I dropped back to base R w/ no Googling
-=======
 
-#I used total <- merge(brightness,swallows,by="nestbox"). I checked by saying View(total)
->>>>>>> 26677ef8a1d7fa4dde9984fd3d518fc73b6a0600
+
+# Google? Y
+
 ```
 
 Inspect your combined data frame. Do some sort of quick sanity check on each column to catch any obvious entry errors. Correct as necessary
 
 ```{r}
-<<<<<<< HEAD
 # Answer
-str(swallows_updated)
-summary(swallows_updated$brood)
-summary(swallows$brood)
-#Summary looks good here...
-summary(swallows_updated$n_fledged)
-summary(swallows$n_fledged)
-summary(swallows_updated$brightness)
-summary(brightness$brightness)
-#Of course, I have no idea what the units are for brightness, so I'm going to assume these numbers are sane. They align, at least.
 # Google N
-=======
->>>>>>> 26677ef8a1d7fa4dde9984fd3d518fc73b6a0600
+
 ```
 
 Create a new column called prop_fledged that contains the proportion of nestlings that fledged from each nest.
 
 ```{r}
 #Answer
-swallows_updated <- mutate(swallows_updated, prop_fledged=n_fledged/brood)
-#Hmmm... getting some NaN but I'm going to choose to ignore, but be aware of it, for now.
-
-<<<<<<< HEAD
-# Google? N
-=======
-#total$prop_fledged <- with(total, brood / n_fledged). I then tidied it up by removing the Na and replacing INF with )
-
 # Google? yes. extensively. this took me 30 minutes since it wouldn't let me use the tidyverse mutate
->>>>>>> 26677ef8a1d7fa4dde9984fd3d518fc73b6a0600
 ```
 
 #### Explore the data
@@ -105,67 +71,21 @@ What was the mean proportion of nestlings fledged in each treatment?
 
 ```{r}
 # Answer 
-#Never mind, I'm going to have to be aware of NaN now and exclude them. Sigh...
-swallows_updated %>% group_by(treatment) %>% summarize(mean = mean(prop_fledged, na.rm=TRUE))
 
-<<<<<<< HEAD
-#Control = 0.70555555...
-#Predation = 0.335; those make sense
-# Google? N
-=======
-#the mean proportion of nestlings fledged was 1.484
-
-#I used summary(total) to get the different stats for each column, had to rename as "View(na.omit(total))" 
-
-# Google? not this time!
->>>>>>> 26677ef8a1d7fa4dde9984fd3d518fc73b6a0600
+# Google?
 ```
 
 Create a plot showing fledging success differences between treatments
 
 ```{r}
-#Answer
-library(ggplot2)
-ggplot(swallows_updated, aes(x=treatment, y=prop_fledged)) +geom_boxplot()
-
-<<<<<<< HEAD
+# Answer
 # Google? N
-=======
-#ggplot(na.omit(total))
-> ggplot(data = na.omit(total), mapping = aes(treatment, n_fledged))
-> ggplot() +
-+     geom_point(mapping = aes(x = treatment, y = n_fledged), data = na.omit(total)) +
-+     geom_point(
-+         mapping = aes(x = treatment, y = n_fledged), data = na.omit(total),
-+         colour = 'red', size = 3
-+     )
-> 
-# Google? no!
->>>>>>> 26677ef8a1d7fa4dde9984fd3d518fc73b6a0600
+
 ```
 
 Is there any evidence that female brightness influenced fledging success? Create a plot to visually investigate this question.
 
 ```{r}
 #Answer
-#That's actally a really interesting question for someone who has no idea how birds work...
-ggplot(swallows_updated, aes(x=brightness,y=prop_fledged)) +geom_smooth(method="lm") +geom_point()
-#Doesn't appear to be affected!
-
-<<<<<<< HEAD
-# Google? Y, for the smoothening function, specifically about the method argument.
-=======
-#Female brightness seems to matter on both ends: darker females and lighter females along the spectrum will have more chicks that fledge, but females in the middle will see a decrease in the number of chicks successfully fledged 
-
-#first I made a scatterplot using this: ggplot() +
-+     geom_point(mapping = aes(x = brightness, y = n_fledged), data = na.omit(total)) +
-+     geom_point(
-+         mapping = aes(x = brightness, y = n_fledged), data = na.omit(total),
-+         colour = 'red', size = 3
-
-#Then I added a trend line to see if it mattered by doing this: ggplot(na.omit(total), aes(x=brightness, y=n_fledged)) + geom_point() + geom_smooth()
-
-
-# Google? yes, so much!
->>>>>>> 26677ef8a1d7fa4dde9984fd3d518fc73b6a0600
+#Google?
 ```
