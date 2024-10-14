@@ -21,7 +21,6 @@ Submit your answers as an html file. Name it "lastname_quiz1.html". Two submissi
 library(dslabs)
 library(dplyr)
 library(ggplot2)
-library(ggthemr)
 ```
 
 #### Load your data:
@@ -35,11 +34,10 @@ You also have a separate data frame called *brightness.csv* where each row lists
 
 ```{r}
 # Answer 
- #brightness <- read_csv("C:/Users/allys/OneDrive/Documents/Ally Learns R/myrepo/ECOL_596W_2024/ECOL_596W_2024/quiz/brightness.csv")
-#swallows <- read_csv("C:/Users/allys/OneDrive/Documents/Ally Learns R/myrepo/ECOL_596W_2024/ECOL_596W_2024/quiz/swallows.csv")
 brightness <- read.csv("../quiz/brightness.csv")
 swallows <- read.csv("../quiz/swallows.csv")
- # Google? n
+
+# Google? n
 ```
 
 #### Wrangle your data
@@ -48,7 +46,7 @@ You realize that you want to add brightness information onto your main swallows 
 
 ```{r}
 #Answer
-data <- left_join(swallows, brightness, by = "nestbox")
+birds <- merge(brightness, swallows)
 # Google? y
 ```
 
@@ -56,15 +54,8 @@ Inspect your combined data frame. Do some sort of quick sanity check on each col
 
 ```{r}
 # Answer
-str(data) #look at data, object types look pretty good to me
-
-missing_values <- colSums(is.na(data))
-print(missing_values) #check for NAs 
-
-
-c_data <- data %>% filter(!is.na(brightness)) %>% filter(brood > 0) # remove those NAs & nests with no babies
-
-
+str(birds)
+head(birds)
 
 # Google n
 ```
@@ -73,7 +64,7 @@ Create a new column called prop_fledged that contains the proportion of nestling
 
 ```{r}
 #Answer
-c_data$prop_fledged <- c_data$n_fledged/c_data$brood 
+prop_fledged <- mutate(birds, rate = n_fledged/brood*100)
 
 
 # Google? n
@@ -85,41 +76,27 @@ What was the mean proportion of nestlings fledged in each treatment?
 
 ```{r}
 # Answer 
-grouped_data<- c_data %>%
-  group_by(treatment) %>%
-    summarize(mean_prop_fledged = mean(prop_fledged, na.rm = TRUE))
+mean(prop_fledged$rate, na= TRUE)
 
-# Google? n
+
+# Google? y
 ```
 
 Create a plot showing fledging success differences between treatments
 
 ```{r}
 #Answer
-grouped_data %>%
-  ggplot(aes(x = treatment, y = mean_prop_fledged)) +
-    geom_bar(stat = "identity") +
-    labs(title = "Mean Proportion of Fledged Nestlings by Treatment Group",
-         x = "Treatment Group",
-         y = "Mean Proportion Fledged") +
-    theme_minimal()
+num_treatment<- as.numeric(birds$treatment)
+prop_fledged |> ggplot() + geom_point(aes(num_treatment, prop_fledged$rate))
 
-# Google? n
+# Google? y
 ```
 
 Is there any evidence that female brightness influenced fledging success? Create a plot to visually investigate this question.
 
 ```{r}
 #Answer
-c_data %>%
-  ggplot(aes(x = brightness, y = prop_fledged)) +
-    geom_point(alpha = 0.7) + 
-    geom_smooth(method = "lm", se = FALSE, color = "blue") + 
-    labs(title = "Relationship Between Female Brightness and Fledgling Success",
-         x = "Female Brightness",
-         y = "Proportion Fledged") +
-    theme_minimal()
-
-#It appears to me that there is no relationship between female brightness and fledging sucess. 
-# Google? y
+#No, there is no evidence
+birds |> ggplot() + geom_point(aes(brightness, prop_fledged$rate))
+# Google? n
 ```

@@ -20,8 +20,8 @@ Submit your answers as an html file. Name it "lastname_quiz1.html". Two submissi
 # load packages and data 
 library(dslabs)
 library(dplyr)
-library(ggplot2)
-library(ggthemr)
+library(tidyverse)
+
 ```
 
 #### Load your data:
@@ -35,11 +35,11 @@ You also have a separate data frame called *brightness.csv* where each row lists
 
 ```{r}
 # Answer 
- #brightness <- read_csv("C:/Users/allys/OneDrive/Documents/Ally Learns R/myrepo/ECOL_596W_2024/ECOL_596W_2024/quiz/brightness.csv")
-#swallows <- read_csv("C:/Users/allys/OneDrive/Documents/Ally Learns R/myrepo/ECOL_596W_2024/ECOL_596W_2024/quiz/swallows.csv")
+swallows <- read.csv("../quiz/swallows.csv")  
 brightness <- read.csv("../quiz/brightness.csv")
-swallows <- read.csv("../quiz/swallows.csv")
- # Google? n
+
+
+# Google? n
 ```
 
 #### Wrangle your data
@@ -48,7 +48,11 @@ You realize that you want to add brightness information onto your main swallows 
 
 ```{r}
 #Answer
-data <- left_join(swallows, brightness, by = "nestbox")
+
+combined <- merge(swallows, brightness, by = "nestbox") # creates the combined data frame
+combined # here I ran this to check if the brightness column was included in the data frame
+# you can also look in the environment section if "combined" is a data fram with 42 observations of 5 variables
+
 # Google? y
 ```
 
@@ -56,15 +60,10 @@ Inspect your combined data frame. Do some sort of quick sanity check on each col
 
 ```{r}
 # Answer
-str(data) #look at data, object types look pretty good to me
-
-missing_values <- colSums(is.na(data))
-print(missing_values) #check for NAs 
-
-
-c_data <- data %>% filter(!is.na(brightness)) %>% filter(brood > 0) # remove those NAs & nests with no babies
-
-
+str(combined)  # see whether each column is a character, integer, etc
+unique(combined$treatment)  # make sure there are no typos!
+sort(combined$brood) # visually see if there are any numbers that are negative or huge
+sort(combined$n_fledged) # same as above
 
 # Google n
 ```
@@ -73,8 +72,8 @@ Create a new column called prop_fledged that contains the proportion of nestling
 
 ```{r}
 #Answer
-c_data$prop_fledged <- c_data$n_fledged/c_data$brood 
-
+combined <- mutate(combined, prop_fledged = n_fledged/brood)
+combined # check that it looks good
 
 # Google? n
 ```
@@ -85,9 +84,12 @@ What was the mean proportion of nestlings fledged in each treatment?
 
 ```{r}
 # Answer 
-grouped_data<- c_data %>%
-  group_by(treatment) %>%
-    summarize(mean_prop_fledged = mean(prop_fledged, na.rm = TRUE))
+mean_prop <- combined %>%
+  filter(prop_fledged != "NaN") %>%
+  summarize(average = mean(prop_fledged))
+mean_prop
+# The mean proportion is 0.5059829
+
 
 # Google? n
 ```
@@ -96,13 +98,11 @@ Create a plot showing fledging success differences between treatments
 
 ```{r}
 #Answer
-grouped_data %>%
-  ggplot(aes(x = treatment, y = mean_prop_fledged)) +
-    geom_bar(stat = "identity") +
-    labs(title = "Mean Proportion of Fledged Nestlings by Treatment Group",
-         x = "Treatment Group",
-         y = "Mean Proportion Fledged") +
-    theme_minimal()
+fledgingtreatment <- ggplot(data = combined, aes(x = treatment, y = prop_fledged)) +
+  labs(title = "Differences in Fledging success due to predation", x = "Treatment", y = "Proportion of brood reaching adulthood") +
+  geom_boxplot() 
+  
+fledgingtreatment
 
 # Google? n
 ```
@@ -111,15 +111,14 @@ Is there any evidence that female brightness influenced fledging success? Create
 
 ```{r}
 #Answer
-c_data %>%
-  ggplot(aes(x = brightness, y = prop_fledged)) +
-    geom_point(alpha = 0.7) + 
-    geom_smooth(method = "lm", se = FALSE, color = "blue") + 
-    labs(title = "Relationship Between Female Brightness and Fledgling Success",
-         x = "Female Brightness",
-         y = "Proportion Fledged") +
-    theme_minimal()
 
-#It appears to me that there is no relationship between female brightness and fledging sucess. 
+fledgingbrightness <- ggplot(combined, aes(x=brightness, y=prop_fledged)) +
+  labs(title = "Differences in Fledging success due to predation", x = "Female Brightness", y = "Proportion of brood reaching adulthood") +
+  geom_point() +
+  geom_smooth(method=lm, se = FALSE, linetype = "dashed", color = "darkblue")
+
+fledgingbrightness    # There is no evidence that brightness influences fledging success
+
+
 # Google? y
 ```

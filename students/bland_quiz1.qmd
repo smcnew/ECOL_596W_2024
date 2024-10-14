@@ -5,9 +5,9 @@ editor: visual
 embed-resources: true
 ---
 
-## Part 2: Coding in action
+\## Part 2: Coding in action
 
-### Instructions
+\### Instructions
 
 Please answer these questions in R using whatever syntax makes sense to you. Feel free to use the R help pages and/or notes from class.
 
@@ -17,11 +17,9 @@ Submit your answers as an html file. Name it "lastname_quiz1.html". Two submissi
 1. Email to mcnew\@arizona.edu 2. Create a branch in your forked-and-cloned class repo. Add the html file to the student_contributions/ folder. Submit a pull request to Sabrina (extra credit).
 
 ```{r, message = F}
-# load packages and data 
+# load packages and data
 library(dslabs)
 library(dplyr)
-library(ggplot2)
-library(ggthemr)
 ```
 
 #### Load your data:
@@ -34,12 +32,11 @@ Load the *swallows.csv* into R, call it swallows. This data frame lists results 
 You also have a separate data frame called *brightness.csv* where each row lists the plumage brightness (a sexual signal) for the female at each nest. Load this one up too.
 
 ```{r}
-# Answer 
- #brightness <- read_csv("C:/Users/allys/OneDrive/Documents/Ally Learns R/myrepo/ECOL_596W_2024/ECOL_596W_2024/quiz/brightness.csv")
-#swallows <- read_csv("C:/Users/allys/OneDrive/Documents/Ally Learns R/myrepo/ECOL_596W_2024/ECOL_596W_2024/quiz/swallows.csv")
-brightness <- read.csv("../quiz/brightness.csv")
-swallows <- read.csv("../quiz/swallows.csv")
- # Google? n
+# Answer
+swallows <- read.csv('../quiz/swallows.csv')
+brightness <- read.csv('../quiz/brightness.csv')
+
+# Google? y/n [n]
 ```
 
 #### Wrangle your data
@@ -48,35 +45,33 @@ You realize that you want to add brightness information onto your main swallows 
 
 ```{r}
 #Answer
-data <- left_join(swallows, brightness, by = "nestbox")
-# Google? y
+
+bright_swa <- merge(swallows, brightness, by='nestbox')
+
+# Google? y/n [y]
 ```
 
 Inspect your combined data frame. Do some sort of quick sanity check on each column to catch any obvious entry errors. Correct as necessary
 
 ```{r}
 # Answer
-str(data) #look at data, object types look pretty good to me
 
-missing_values <- colSums(is.na(data))
-print(missing_values) #check for NAs 
+bright_swa <- na.omit(bright_swa)
 
-
-c_data <- data %>% filter(!is.na(brightness)) %>% filter(brood > 0) # remove those NAs & nests with no babies
-
-
-
-# Google n
+# Google y/n [n]
 ```
 
 Create a new column called prop_fledged that contains the proportion of nestlings that fledged from each nest.
 
 ```{r}
 #Answer
-c_data$prop_fledged <- c_data$n_fledged/c_data$brood 
+
+bright_swa <- bright_swa %>%
+  mutate(prop_fledged = n_fledged/brood) %>%
+  mutate_all(~replace(., is.nan(.), 0))
 
 
-# Google? n
+# Google? y/n [y for dropping NaNs]
 ```
 
 #### Explore the data
@@ -84,42 +79,38 @@ c_data$prop_fledged <- c_data$n_fledged/c_data$brood
 What was the mean proportion of nestlings fledged in each treatment?
 
 ```{r}
-# Answer 
-grouped_data<- c_data %>%
-  group_by(treatment) %>%
-    summarize(mean_prop_fledged = mean(prop_fledged, na.rm = TRUE))
+# Answer
 
-# Google? n
+bright_swa %>%
+  group_by(treatment) %>%
+  summarize(average = mean(prop_fledged))
+
+# Google? y/n [n]
 ```
 
 Create a plot showing fledging success differences between treatments
 
 ```{r}
 #Answer
-grouped_data %>%
-  ggplot(aes(x = treatment, y = mean_prop_fledged)) +
-    geom_bar(stat = "identity") +
-    labs(title = "Mean Proportion of Fledged Nestlings by Treatment Group",
-         x = "Treatment Group",
-         y = "Mean Proportion Fledged") +
-    theme_minimal()
 
-# Google? n
+library(ggplot2)
+fledg_plot <- bright_swa %>%
+  ggplot(aes(treatment, prop_fledged)) +
+  geom_violin()
+fledg_plot
+# Google? y/n [n]
 ```
 
 Is there any evidence that female brightness influenced fledging success? Create a plot to visually investigate this question.
 
 ```{r}
 #Answer
-c_data %>%
-  ggplot(aes(x = brightness, y = prop_fledged)) +
-    geom_point(alpha = 0.7) + 
-    geom_smooth(method = "lm", se = FALSE, color = "blue") + 
-    labs(title = "Relationship Between Female Brightness and Fledgling Success",
-         x = "Female Brightness",
-         y = "Proportion Fledged") +
-    theme_minimal()
+# There seems to be no relationhsip between brightness and fledging success.The
+# graph depicts no discernable impact of brightness on fledging success.
 
-#It appears to me that there is no relationship between female brightness and fledging sucess. 
-# Google? y
+bright_plot <- bright_swa %>%
+  ggplot(aes(brightness, prop_fledged, color = treatment)) +
+  geom_jitter()
+bright_plot
+# Google? y/n [n]
 ```
