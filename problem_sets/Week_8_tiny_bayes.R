@@ -2,18 +2,20 @@
 
 
 # What proportion p of a planet's surface is water?
-# Toss a globe 12 times, what do you find?
-water <- 7
-land <- 5
+# Toss a globe 9 times, what do you find?
+water <- 5
+land <- 4
 total_toss <- water + land
 
 
 # dbinom will give us the probability
 # of seeing W waters for any hypothesized p
-dbinom(water, size = total_toss, prob = 0.8)
+dbinom(water, size = total_toss, prob = 0.2)
 
-# Let's say we have no idea how much water on earth there is, so we'd like to
-# simulate a range of possibilities ranging from p = 0 (all land) to p = 1 (all water)
+# Let's say we have no idea how much water on earth there is,
+# so we'd like to
+# simulate a range of possibilities
+# ranging from p = 0 (all land) to p = 1 (all water)
 
 p_grid <- data.frame(ps = seq(from = 0, to = 1,
                               length.out = 100))
@@ -24,13 +26,14 @@ head(p_grid)
 plot(likelihoods ~ ps, data = p_grid, pch = 19)
 
 # lets update the data
-# Let's call sampling A our "preliminary data"
+# Let's call sampling A our
+# "preliminary data"
 # aka our prior
 
 p_grid$prior <- p_grid$likelihoods
 
 # Now we toss the globe 14 more times
-water2 <- 10
+water2 <- 7
 land2 <- 4
 total_toss2 <- water2 + land2
 
@@ -69,7 +72,7 @@ hist(p)
 # let's break up this loop and see what it says
 # The first iteration of the loop is i = 2
 
-# pick a new P from a random distribution, centered on 0.5, with sd = 0.1
+# pick a new P from a random distribution, centered on our original p, with sd = 0.1
 # Notice that the indicies are referring to step 2, or step 2-1 e.g. p[i-1]
 p_new <- rnorm( 1 , p[1] , 0.1 )
 if ( p_new < 0 ) p_new <- abs( p_new ) # quick check to make sure p ends up > 0
