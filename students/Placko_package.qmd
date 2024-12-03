@@ -1,0 +1,49 @@
+---
+title: "Present-a-Package VisReg"
+author: "Allyson Placko"
+format: html
+editor: visual
+---
+
+## VisReg Intro
+
+Visreg is an object oriented package that is used for visualizing the effect of predictors (x) on outcomes (y) in models. One advantage of visreg is its object-oriented design which allows it to interact with a wide range of model classes. It is also is great for examining two-way interactions by splitting predictions and works with both categorical and numeric variables. Visreg displays partial residuals rather than pure residuals, which allows it to visualize and assess the specific contribution of one predictor (e.g., sex) to the response (thanks chatGPT for help with residuals/partial residuals)
+
+## Quick start
+
+```{r}
+
+library(visreg)
+library(dbplyr)
+library(readr)
+
+data <- read_csv("../datasets/finch.csv")
+
+#minor data cleaning
+data <- data[!(data$sex %in% c(0, 4, "U")), ]
+
+
+#first you will need a model 
+model <- lm(mass ~ sex + species, data = data)
+
+#you can then pass this to visreg to visualize a predictor 
+
+visreg(model, "species")
+
+#can visualize 2 predictors with the "visreg2d" command
+
+visreg2d(model, "sex", "species")
+
+
+#visreg also enables you to visulaize intereactions 
+visreg(model, "species", by = "sex")
+
+#Can also customize with commnads like "partial = FALSE" which removes the partial residuals and "overlay" which will enables visulaization of interactions on 1 plot insead of split up.
+
+visreg(model, "species", partial= FALSE, overlay = TRUE)
+
+#Partial residuals show how the response variable varies with the predictor (species) after accounting for the effects of other predictors in the model. 
+
+
+
+```
