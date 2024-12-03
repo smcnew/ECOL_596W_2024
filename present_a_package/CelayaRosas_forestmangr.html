@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Maryelacelaya">
+
+<title>Celaya_package</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="CelayaRosas_forestmangr_files/libs/clipboard/clipboard.min.js"></script>
+<script src="CelayaRosas_forestmangr_files/libs/quarto-html/quarto.js"></script>
+<script src="CelayaRosas_forestmangr_files/libs/quarto-html/popper.min.js"></script>
+<script src="CelayaRosas_forestmangr_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="CelayaRosas_forestmangr_files/libs/quarto-html/anchor.min.js"></script>
+<link href="CelayaRosas_forestmangr_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="CelayaRosas_forestmangr_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="CelayaRosas_forestmangr_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="CelayaRosas_forestmangr_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="CelayaRosas_forestmangr_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Celaya_package</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Maryelacelaya </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="ecol-596-w" class="level2">
+<h2 class="anchored" data-anchor-id="ecol-596-w">ECOL 596 W</h2>
+</section>
+<section id="quick-start-forestmangr-package" class="level2">
+<h2 class="anchored" data-anchor-id="quick-start-forestmangr-package">Quick start: forestmangr package</h2>
+<p>This package was created by Sollano Rabelo Braga [aut, cre, cph], Marcio Leles Romarco de Oliveira [aut] and Eric Bastos Gorgens [aut] (2024) for the purpose of analyzing forest survey data.</p>
+<section id="package-contents" class="level4">
+<h4 class="anchored" data-anchor-id="package-contents"><strong>0.Package Contents</strong></h4>
+<p>The package provides 43 functions and 22 inventory databases as examples (exfm#).</p>
+</section>
+<section id="installation" class="level4">
+<h4 class="anchored" data-anchor-id="installation"><strong>1.Installation</strong></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("forestmangr")</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forestmangr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'forestmangr' was built under R version 4.3.3</code></pre>
+</div>
+</div>
+</section>
+<section id="basic-functions" class="level4">
+<h4 class="anchored" data-anchor-id="basic-functions">2.Basic Functions</h4>
+<section id="to-check-if-character-vector-contains-variable-names-use-check_names-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-check-if-character-vector-contains-variable-names-use-check_names-function">2.1 To check if character vector contains variable names, use <strong>check_names()</strong> function:</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_names</span>(iris,<span class="st">"Species"</span>) <span class="co">#This would give a TRUE/FALSE result. Notice "iris" is the data set name</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_names</span>(iris, <span class="st">"Species"</span>,<span class="at">boolean=</span><span class="cn">FALSE</span>) <span class="co">#Include boolean=FALSE to get a more verbose response (i.e. "All variables exist in df")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "All variables exist in df"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_names</span>(iris, <span class="fu">c</span>(<span class="st">"Especies"</span>,<span class="st">"Setal.Width"</span>),<span class="at">boolean=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Variable 'Especies' does not exist in df    "   
+[2] "Variable 'Setal.Width' does not exist in df    "</code></pre>
+</div>
+</div>
+</section>
+<section id="to-classify-inventory-data-based-on-site-index-use-the-classify_site-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-classify-inventory-data-based-on-site-index-use-the-classify_site-function">2.2 To classify inventory data based on site index, use the <strong>classify_site</strong> function:</h5>
+<p>This function would add 4 columns:</p>
+<ul>
+<li><p>site_mean = average site productivity based on an attribute (such as volume, biomass, or height).</p></li>
+<li><p>interval = interval that defines the limits for assigning site quality categories.</p></li>
+<li><p>category = numbers from 1 to 3.</p></li>
+<li><p>category_ = “lower”, “Middle” and “Upper” quality.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Upload the data frame:</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"exfm17"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(exfm17) <span class="co"># Notice that</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  strata plot  age   DH    N     V    B        S
+1      1    1 26.4 12.4 1020  19.7  5.7 18.97327
+2      1    1 38.4 17.2 1020  60.8  9.8 20.98908
+3      1    1 51.6 19.1 1020 103.4 13.9 20.52111
+4      1    1 63.6 21.8 1020 136.5 15.3 21.84098
+5      1    2 26.4 15.0  900  27.3  6.0 22.95153
+6      1    2 38.4 20.3  900  80.0 10.5 24.77199</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Classify data into 3 classes</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ex_class<span class="ot">&lt;-</span><span class="fu">classify_site</span>(exfm17, <span class="co">#name of the data frame</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"S"</span>, <span class="co">#name of the column with the site variable</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                        <span class="dv">3</span>, <span class="co">#number of categories used to classify the data</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"plot"</span>) <span class="co">#name of the column with the plot variable</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ex_class,<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   plot site_mean strata  age   DH    N     V    B       S interval category
+1    24   20.1357      2 30.0 13.5 1040  24.3  6.0 18.9376 23.38947        1
+2    24   20.1357      2 40.8 17.5 1040  54.8  8.9 20.7390 23.38947        1
+3    24   20.1357      2 52.8 19.0 1040  76.6 10.9 20.2425 23.38947        1
+4    24   20.1357      2 64.8 20.7 1040  98.2 12.1 20.6238 23.38947        1
+5    25   20.3347      2 28.8 16.1 1080  25.5  6.1 23.1924 23.38947        1
+6    25   20.3347      2 39.6 17.3 1060  51.8  8.8 20.7951 23.38947        1
+7    25   20.3347      2 51.6 17.7 1040  68.4 10.7 19.0169 23.38947        1
+8    25   20.3347      2 63.6 18.3 1040  80.3 11.6 18.3344 23.38947        1
+9    35   20.3994      2 44.4 18.8  740  40.6  6.5 21.4492 23.38947        1
+10   35   20.3994      2 55.2 19.1  720  50.4  7.4 20.0313 23.38947        1
+11   35   20.3994      2 68.4 20.1  720  62.2  8.5 19.7176 23.38947        1
+12    9   20.4952      1 28.8 14.4 1060  22.6  6.0 20.7435 23.38947        1
+13    9   20.4952      1 39.6 16.9 1060  52.7  9.1 20.3143 23.38947        1
+14    9   20.4952      1 51.6 18.6 1060  80.8 11.8 19.9839 23.38947        1
+15    9   20.4952      1 63.6 20.9 1060 105.9 13.1 20.9393 23.38947        1
+   category_
+1      Lower
+2      Lower
+3      Lower
+4      Lower
+5      Lower
+6      Lower
+7      Lower
+8      Lower
+9      Lower
+10     Lower
+11     Lower
+12     Lower
+13     Lower
+14     Lower
+15     Lower</code></pre>
+</div>
+</div>
+</section>
+<section id="to-calculate-the-equivalent-diameter-of-trees-with-more-than-one-trunk-use-the-tree_summarise-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-calculate-the-equivalent-diameter-of-trees-with-more-than-one-trunk-use-the-tree_summarise-function">2.3. To calculate the equivalent diameter of trees with more than one trunk, use the <strong>tree_summarise</strong> function:</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"exfm18"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(exfm18) </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>eq_diam <span class="ot">&lt;-</span> <span class="fu">tree_summarise</span>(exfm18, <span class="co">#DF</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                          <span class="st">"DBH"</span>, <span class="co">#column with the diameter at breast height variable</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">tree=</span><span class="st">"Tree"</span>, <span class="co">#variable used to differentiate the trees’ sections</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">.groups=</span><span class="fu">c</span>(<span class="st">"Plot"</span>, <span class="st">"Species"</span>) ) <span class="co">#name(s) of grouping variables that can be added to differentiate subdivisions of the data</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(eq_diam)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(eq_diam, <span class="dv">10</span>) <span class="co">#This function fixes the number of "Trunk" for trees that have more than one, and adjusts the value of CBH and DBH. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Plot      Species Tree Trunk  CBH       DBH
+1    12 Unidentified    1     1 49.1 15.629015
+2    12 Unidentified    2     1 21.0  6.684508
+3    12 Unidentified    3     1 14.1  4.488169
+4    12 Unidentified    4     1 17.3  5.506761
+5    12 Unidentified    5     1 13.0  4.138029
+6    12 Unidentified    6     1 35.0 14.924763
+7    12 Unidentified    7     1 10.9  3.469578
+8    12 Unidentified    8     1 22.1  7.034648
+9    12 Unidentified    9     1 20.9  8.759134
+10   12 Unidentified   10     1 10.0  3.183099</code></pre>
+</div>
+</div>
+</section>
+<section id="to-summarize-forest-inventory-data-use-the-plot_summarise-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-summarize-forest-inventory-data-use-the-plot_summarise-function">2.4 To summarize forest inventory data, use the <strong>plot_summarise</strong> function:</h5>
+<p>This function allows you to group data into different categories, depending on the information provided. The required arguments are:</p>
+<ul>
+<li><p>DF,</p></li>
+<li><p>plot (to differentiate the data’s plots; it’s also possible to use other defined groups in the DF), and</p></li>
+<li><p>plot area in square meters.</p></li>
+</ul>
+<p><strong>2.4.1. Results interpretation</strong></p>
+<p>This function would also generate two additional columns:</p>
+<ul>
+<li><p>“q” = Quadratic Mean Diameter (QMD). This is a common way to represent tree size distribution. If QMD is much higher than dbh, it indicates a few very large trees dominate the plot.</p></li>
+<li><p>“G” = Basal Area per Plot (m<sup><sub><span class="smallcaps">2</span></sub></sup>/plot). Basal area is the cross-sectional area of all trees at breast height. Higher values often suggest higher forest density or larger trees.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"exfm21"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Obligatory arguments. Basic informations about the plot.</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_summarise</span>(exfm21, <span class="st">"PLOT"</span>, <span class="dv">810</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 4
+    PLOT plot_area  Indv Indvha
+   &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt;
+ 1     1       810    90  1111.
+ 2     2       810    90  1111.
+ 3     3       810    90  1111.
+ 4     4       810    90  1111.
+ 5     5       810    90  1111.
+ 6     7       810    90  1111.
+ 7     8       810    90  1111.
+ 8     9       810    90  1111.
+ 9    10       810    90  1111.
+10    11       810    90  1111.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># With TH supplied, we get the mean total height and dominant height</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_summarise</span>(exfm21, <span class="st">"PLOT"</span>, <span class="st">"PLOT_AREA"</span>, <span class="st">"DBH"</span>, <span class="st">"TH_EST"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 10
+    PLOT PLOT_AREA   DBH     q TH_EST    DH  Indv Indvha     G  G_ha
+   &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1     1       810  14.2  14.2   24.0  25.6    90  1111.  1.43  17.6
+ 2     2       810  14.4  14.5   23.4  25.6    90  1111.  1.47  18.2
+ 3     3       810  12.9  12.9   20.0  21.2    90  1111.  1.16  14.3
+ 4     4       810  12.3  12.3   19.0  20.7    90  1111.  1.07  13.3
+ 5     5       810  12.6  12.7   18.9  20.5    90  1111.  1.14  14.1
+ 6     7       810  14.8  14.8   23.9  25.1    90  1111.  1.53  18.9
+ 7     8       810  14.6  14.6   23.5  24.5    90  1111.  1.51  18.7
+ 8     9       810  13.6  13.7   20.4  22.8    90  1111.  1.30  16.1
+ 9    10       810  14.0  14.0   21.4  22.6    90  1111.  1.39  17.1
+10    11       810  13.9  13.9   21.8  23.1    90  1111.  1.35  16.7</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># With the AGE variable supplied, we get the average age of each plot</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_summarise</span>(exfm21, <span class="st">"PLOT"</span>, <span class="st">"PLOT_AREA"</span>, <span class="st">"DBH"</span>, <span class="st">"TH_EST"</span>, <span class="st">"STRATA"</span>, <span class="st">"STRATA_AREA"</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="st">"VWB"</span>, <span class="st">"VWOB"</span>, <span class="st">"DH"</span>, <span class="st">"AGE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 17
+# Groups:   STRATA [2]
+   STRATA  PLOT   AGE STRATA_AREA PLOT_AREA   DBH     q TH_EST    DH  Indv
+    &lt;int&gt; &lt;int&gt; &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;
+ 1      2     1    66          45       810  14.2  14.2   24.0  25.0    90
+ 2      2     2    66          45       810  14.4  14.5   23.4  23.8    90
+ 3      2     3    63          45       810  12.9  12.9   20.0  20.7    90
+ 4      2     7    66          45       810  14.8  14.8   23.9  24.4    90
+ 5      2     8    66          45       810  14.6  14.6   23.5  24.0    90
+ 6      4     4    63          51       810  12.3  12.3   19.0  20.0    90
+ 7      4     5    63          51       810  12.6  12.7   18.9  19.6    90
+ 8      4     9    65          51       810  13.6  13.7   20.4  20.7    90
+ 9      4    10    65          51       810  14.0  14.0   21.4  21.7    90
+10      4    11    65          51       810  13.9  13.9   21.8  22.5    90
+# ℹ 7 more variables: Indvha &lt;dbl&gt;, G &lt;dbl&gt;, G_ha &lt;dbl&gt;, VWB &lt;dbl&gt;,
+#   VWB_ha &lt;dbl&gt;, VWOB &lt;dbl&gt;, VWOB_ha &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="to-summarize-volume-of-tree-use-the-vol_summarise-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-summarize-volume-of-tree-use-the-vol_summarise-function">2.5 To summarize volume of tree, use the <strong>vol_summarise</strong> function:</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"exfm7"</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(exfm7)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># In order to calculate the volume of each tree, first we calculate the volume by tree section using the Smalian method:</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>sec_data_vol <span class="ot">&lt;-</span> exfm7 <span class="sc">%&gt;%</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">smalianwb</span>(<span class="st">"di_wb"</span>, <span class="st">"hi"</span>, <span class="st">"TREE"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="fu">smalianwob</span>(<span class="st">"di_wb"</span>, <span class="st">"hi"</span>, <span class="st">"bark_t"</span>, <span class="st">"TREE"</span>, <span class="at">bt_mm_to_cm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>sec_data_vol</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3,393 × 16
+   MAP     PROJECT SPACING STRATA GENCODE  TREE   DBH    TH    hi di_wb bark_t
+   &lt;chr&gt;   &lt;fct&gt;   &lt;fct&gt;    &lt;int&gt; &lt;fct&gt;   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+ 1 FOREST1 PEQUI   3x3          4 FM00100     1  12.4  22.1   0.1 13.1     0.6
+ 2 FOREST1 PEQUI   3x3          4 FM00100     1  12.4  22.1   0.5 12.6     0.6
+ 3 FOREST1 PEQUI   3x3          4 FM00100     1  12.4  22.1   1   12.4     0.5
+ 4 FOREST1 PEQUI   3x3          4 FM00100     1  12.4  22.1   1.5 12.3     0.5
+ 5 FOREST1 PEQUI   3x3          4 FM00100     1  12.4  22.1   2   11.8     0.4
+ 6 FOREST1 PEQUI   3x3          4 FM00100     1  12.4  22.1   4   11.3     0.4
+ 7 FOREST1 PEQUI   3x3          4 FM00100     1  12.4  22.1   6   10.5     0.3
+ 8 FOREST1 PEQUI   3x3          4 FM00100     1  12.4  22.1   8    9.55    0.3
+ 9 FOREST1 PEQUI   3x3          4 FM00100     1  12.4  22.1  10    8.59    0.3
+10 FOREST1 PEQUI   3x3          4 FM00100     1  12.4  22.1  12    8.12    0.3
+# ℹ 3,383 more rows
+# ℹ 5 more variables: CSA_WB &lt;dbl&gt;, VWB &lt;dbl&gt;, di_wob &lt;dbl&gt;, CSA_WOB &lt;dbl&gt;,
+#   VWOB &lt;dbl&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, we summarize the tree's volume:</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">vol_summarise</span>(sec_data_vol, <span class="at">dbh =</span> <span class="st">"DBH"</span>, <span class="at">th =</span> <span class="st">"TH"</span>, <span class="at">vwb =</span> <span class="st">"VWB"</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="at">tree =</span> <span class="st">"TREE"</span>, <span class="at">.groups =</span> <span class="st">"STRATA"</span>,<span class="at">vwob =</span> <span class="st">"VWOB"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 197 × 11
+   STRATA  TREE   DBH    TH    CSA   VWB  VWOB  FFWB FFWOB FFWB_mean FFWOB_mean
+    &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+ 1      2   113  12.3  23.0 0.0118 0.138 0.114 0.510 0.419     0.484      0.424
+ 2      2   114  12.6  22.8 0.0124 0.142 0.120 0.502 0.425     0.484      0.424
+ 3      2   115  12.9  23.5 0.0131 0.147 0.128 0.478 0.416     0.484      0.424
+ 4      2   116  13.2  22.9 0.0137 0.151 0.128 0.480 0.408     0.484      0.424
+ 5      2   117  13.4  23.5 0.0140 0.159 0.138 0.482 0.419     0.484      0.424
+ 6      2   118  13.5  22.6 0.0144 0.156 0.133 0.480 0.408     0.484      0.424
+ 7      2   119  13.8  23.5 0.0151 0.157 0.134 0.444 0.378     0.484      0.424
+ 8      2   120  14.6  25.1 0.0168 0.188 0.161 0.445 0.382     0.484      0.424
+ 9      2   121  15.3  25.8 0.0183 0.223 0.194 0.470 0.410     0.484      0.424
+10      2   122  15.3  24.5 0.0183 0.203 0.180 0.452 0.399     0.484      0.424
+# ℹ 187 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="to-fit-linear-regressions-by-group-and-get-different-output-options-use-the-lm_table-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-fit-linear-regressions-by-group-and-get-different-output-options-use-the-lm_table-function">2.6 To fit linear regressions by group, and get different output options, use the <strong>lm_table</strong> function:</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"exfm19"</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'dplyr' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit Schumacher and Hall model for volume estimation, and get</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># coefficient, R2 and error values:</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lm_table</span>(exfm19, <span class="fu">log</span>(VWB) <span class="sc">~</span> <span class="fu">log</span>(DBH) <span class="sc">+</span> <span class="fu">log</span>(TH))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         b0       b1        b2      Rsqr  Rsqr_adj  Std.Error
+1 -9.595863 1.889372 0.9071631 0.9966646 0.9966303 0.04855508</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit SH model by group:</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm_table</span>(exfm19, <span class="fu">log</span>(VWB) <span class="sc">~</span> <span class="fu">log</span>(DBH) <span class="sc">+</span> <span class="fu">log</span>(TH), <span class="st">"STRATA"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  STRATA        b0       b1        b2      Rsqr  Rsqr_adj  Std.Error
+1      2 -9.583751 1.924155 0.8760372 0.9975572 0.9974976 0.04499458
+2      4 -9.737861 1.757816 1.0606130 0.9947937 0.9946982 0.04950585</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="specific-functions" class="level4">
+<h4 class="anchored" data-anchor-id="specific-functions">3.Specific Functions</h4>
+<section id="to-generate-the-curve-of-a-forests-average-tree-using-the-kozak-taper-model-use-the-avg_tree_curve-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-generate-the-curve-of-a-forests-average-tree-using-the-kozak-taper-model-use-the-avg_tree_curve-function">3.1 To generate the curve of a forest’s average tree using the Kozak taper model, use the <strong>avg_tree_curve</strong> function:</h5>
+<p><strong>3.1.1 Results interpretation</strong></p>
+<p>The Kozak taper model is&nbsp;a variable-exponent taper equation that estimates the shape of a tree’s bole from the ground to the top. The curves show how the tree diameter decreases along the height for each stratum.</p>
+<ul>
+<li><p>The shape is consistent with expected tree taper patterns, where the diameter is widest near the base and tapers to the top.</p></li>
+<li><p>The differentiation by color (e.g., “FM00100” vs.&nbsp;“FM002335”) allows for a visual comparison of taper patterns between groups.</p></li>
+<li><p>If the points for one GENCODE consistently lie above or below the other, it indicates differences in taper characteristics (e.g., tree form or growth patterns).</p></li>
+<li><p>The two facets (strata “2” and “4”) show how tree taper varies between forest strata. If curves differ significantly, this might indicate ecological or management differences influencing tree form.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"exfm7"</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the data's average tree curve inserting the section diameter and height, total height and dbh variables:</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">avg_tree_curve</span>(<span class="at">df=</span>exfm7,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">d=</span><span class="st">"di_wb"</span>, <span class="co">#Quoted name of the section diameter variable, in cm.</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">dbh=</span><span class="st">"DBH"</span>, <span class="co">#Quoted name of the diameter at breast height variable, in cm.</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">h=</span><span class="st">"hi"</span>, <span class="co">#Quoted name of the section height variable, in meters.</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">th=</span><span class="st">"TH"</span>, <span class="co">#Quoted name of the total height variable, in meters.</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">eq=</span><span class="cn">FALSE</span>) <span class="co"># if TRUE, Kozak’s taper model is adjusted and the equation is shown on the plot. (Default TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="CelayaRosas_forestmangr_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># It's possible to get the average tree curve of each strata with the facet arg., and divide the data by color with the color argument:</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">avg_tree_curve</span>(exfm7,<span class="st">"di_wb"</span>,<span class="st">"DBH"</span>,<span class="st">"hi"</span>,<span class="st">"TH"</span>,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">"STRATA"</span>, <span class="co">#variable used to divide the plot into facets</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>               <span class="st">"GENCODE"</span>, <span class="co">#to clasify the data by color</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>               <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="CelayaRosas_forestmangr_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="to-classify-a-forest-for-selective-cutting-using-the-meyer-bdq-method-use-the-bdq_meyer-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-classify-a-forest-for-selective-cutting-using-the-meyer-bdq-method-use-the-bdq_meyer-function">3.2 To classify a forest for selective cutting using the Meyer BDq method, use the <strong>bdq_meyer</strong> function:</h5>
+<p><strong>3.2.1. Results interpretation</strong></p>
+<p>This is a linear relationship in logarithmic space, where:</p>
+<ul>
+<li><p><strong>Intercept (<code>a</code>)</strong>: Represents the logarithm of the predicted number of trees per hectare in the smallest diameter class.</p>
+<ul>
+<li><p>A higher intercept suggests a forest with a greater density of small trees.</p></li>
+<li><p>A lower intercept indicates a forest with fewer small trees, which might point to regeneration issues or over-harvesting.</p></li>
+</ul></li>
+<li><p><strong>Slope (<code>b</code>)</strong>: Describes the rate at which the number of trees decreases as diameter increases (negative in most cases for forests, due to fewer large trees).</p>
+<ul>
+<li><p><strong>Steeper Slope (More Negative)</strong>:</p>
+<ul>
+<li><p>Indicates a rapid decrease in tree density with increasing diameter.</p></li>
+<li><p>Suggests a forest dominated by smaller trees, often due to regeneration or selective logging.</p></li>
+</ul></li>
+<li><p><strong>Flatter Slope (Less Negative)</strong>:</p>
+<ul>
+<li><p>Indicates a more even distribution of tree sizes or a higher proportion of large trees.</p></li>
+<li><p>Could reflect an old-growth forest or reduced harvesting pressure.</p></li>
+</ul></li>
+</ul></li>
+<li><p><strong>High tree density in smaller classes</strong>: Indicates active regeneration but could signal competition or resource limitations.</p></li>
+<li><p><strong>Low density in smaller classes</strong>: Could point to poor recruitment or regeneration challenges.</p></li>
+<li><p><strong>Presence of larger trees</strong>: Suggests good structural diversity, potentially desirable for biodiversity.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"exfm20"</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(exfm20)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "cod"             "transect"        "tree"            "common.name"    
+ [5] "scientific.name" "family"          "dbh"             "canopy.pos"     
+ [9] "light"           "dead"            "Hcom"            "Htot"           
+[13] "date"            "utm.east"        "utm.north"       "vol"            
+[17] "plot.area"       "total.area"     </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To get the table with the regulated forest:</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>exfm20_reg<span class="ot">&lt;-</span><span class="fu">bdq_meyer</span>(exfm20, <span class="co">#Data frame</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"transect"</span>, <span class="co">#name of the column containing the plots ID</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"dbh"</span>, <span class="co">#Quoted name of the diameter at breast height variable, in cm</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>                      <span class="dv">1000</span>) <span class="co">#plot area in square meters</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Use different class interval values to get different results:</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="fu">bdq_meyer</span>(exfm20, <span class="st">"transect"</span>, <span class="st">"dbh"</span>, <span class="dv">1000</span>, <span class="at">class_interval =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Class_Center NumIndv IndvHectare Meyer   q MeyerBalan
+1            10    4730      2150.0  1264 1.0       2974
+2            20    4540      2063.6   743 2.8       1487
+3            30    1600       727.3   437 2.4        744
+4            40     660       300.0   257 1.7        372
+5            50     388       176.4   151 2.2        186
+6            60     176        80.0    89 2.0         93
+7            70      89        40.5    52 1.8         46
+8            80      50        22.7    31 1.5         23
+9            90      33        15.0    18 3.0         12
+10          100      11         5.0    11 1.6          6
+11          110       7         3.2     6 1.8          3
+12          120       4         1.8     4 3.6          1
+13          130       1         0.5     2 1.0          1
+14          140       1         0.5     1 0.4          0
+15          150       3         1.4     1 2.8          0
+16          160       1         0.5     0 1.0          0
+17          200       1         0.5     0  NA          0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># It's possible to get different outputs (Can be either "table" for the classified data table, "model" to get a lm object with the linear model fitted, "coefs" to get a vector with the Meyer coefficients, or "full", to get a list with all restuls): </span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bdq_meyer</span>(exfm20, <span class="st">"transect"</span>, <span class="st">"dbh"</span>, <span class="dv">1000</span>, <span class="at">output=</span><span class="st">"model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+stats::lm(formula = log(DD$IndvHectare) ~ DD$Class_Center)
+
+Coefficients:
+    (Intercept)  DD$Class_Center  
+        6.98615         -0.05212  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdq_meyer</span>(exfm20, <span class="st">"transect"</span>, <span class="st">"dbh"</span>, <span class="dv">1000</span>, <span class="at">output=</span><span class="st">"coefs"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10.270022 -0.138629</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdq_meyer</span>(exfm20, <span class="st">"transect"</span>, <span class="st">"dbh"</span>, <span class="dv">1000</span>, <span class="at">output=</span><span class="st">"full"</span>) <span class="co">#the result will be breaked in 10 classes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$table
+   Class_Center NumIndv IndvHectare Meyer   q MeyerBalan
+1          12.5    4730      2150.0   564 1.8       5101
+2          17.5    2700      1227.3   434 1.5       2550
+3          22.5    1840       836.4   335 2.0       1275
+4          27.5     930       422.7   258 1.4        638
+5          32.5     670       304.5   199 1.8        319
+6          37.5     369       167.7   153 1.3        159
+7          42.5     291       132.3   118 1.4         80
+8          47.5     208        94.5    91 1.2         40
+9          52.5     180        81.8    70 1.6         20
+10         57.5     116        52.7    54 1.9         10
+11         62.5      60        27.3    42 1.2          5
+12         67.5      49        22.3    32 1.2          2
+13         72.5      40        18.2    25 1.9          1
+14         77.5      21         9.5    19 0.7          1
+15         82.5      29        13.2    15 1.5          0
+16         87.5      20         9.1    11 1.5          0
+17         92.5      13         5.9     9 1.6          0
+18         97.5       8         3.6     7 2.6          0
+19        102.5       3         1.4     5 0.8          0
+20        107.5       4         1.8     4 1.3          0
+21        112.5       3         1.4     3 2.8          0
+22        117.5       1         0.5     2 0.4          0
+23        122.5       3         1.4     2 2.8          0
+24        127.5       1         0.5     1 1.0          0
+25        142.5       1         0.5     1 1.0          0
+26        147.5       1         0.5     0 0.6          0
+27        152.5       2         0.9     0 1.8          0
+28        162.5       1         0.5     0 1.0          0
+29        202.5       1         0.5     0  NA          0
+
+$model
+
+Call:
+stats::lm(formula = log(DD$IndvHectare) ~ DD$Class_Center)
+
+Coefficients:
+    (Intercept)  DD$Class_Center  
+        6.98615         -0.05212  
+
+
+$coefs
+[1] 10.270022 -0.138629</code></pre>
+</div>
+</div>
+</section>
+<section id="to-get-some-species-diversity-indexes-use-the-species_diversity-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-get-some-species-diversity-indexes-use-the-species_diversity-function">3.3 To get some species diversity indexes, use the species_diversity function:</h5>
+<p>This would give you in particular the following indexes: Shannon, Simpson, Equitability, Pielou and Jentsch.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"exfm20"</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(exfm20)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 18
+  cod   transect  tree common.name scientific.name family   dbh canopy.pos light
+  &lt;fct&gt; &lt;fct&gt;    &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;           &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt;      &lt;int&gt;
+1 CAU_… T01          2 macucu      Licania guiane… Chrys…  10.3 S              2
+2 CAU_… T01          5 casca seca  Licania canesc… Chrys…  14.6 S              2
+3 CAU_… T01          6 cajuacu     Anacardium spr… Anaca…  78.8 E              1
+4 CAU_… T01          7 breu branco Protium panicu… Burse…  14.7 S              2
+5 CAU_… T01          9 breu branco Protium panicu… Burse…  10.6 E              3
+6 CAU_… T01         10 caramuxi    Pouteria hispi… Sapot…  27.1 C              2
+# ℹ 9 more variables: dead &lt;lgl&gt;, Hcom &lt;dbl&gt;, Htot &lt;dbl&gt;, date &lt;int&gt;,
+#   utm.east &lt;dbl&gt;, utm.north &lt;dbl&gt;, vol &lt;dbl&gt;, plot.area &lt;int&gt;,
+#   total.area &lt;int&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># By default, the function returns all indexes:</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">species_diversity</span>(exfm20, <span class="co">#data frame</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"scientific.name"</span>) <span class="co">#Quoted name of the scientific names variable, or any variable used to differentiate the different species found in data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  Shannon Simpson EqMaxima Pielou Jentsch
+    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+1     3.9    0.95     5.15   0.76    0.01</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># It's possible to use a subdivision variable, like plot, to get</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the indexes for each subdivision:</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="fu">species_diversity</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="st">"transect"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 22 × 6
+   transect Shannon Simpson EqMaxima Pielou Jentsch
+   &lt;chr&gt;      &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+ 1 T01         3.06    0.94     3.71   0.82    0.08
+ 2 T02         3.46    0.96     4.06   0.85    0.09
+ 3 T03         3.2     0.95     3.85   0.83    0.13
+ 4 T04         3.06    0.93     3.85   0.79    0.08
+ 5 T05         3.32    0.95     3.91   0.85    0.08
+ 6 T06         3.12    0.94     3.78   0.83    0.08
+ 7 T07         2.57    0.82     3.99   0.64    0.1 
+ 8 T08         3.02    0.92     3.87   0.78    0.1 
+ 9 T09         3.16    0.94     3.87   0.82    0.1 
+10 T10         2.9     0.9      3.83   0.76    0.09
+# ℹ 12 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To only get one specific index, use the index argument:</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">species_diversity</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="at">index =</span> <span class="st">"H"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.9</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">species_diversity</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="at">index =</span> <span class="st">"S"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.95</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">species_diversity</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="at">index =</span> <span class="st">"Hmax"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5.15</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">species_diversity</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="at">index =</span> <span class="st">"J"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.76</code></pre>
+</div>
+</div>
+</section>
+<section id="to-get-the-forest-horizontal-vertical-and-internal-structure-use-the-forest_structure-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-get-the-forest-horizontal-vertical-and-internal-structure-use-the-forest_structure-function">3.4 To get the forest horizontal, vertical and internal structure, use the <strong>forest_structure</strong> function:</h5>
+<p><strong>3.4.1. Results interpretation</strong></p>
+<p>This function would generate additional columns:</p>
+<ul>
+<li><p>Species composition:</p>
+<ul>
+<li>“especie”: to list the species present in the forest</li>
+</ul></li>
+<li><p>Frequency Metrics:</p>
+<ul>
+<li><p>“AF” :<strong>(Absolute Frequency)</strong>: The number of plots in which a species is recorded</p></li>
+<li><p>“RF” <strong>(Relative Frequency)</strong>: The proportion of plots occupied by a species relative to the total.</p></li>
+</ul></li>
+<li><p>Abundance Metrics:</p>
+<ul>
+<li><p><strong>AD (Absolute Density)</strong>: The total number of individuals per unit area</p></li>
+<li><p><strong>RDo (Relative Dominance)</strong>: Proportion of basal area occupied by a species relative to the total basal area. Highlights the contribution of each species to the forest canopy and ecosystem structure.</p></li>
+</ul></li>
+<li><p>IVI (Importance Value Index): Combines Relative Frequency (RF), Relative Density (RDo), and Relative Dominance (ADo) to assess the ecological importance of each species</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"exfm20"</span>)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(exfm20)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 18
+  cod   transect  tree common.name scientific.name family   dbh canopy.pos light
+  &lt;fct&gt; &lt;fct&gt;    &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;           &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt;      &lt;int&gt;
+1 CAU_… T01          2 macucu      Licania guiane… Chrys…  10.3 S              2
+2 CAU_… T01          5 casca seca  Licania canesc… Chrys…  14.6 S              2
+3 CAU_… T01          6 cajuacu     Anacardium spr… Anaca…  78.8 E              1
+4 CAU_… T01          7 breu branco Protium panicu… Burse…  14.7 S              2
+5 CAU_… T01          9 breu branco Protium panicu… Burse…  10.6 E              3
+6 CAU_… T01         10 caramuxi    Pouteria hispi… Sapot…  27.1 C              2
+# ℹ 9 more variables: dead &lt;lgl&gt;, Hcom &lt;dbl&gt;, Htot &lt;dbl&gt;, date &lt;int&gt;,
+#   utm.east &lt;dbl&gt;, utm.north &lt;dbl&gt;, vol &lt;dbl&gt;, plot.area &lt;int&gt;,
+#   total.area &lt;int&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the forest's horizontal structure:</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">forest_structure</span>(exfm20, <span class="co">#data frame</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"scientific.name"</span>, <span class="co">#Quoted name of the scientific names variable</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"dbh"</span>, <span class="co">#Quoted name of the diameter at breast height variable, in cm.</span></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"transect"</span>, <span class="co">#Quoted name of the plot variable</span></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">10000</span>) <span class="co">#Quoted name of the plot area variable, or a numeric vector with the plot area value. The plot area value must be in square meters</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 172 × 9
+   especie                  AF     RF     AD     DR     ADo    RDo    IVC    IVI
+   &lt;fct&gt;                 &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl[1&gt; &lt;dbl[&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Abarema cochleata     18.2  0.392  0.182  0.0343 0.0359  0.137  0.0859 0.188 
+ 2 Abarema jupunba       13.6  0.294  0.136  0.0258 0.0302  0.116  0.0707 0.145 
+ 3 Abuta grandifolia      9.09 0.196  1.36   0.258  0.0162  0.0621 0.160  0.172 
+ 4 Aiouea sp.             9.09 0.196  0.909  0.172  0.0413  0.158  0.165  0.175 
+ 5 Ambelania acida        4.55 0.0979 0.454  0.0859 0.00379 0.0145 0.0502 0.0661
+ 6 Anacardium spruceanum 27.3  0.588  1.23   0.232  0.159   0.608  0.420  0.476 
+ 7 Aniba canelilla        9.09 0.196  0.5    0.0945 0.0103  0.0396 0.0670 0.110 
+ 8 Aniba parviflora       4.55 0.0979 0.454  0.0859 0.00480 0.0184 0.0521 0.0674
+ 9 Annona ambotay         4.55 0.0979 0.0455 0.0086 0.00455 0.0174 0.0130 0.0413
+10 Annona sp.            13.6  0.294  1.36   0.258  0.0114  0.0439 0.151  0.198 
+# ℹ 162 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># area plot as a variable name:</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">forest_structure</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="st">"dbh"</span>, <span class="st">"transect"</span>, <span class="st">"plot.area"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 172 × 9
+   especie                  AF     RF     AD     DR     ADo    RDo    IVC    IVI
+   &lt;fct&gt;                 &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl[1&gt; &lt;dbl[&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Abarema cochleata     18.2  0.392  0.182  0.0343 0.0359  0.137  0.0859 0.188 
+ 2 Abarema jupunba       13.6  0.294  0.136  0.0258 0.0302  0.116  0.0707 0.145 
+ 3 Abuta grandifolia      9.09 0.196  1.36   0.258  0.0162  0.0621 0.160  0.172 
+ 4 Aiouea sp.             9.09 0.196  0.909  0.172  0.0413  0.158  0.165  0.175 
+ 5 Ambelania acida        4.55 0.0979 0.454  0.0859 0.00379 0.0145 0.0502 0.0661
+ 6 Anacardium spruceanum 27.3  0.588  1.23   0.232  0.159   0.608  0.420  0.476 
+ 7 Aniba canelilla        9.09 0.196  0.5    0.0945 0.0103  0.0396 0.0670 0.110 
+ 8 Aniba parviflora       4.55 0.0979 0.454  0.0859 0.00480 0.0184 0.0521 0.0674
+ 9 Annona ambotay         4.55 0.0979 0.0455 0.0086 0.00455 0.0174 0.0130 0.0413
+10 Annona sp.            13.6  0.294  1.36   0.258  0.0114  0.0439 0.151  0.198 
+# ℹ 162 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the forest's horizontal and vertical structure.</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The vertical structure variable can either be the height variable,or a factor variable with the horizontal strata:</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a><span class="fu">forest_structure</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="st">"dbh"</span>, <span class="st">"transect"</span>, <span class="dv">10000</span>, <span class="st">"canopy.pos"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 172 × 14
+   especie      AF     RF     AD     DR     ADo    RDo    IVC    IVI   VFC   VFE
+   &lt;fct&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl[1&gt; &lt;dbl[&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Abarema … 18.2  0.392  0.182  0.0343 0.0359  0.137  0.0859 0.188   51.2   0  
+ 2 Abarema … 13.6  0.294  0.136  0.0258 0.0302  0.116  0.0707 0.145   25.6   0  
+ 3 Abuta gr…  9.09 0.196  1.36   0.258  0.0162  0.0621 0.160  0.172    0     0  
+ 4 Aiouea s…  9.09 0.196  0.909  0.172  0.0413  0.158  0.165  0.175    0     0  
+ 5 Ambelani…  4.55 0.0979 0.454  0.0859 0.00379 0.0145 0.0502 0.0661   0     0  
+ 6 Anacardi… 27.3  0.588  1.23   0.232  0.159   0.608  0.420  0.476   38.4  13.4
+ 7 Aniba ca…  9.09 0.196  0.5    0.0945 0.0103  0.0396 0.0670 0.110   12.8   0  
+ 8 Aniba pa…  4.55 0.0979 0.454  0.0859 0.00480 0.0184 0.0521 0.0674   0     0  
+ 9 Annona a…  4.55 0.0979 0.0455 0.0086 0.00455 0.0174 0.0130 0.0413  12.8   0  
+10 Annona s… 13.6  0.294  1.36   0.258  0.0114  0.0439 0.151  0.198    0     0  
+# ℹ 162 more rows
+# ℹ 3 more variables: VFS &lt;dbl&gt;, PSA &lt;dbl&gt;, PSR &lt;dbl&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the forest's horizontal, vertical and internal structure:</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">forest_structure</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="st">"dbh"</span>, <span class="st">"transect"</span>, <span class="dv">10000</span>, <span class="st">"canopy.pos"</span>, <span class="st">"light"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 172 × 19
+   especie      AF     RF     AD     DR     ADo    RDo    IVC    IVI   VFC   VFE
+   &lt;fct&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl[1&gt; &lt;dbl[&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Abarema … 18.2  0.392  0.182  0.0343 0.0359  0.137  0.0859 0.188   51.2   0  
+ 2 Abarema … 13.6  0.294  0.136  0.0258 0.0302  0.116  0.0707 0.145   25.6   0  
+ 3 Abuta gr…  9.09 0.196  1.36   0.258  0.0162  0.0621 0.160  0.172    0     0  
+ 4 Aiouea s…  9.09 0.196  0.909  0.172  0.0413  0.158  0.165  0.175    0     0  
+ 5 Ambelani…  4.55 0.0979 0.454  0.0859 0.00379 0.0145 0.0502 0.0661   0     0  
+ 6 Anacardi… 27.3  0.588  1.23   0.232  0.159   0.608  0.420  0.476   38.4  13.4
+ 7 Aniba ca…  9.09 0.196  0.5    0.0945 0.0103  0.0396 0.0670 0.110   12.8   0  
+ 8 Aniba pa…  4.55 0.0979 0.454  0.0859 0.00480 0.0184 0.0521 0.0674   0     0  
+ 9 Annona a…  4.55 0.0979 0.0455 0.0086 0.00455 0.0174 0.0130 0.0413  12.8   0  
+10 Annona s… 13.6  0.294  1.36   0.258  0.0114  0.0439 0.151  0.198    0     0  
+# ℹ 162 more rows
+# ℹ 8 more variables: VFS &lt;dbl&gt;, PSA &lt;dbl&gt;, PSR &lt;dbl&gt;, QF1 &lt;dbl&gt;, QF2 &lt;dbl&gt;,
+#   QF3 &lt;dbl&gt;, QAF &lt;dbl&gt;, QRF &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="to-get-a-similarity-matrix-of-an-area-use-the-similarity_matrix-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-get-a-similarity-matrix-of-an-area-use-the-similarity_matrix-function">3.5 To get a similarity matrix of an area, use the <strong>similarity_matrix</strong> function:</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"exfm20"</span>)</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(exfm20)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 18
+  cod   transect  tree common.name scientific.name family   dbh canopy.pos light
+  &lt;fct&gt; &lt;fct&gt;    &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;           &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt;      &lt;int&gt;
+1 CAU_… T01          2 macucu      Licania guiane… Chrys…  10.3 S              2
+2 CAU_… T01          5 casca seca  Licania canesc… Chrys…  14.6 S              2
+3 CAU_… T01          6 cajuacu     Anacardium spr… Anaca…  78.8 E              1
+4 CAU_… T01          7 breu branco Protium panicu… Burse…  14.7 S              2
+5 CAU_… T01          9 breu branco Protium panicu… Burse…  10.6 E              3
+6 CAU_… T01         10 caramuxi    Pouteria hispi… Sapot…  27.1 C              2
+# ℹ 9 more variables: dead &lt;lgl&gt;, Hcom &lt;dbl&gt;, Htot &lt;dbl&gt;, date &lt;int&gt;,
+#   utm.east &lt;dbl&gt;, utm.north &lt;dbl&gt;, vol &lt;dbl&gt;, plot.area &lt;int&gt;,
+#   total.area &lt;int&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To get the similarity matrix of an area, we simply need to provide the species variable name, and a subdivision variable name, like transect. By default we get a a matrix based on the Sorensen index:</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="fu">similarity_matrix</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="st">"transect"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
+ [1,] 1.00 0.55 0.61 0.59 0.53 0.45 0.61 0.56 0.54  0.55  0.56  0.51  0.52
+ [2,] 0.55 1.00 0.46 0.53 0.46 0.33 0.66 0.51 0.51  0.46  0.54  0.30  0.51
+ [3,] 0.61 0.46 1.00 0.51 0.49 0.46 0.51 0.53 0.55  0.52  0.54  0.43  0.51
+ [4,] 0.59 0.53 0.51 1.00 0.45 0.44 0.57 0.53 0.57  0.54  0.52  0.41  0.47
+ [5,] 0.53 0.46 0.49 0.45 1.00 0.51 0.50 0.61 0.57  0.56  0.48  0.48  0.47
+ [6,] 0.45 0.33 0.46 0.44 0.51 1.00 0.41 0.61 0.59  0.58  0.49  0.45  0.44
+ [7,] 0.61 0.66 0.51 0.57 0.50 0.41 1.00 0.53 0.51  0.52  0.51  0.46  0.50
+ [8,] 0.56 0.51 0.53 0.53 0.61 0.61 0.53 1.00 0.65  0.51  0.54  0.45  0.48
+ [9,] 0.54 0.51 0.55 0.57 0.57 0.59 0.51 0.65 1.00  0.60  0.60  0.45  0.51
+[10,] 0.55 0.46 0.52 0.54 0.56 0.58 0.52 0.51 0.60  1.00  0.53  0.41  0.47
+[11,] 0.56 0.54 0.54 0.52 0.48 0.49 0.51 0.54 0.60  0.53  1.00  0.37  0.50
+[12,] 0.51 0.30 0.43 0.41 0.48 0.45 0.46 0.45 0.45  0.41  0.37  1.00  0.52
+[13,] 0.52 0.51 0.51 0.47 0.47 0.44 0.50 0.48 0.51  0.47  0.50  0.52  1.00
+[14,] 0.49 0.37 0.50 0.48 0.48 0.58 0.38 0.58 0.49  0.48  0.47  0.56  0.52
+[15,] 0.60 0.48 0.56 0.58 0.52 0.51 0.49 0.53 0.57  0.52  0.59  0.48  0.56
+[16,] 0.36 0.44 0.47 0.45 0.52 0.51 0.50 0.57 0.46  0.47  0.46  0.41  0.47
+[17,] 0.38 0.42 0.46 0.36 0.45 0.43 0.43 0.46 0.46  0.45  0.43  0.40  0.44
+[18,] 0.43 0.40 0.49 0.45 0.46 0.51 0.42 0.53 0.53  0.49  0.40  0.48  0.45
+[19,] 0.45 0.47 0.42 0.44 0.53 0.45 0.47 0.48 0.50  0.44  0.47  0.45  0.53
+[20,] 0.41 0.38 0.45 0.45 0.46 0.47 0.38 0.54 0.52  0.41  0.56  0.39  0.55
+[21,] 0.52 0.49 0.42 0.47 0.47 0.43 0.56 0.55 0.51  0.42  0.60  0.50  0.47
+[22,] 0.43 0.48 0.43 0.49 0.47 0.48 0.50 0.57 0.55  0.52  0.43  0.45  0.43
+      [,14] [,15] [,16] [,17] [,18] [,19] [,20] [,21] [,22]
+ [1,]  0.49  0.60  0.36  0.38  0.43  0.45  0.41  0.52  0.43
+ [2,]  0.37  0.48  0.44  0.42  0.40  0.47  0.38  0.49  0.48
+ [3,]  0.50  0.56  0.47  0.46  0.49  0.42  0.45  0.42  0.43
+ [4,]  0.48  0.58  0.45  0.36  0.45  0.44  0.45  0.47  0.49
+ [5,]  0.48  0.52  0.52  0.45  0.46  0.53  0.46  0.47  0.47
+ [6,]  0.58  0.51  0.51  0.43  0.51  0.45  0.47  0.43  0.48
+ [7,]  0.38  0.49  0.50  0.43  0.42  0.47  0.38  0.56  0.50
+ [8,]  0.58  0.53  0.57  0.46  0.53  0.48  0.54  0.55  0.57
+ [9,]  0.49  0.57  0.46  0.46  0.53  0.50  0.52  0.51  0.55
+[10,]  0.48  0.52  0.47  0.45  0.49  0.44  0.41  0.42  0.52
+[11,]  0.47  0.59  0.46  0.43  0.40  0.47  0.56  0.60  0.43
+[12,]  0.56  0.48  0.41  0.40  0.48  0.45  0.39  0.50  0.45
+[13,]  0.52  0.56  0.47  0.44  0.45  0.53  0.55  0.47  0.43
+[14,]  1.00  0.57  0.57  0.43  0.54  0.54  0.58  0.57  0.52
+[15,]  0.57  1.00  0.49  0.48  0.53  0.51  0.57  0.54  0.42
+[16,]  0.57  0.49  1.00  0.55  0.43  0.44  0.57  0.47  0.53
+[17,]  0.43  0.48  0.55  1.00  0.46  0.41  0.47  0.41  0.44
+[18,]  0.54  0.53  0.43  0.46  1.00  0.48  0.50  0.47  0.53
+[19,]  0.54  0.51  0.44  0.41  0.48  1.00  0.52  0.58  0.51
+[20,]  0.58  0.57  0.57  0.47  0.50  0.52  1.00  0.50  0.50
+[21,]  0.57  0.54  0.47  0.41  0.47  0.58  0.50  1.00  0.44
+[22,]  0.52  0.42  0.53  0.44  0.53  0.51  0.50  0.44  1.00</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To get the similarity matrix of Jaccard, use the index argument:</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">similarity_matrix</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="st">"transect"</span>, <span class="at">index =</span> <span class="st">"Jaccard"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
+ [1,] 1.00 0.38 0.44 0.42 0.36 0.29 0.44 0.39 0.37  0.38  0.39  0.34  0.35
+ [2,] 0.38 1.00 0.30 0.36 0.30 0.20 0.49 0.34 0.34  0.30  0.37  0.18  0.35
+ [3,] 0.44 0.30 1.00 0.34 0.33 0.30 0.35 0.36 0.38  0.35  0.37  0.28  0.34
+ [4,] 0.42 0.36 0.34 1.00 0.29 0.28 0.40 0.36 0.40  0.37  0.35  0.26  0.31
+ [5,] 0.36 0.30 0.33 0.29 1.00 0.34 0.33 0.44 0.40  0.39  0.32  0.32  0.31
+ [6,] 0.29 0.20 0.30 0.28 0.34 1.00 0.26 0.44 0.42  0.41  0.33  0.29  0.28
+ [7,] 0.44 0.49 0.35 0.40 0.33 0.26 1.00 0.36 0.34  0.35  0.34  0.30  0.33
+ [8,] 0.39 0.34 0.36 0.36 0.44 0.44 0.36 1.00 0.48  0.34  0.37  0.29  0.32
+ [9,] 0.37 0.34 0.38 0.40 0.40 0.42 0.34 0.48 1.00  0.42  0.43  0.29  0.34
+[10,] 0.38 0.30 0.35 0.37 0.39 0.41 0.35 0.34 0.42  1.00  0.36  0.26  0.31
+[11,] 0.39 0.37 0.37 0.35 0.32 0.33 0.34 0.37 0.43  0.36  1.00  0.23  0.33
+[12,] 0.34 0.18 0.28 0.26 0.32 0.29 0.30 0.29 0.29  0.26  0.23  1.00  0.35
+[13,] 0.35 0.35 0.34 0.31 0.31 0.28 0.33 0.32 0.34  0.31  0.33  0.35  1.00
+[14,] 0.32 0.23 0.33 0.31 0.32 0.41 0.24 0.41 0.33  0.32  0.30  0.39  0.35
+[15,] 0.42 0.31 0.38 0.41 0.35 0.34 0.33 0.36 0.40  0.35  0.42  0.31  0.38
+[16,] 0.22 0.28 0.31 0.29 0.35 0.34 0.33 0.40 0.30  0.31  0.30  0.26  0.31
+[17,] 0.24 0.26 0.30 0.22 0.29 0.28 0.28 0.30 0.30  0.29  0.27  0.25  0.28
+[18,] 0.28 0.25 0.32 0.29 0.29 0.34 0.27 0.36 0.36  0.33  0.25  0.31  0.29
+[19,] 0.29 0.31 0.26 0.28 0.36 0.29 0.31 0.31 0.33  0.29  0.31  0.29  0.36
+[20,] 0.26 0.24 0.29 0.29 0.30 0.31 0.23 0.37 0.35  0.26  0.39  0.24  0.38
+[21,] 0.36 0.33 0.26 0.30 0.31 0.28 0.39 0.38 0.34  0.27  0.42  0.33  0.30
+[22,] 0.28 0.31 0.27 0.32 0.31 0.32 0.33 0.40 0.38  0.35  0.28  0.29  0.27
+      [,14] [,15] [,16] [,17] [,18] [,19] [,20] [,21] [,22]
+ [1,]  0.32  0.42  0.22  0.24  0.28  0.29  0.26  0.36  0.28
+ [2,]  0.23  0.31  0.28  0.26  0.25  0.31  0.24  0.33  0.31
+ [3,]  0.33  0.38  0.31  0.30  0.32  0.26  0.29  0.26  0.27
+ [4,]  0.31  0.41  0.29  0.22  0.29  0.28  0.29  0.30  0.32
+ [5,]  0.32  0.35  0.35  0.29  0.29  0.36  0.30  0.31  0.31
+ [6,]  0.41  0.34  0.34  0.28  0.34  0.29  0.31  0.28  0.32
+ [7,]  0.24  0.33  0.33  0.28  0.27  0.31  0.23  0.39  0.33
+ [8,]  0.41  0.36  0.40  0.30  0.36  0.31  0.37  0.38  0.40
+ [9,]  0.33  0.40  0.30  0.30  0.36  0.33  0.35  0.34  0.38
+[10,]  0.32  0.35  0.31  0.29  0.33  0.29  0.26  0.27  0.35
+[11,]  0.30  0.42  0.30  0.27  0.25  0.31  0.39  0.42  0.28
+[12,]  0.39  0.31  0.26  0.25  0.31  0.29  0.24  0.33  0.29
+[13,]  0.35  0.38  0.31  0.28  0.29  0.36  0.38  0.30  0.27
+[14,]  1.00  0.40  0.39  0.27  0.37  0.37  0.41  0.40  0.35
+[15,]  0.40  1.00  0.32  0.32  0.36  0.34  0.40  0.37  0.27
+[16,]  0.39  0.32  1.00  0.38  0.27  0.28  0.40  0.30  0.36
+[17,]  0.27  0.32  0.38  1.00  0.30  0.26  0.31  0.26  0.28
+[18,]  0.37  0.36  0.27  0.30  1.00  0.32  0.33  0.30  0.36
+[19,]  0.37  0.34  0.28  0.26  0.32  1.00  0.35  0.41  0.34
+[20,]  0.41  0.40  0.40  0.31  0.33  0.35  1.00  0.33  0.33
+[21,]  0.40  0.37  0.30  0.26  0.30  0.41  0.33  1.00  0.28
+[22,]  0.35  0.27  0.36  0.28  0.36  0.34  0.33  0.28  1.00</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To get a dendrogram with the matrix, use dendrogram=TRUE:</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="fu">similarity_matrix</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="st">"transect"</span>, <span class="at">index =</span> <span class="st">"Jaccard"</span>, <span class="at">dendrogram =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Dendrogram
+$Dendrogram[[1]]</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="CelayaRosas_forestmangr_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+$Matrix
+      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
+ [1,] 1.00 0.38 0.44 0.42 0.36 0.29 0.44 0.39 0.37  0.38  0.39  0.34  0.35
+ [2,] 0.38 1.00 0.30 0.36 0.30 0.20 0.49 0.34 0.34  0.30  0.37  0.18  0.35
+ [3,] 0.44 0.30 1.00 0.34 0.33 0.30 0.35 0.36 0.38  0.35  0.37  0.28  0.34
+ [4,] 0.42 0.36 0.34 1.00 0.29 0.28 0.40 0.36 0.40  0.37  0.35  0.26  0.31
+ [5,] 0.36 0.30 0.33 0.29 1.00 0.34 0.33 0.44 0.40  0.39  0.32  0.32  0.31
+ [6,] 0.29 0.20 0.30 0.28 0.34 1.00 0.26 0.44 0.42  0.41  0.33  0.29  0.28
+ [7,] 0.44 0.49 0.35 0.40 0.33 0.26 1.00 0.36 0.34  0.35  0.34  0.30  0.33
+ [8,] 0.39 0.34 0.36 0.36 0.44 0.44 0.36 1.00 0.48  0.34  0.37  0.29  0.32
+ [9,] 0.37 0.34 0.38 0.40 0.40 0.42 0.34 0.48 1.00  0.42  0.43  0.29  0.34
+[10,] 0.38 0.30 0.35 0.37 0.39 0.41 0.35 0.34 0.42  1.00  0.36  0.26  0.31
+[11,] 0.39 0.37 0.37 0.35 0.32 0.33 0.34 0.37 0.43  0.36  1.00  0.23  0.33
+[12,] 0.34 0.18 0.28 0.26 0.32 0.29 0.30 0.29 0.29  0.26  0.23  1.00  0.35
+[13,] 0.35 0.35 0.34 0.31 0.31 0.28 0.33 0.32 0.34  0.31  0.33  0.35  1.00
+[14,] 0.32 0.23 0.33 0.31 0.32 0.41 0.24 0.41 0.33  0.32  0.30  0.39  0.35
+[15,] 0.42 0.31 0.38 0.41 0.35 0.34 0.33 0.36 0.40  0.35  0.42  0.31  0.38
+[16,] 0.22 0.28 0.31 0.29 0.35 0.34 0.33 0.40 0.30  0.31  0.30  0.26  0.31
+[17,] 0.24 0.26 0.30 0.22 0.29 0.28 0.28 0.30 0.30  0.29  0.27  0.25  0.28
+[18,] 0.28 0.25 0.32 0.29 0.29 0.34 0.27 0.36 0.36  0.33  0.25  0.31  0.29
+[19,] 0.29 0.31 0.26 0.28 0.36 0.29 0.31 0.31 0.33  0.29  0.31  0.29  0.36
+[20,] 0.26 0.24 0.29 0.29 0.30 0.31 0.23 0.37 0.35  0.26  0.39  0.24  0.38
+[21,] 0.36 0.33 0.26 0.30 0.31 0.28 0.39 0.38 0.34  0.27  0.42  0.33  0.30
+[22,] 0.28 0.31 0.27 0.32 0.31 0.32 0.33 0.40 0.38  0.35  0.28  0.29  0.27
+      [,14] [,15] [,16] [,17] [,18] [,19] [,20] [,21] [,22]
+ [1,]  0.32  0.42  0.22  0.24  0.28  0.29  0.26  0.36  0.28
+ [2,]  0.23  0.31  0.28  0.26  0.25  0.31  0.24  0.33  0.31
+ [3,]  0.33  0.38  0.31  0.30  0.32  0.26  0.29  0.26  0.27
+ [4,]  0.31  0.41  0.29  0.22  0.29  0.28  0.29  0.30  0.32
+ [5,]  0.32  0.35  0.35  0.29  0.29  0.36  0.30  0.31  0.31
+ [6,]  0.41  0.34  0.34  0.28  0.34  0.29  0.31  0.28  0.32
+ [7,]  0.24  0.33  0.33  0.28  0.27  0.31  0.23  0.39  0.33
+ [8,]  0.41  0.36  0.40  0.30  0.36  0.31  0.37  0.38  0.40
+ [9,]  0.33  0.40  0.30  0.30  0.36  0.33  0.35  0.34  0.38
+[10,]  0.32  0.35  0.31  0.29  0.33  0.29  0.26  0.27  0.35
+[11,]  0.30  0.42  0.30  0.27  0.25  0.31  0.39  0.42  0.28
+[12,]  0.39  0.31  0.26  0.25  0.31  0.29  0.24  0.33  0.29
+[13,]  0.35  0.38  0.31  0.28  0.29  0.36  0.38  0.30  0.27
+[14,]  1.00  0.40  0.39  0.27  0.37  0.37  0.41  0.40  0.35
+[15,]  0.40  1.00  0.32  0.32  0.36  0.34  0.40  0.37  0.27
+[16,]  0.39  0.32  1.00  0.38  0.27  0.28  0.40  0.30  0.36
+[17,]  0.27  0.32  0.38  1.00  0.30  0.26  0.31  0.26  0.28
+[18,]  0.37  0.36  0.27  0.30  1.00  0.32  0.33  0.30  0.36
+[19,]  0.37  0.34  0.28  0.26  0.32  1.00  0.35  0.41  0.34
+[20,]  0.41  0.40  0.40  0.31  0.33  0.35  1.00  0.33  0.33
+[21,]  0.40  0.37  0.30  0.26  0.30  0.41  0.33  1.00  0.28
+[22,]  0.35  0.27  0.36  0.28  0.36  0.34  0.33  0.28  1.00</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To get a list with both matrices, use index="all":</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="fu">similarity_matrix</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="st">"transect"</span>, <span class="at">index =</span> <span class="st">"all"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Jaccard
+      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
+ [1,] 1.00 0.38 0.44 0.42 0.36 0.29 0.44 0.39 0.37  0.38  0.39  0.34  0.35
+ [2,] 0.38 1.00 0.30 0.36 0.30 0.20 0.49 0.34 0.34  0.30  0.37  0.18  0.35
+ [3,] 0.44 0.30 1.00 0.34 0.33 0.30 0.35 0.36 0.38  0.35  0.37  0.28  0.34
+ [4,] 0.42 0.36 0.34 1.00 0.29 0.28 0.40 0.36 0.40  0.37  0.35  0.26  0.31
+ [5,] 0.36 0.30 0.33 0.29 1.00 0.34 0.33 0.44 0.40  0.39  0.32  0.32  0.31
+ [6,] 0.29 0.20 0.30 0.28 0.34 1.00 0.26 0.44 0.42  0.41  0.33  0.29  0.28
+ [7,] 0.44 0.49 0.35 0.40 0.33 0.26 1.00 0.36 0.34  0.35  0.34  0.30  0.33
+ [8,] 0.39 0.34 0.36 0.36 0.44 0.44 0.36 1.00 0.48  0.34  0.37  0.29  0.32
+ [9,] 0.37 0.34 0.38 0.40 0.40 0.42 0.34 0.48 1.00  0.42  0.43  0.29  0.34
+[10,] 0.38 0.30 0.35 0.37 0.39 0.41 0.35 0.34 0.42  1.00  0.36  0.26  0.31
+[11,] 0.39 0.37 0.37 0.35 0.32 0.33 0.34 0.37 0.43  0.36  1.00  0.23  0.33
+[12,] 0.34 0.18 0.28 0.26 0.32 0.29 0.30 0.29 0.29  0.26  0.23  1.00  0.35
+[13,] 0.35 0.35 0.34 0.31 0.31 0.28 0.33 0.32 0.34  0.31  0.33  0.35  1.00
+[14,] 0.32 0.23 0.33 0.31 0.32 0.41 0.24 0.41 0.33  0.32  0.30  0.39  0.35
+[15,] 0.42 0.31 0.38 0.41 0.35 0.34 0.33 0.36 0.40  0.35  0.42  0.31  0.38
+[16,] 0.22 0.28 0.31 0.29 0.35 0.34 0.33 0.40 0.30  0.31  0.30  0.26  0.31
+[17,] 0.24 0.26 0.30 0.22 0.29 0.28 0.28 0.30 0.30  0.29  0.27  0.25  0.28
+[18,] 0.28 0.25 0.32 0.29 0.29 0.34 0.27 0.36 0.36  0.33  0.25  0.31  0.29
+[19,] 0.29 0.31 0.26 0.28 0.36 0.29 0.31 0.31 0.33  0.29  0.31  0.29  0.36
+[20,] 0.26 0.24 0.29 0.29 0.30 0.31 0.23 0.37 0.35  0.26  0.39  0.24  0.38
+[21,] 0.36 0.33 0.26 0.30 0.31 0.28 0.39 0.38 0.34  0.27  0.42  0.33  0.30
+[22,] 0.28 0.31 0.27 0.32 0.31 0.32 0.33 0.40 0.38  0.35  0.28  0.29  0.27
+      [,14] [,15] [,16] [,17] [,18] [,19] [,20] [,21] [,22]
+ [1,]  0.32  0.42  0.22  0.24  0.28  0.29  0.26  0.36  0.28
+ [2,]  0.23  0.31  0.28  0.26  0.25  0.31  0.24  0.33  0.31
+ [3,]  0.33  0.38  0.31  0.30  0.32  0.26  0.29  0.26  0.27
+ [4,]  0.31  0.41  0.29  0.22  0.29  0.28  0.29  0.30  0.32
+ [5,]  0.32  0.35  0.35  0.29  0.29  0.36  0.30  0.31  0.31
+ [6,]  0.41  0.34  0.34  0.28  0.34  0.29  0.31  0.28  0.32
+ [7,]  0.24  0.33  0.33  0.28  0.27  0.31  0.23  0.39  0.33
+ [8,]  0.41  0.36  0.40  0.30  0.36  0.31  0.37  0.38  0.40
+ [9,]  0.33  0.40  0.30  0.30  0.36  0.33  0.35  0.34  0.38
+[10,]  0.32  0.35  0.31  0.29  0.33  0.29  0.26  0.27  0.35
+[11,]  0.30  0.42  0.30  0.27  0.25  0.31  0.39  0.42  0.28
+[12,]  0.39  0.31  0.26  0.25  0.31  0.29  0.24  0.33  0.29
+[13,]  0.35  0.38  0.31  0.28  0.29  0.36  0.38  0.30  0.27
+[14,]  1.00  0.40  0.39  0.27  0.37  0.37  0.41  0.40  0.35
+[15,]  0.40  1.00  0.32  0.32  0.36  0.34  0.40  0.37  0.27
+[16,]  0.39  0.32  1.00  0.38  0.27  0.28  0.40  0.30  0.36
+[17,]  0.27  0.32  0.38  1.00  0.30  0.26  0.31  0.26  0.28
+[18,]  0.37  0.36  0.27  0.30  1.00  0.32  0.33  0.30  0.36
+[19,]  0.37  0.34  0.28  0.26  0.32  1.00  0.35  0.41  0.34
+[20,]  0.41  0.40  0.40  0.31  0.33  0.35  1.00  0.33  0.33
+[21,]  0.40  0.37  0.30  0.26  0.30  0.41  0.33  1.00  0.28
+[22,]  0.35  0.27  0.36  0.28  0.36  0.34  0.33  0.28  1.00
+
+$Sorensen
+      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
+ [1,] 1.00 0.55 0.61 0.59 0.53 0.45 0.61 0.56 0.54  0.55  0.56  0.51  0.52
+ [2,] 0.55 1.00 0.46 0.53 0.46 0.33 0.66 0.51 0.51  0.46  0.54  0.30  0.51
+ [3,] 0.61 0.46 1.00 0.51 0.49 0.46 0.51 0.53 0.55  0.52  0.54  0.43  0.51
+ [4,] 0.59 0.53 0.51 1.00 0.45 0.44 0.57 0.53 0.57  0.54  0.52  0.41  0.47
+ [5,] 0.53 0.46 0.49 0.45 1.00 0.51 0.50 0.61 0.57  0.56  0.48  0.48  0.47
+ [6,] 0.45 0.33 0.46 0.44 0.51 1.00 0.41 0.61 0.59  0.58  0.49  0.45  0.44
+ [7,] 0.61 0.66 0.51 0.57 0.50 0.41 1.00 0.53 0.51  0.52  0.51  0.46  0.50
+ [8,] 0.56 0.51 0.53 0.53 0.61 0.61 0.53 1.00 0.65  0.51  0.54  0.45  0.48
+ [9,] 0.54 0.51 0.55 0.57 0.57 0.59 0.51 0.65 1.00  0.60  0.60  0.45  0.51
+[10,] 0.55 0.46 0.52 0.54 0.56 0.58 0.52 0.51 0.60  1.00  0.53  0.41  0.47
+[11,] 0.56 0.54 0.54 0.52 0.48 0.49 0.51 0.54 0.60  0.53  1.00  0.37  0.50
+[12,] 0.51 0.30 0.43 0.41 0.48 0.45 0.46 0.45 0.45  0.41  0.37  1.00  0.52
+[13,] 0.52 0.51 0.51 0.47 0.47 0.44 0.50 0.48 0.51  0.47  0.50  0.52  1.00
+[14,] 0.49 0.37 0.50 0.48 0.48 0.58 0.38 0.58 0.49  0.48  0.47  0.56  0.52
+[15,] 0.60 0.48 0.56 0.58 0.52 0.51 0.49 0.53 0.57  0.52  0.59  0.48  0.56
+[16,] 0.36 0.44 0.47 0.45 0.52 0.51 0.50 0.57 0.46  0.47  0.46  0.41  0.47
+[17,] 0.38 0.42 0.46 0.36 0.45 0.43 0.43 0.46 0.46  0.45  0.43  0.40  0.44
+[18,] 0.43 0.40 0.49 0.45 0.46 0.51 0.42 0.53 0.53  0.49  0.40  0.48  0.45
+[19,] 0.45 0.47 0.42 0.44 0.53 0.45 0.47 0.48 0.50  0.44  0.47  0.45  0.53
+[20,] 0.41 0.38 0.45 0.45 0.46 0.47 0.38 0.54 0.52  0.41  0.56  0.39  0.55
+[21,] 0.52 0.49 0.42 0.47 0.47 0.43 0.56 0.55 0.51  0.42  0.60  0.50  0.47
+[22,] 0.43 0.48 0.43 0.49 0.47 0.48 0.50 0.57 0.55  0.52  0.43  0.45  0.43
+      [,14] [,15] [,16] [,17] [,18] [,19] [,20] [,21] [,22]
+ [1,]  0.49  0.60  0.36  0.38  0.43  0.45  0.41  0.52  0.43
+ [2,]  0.37  0.48  0.44  0.42  0.40  0.47  0.38  0.49  0.48
+ [3,]  0.50  0.56  0.47  0.46  0.49  0.42  0.45  0.42  0.43
+ [4,]  0.48  0.58  0.45  0.36  0.45  0.44  0.45  0.47  0.49
+ [5,]  0.48  0.52  0.52  0.45  0.46  0.53  0.46  0.47  0.47
+ [6,]  0.58  0.51  0.51  0.43  0.51  0.45  0.47  0.43  0.48
+ [7,]  0.38  0.49  0.50  0.43  0.42  0.47  0.38  0.56  0.50
+ [8,]  0.58  0.53  0.57  0.46  0.53  0.48  0.54  0.55  0.57
+ [9,]  0.49  0.57  0.46  0.46  0.53  0.50  0.52  0.51  0.55
+[10,]  0.48  0.52  0.47  0.45  0.49  0.44  0.41  0.42  0.52
+[11,]  0.47  0.59  0.46  0.43  0.40  0.47  0.56  0.60  0.43
+[12,]  0.56  0.48  0.41  0.40  0.48  0.45  0.39  0.50  0.45
+[13,]  0.52  0.56  0.47  0.44  0.45  0.53  0.55  0.47  0.43
+[14,]  1.00  0.57  0.57  0.43  0.54  0.54  0.58  0.57  0.52
+[15,]  0.57  1.00  0.49  0.48  0.53  0.51  0.57  0.54  0.42
+[16,]  0.57  0.49  1.00  0.55  0.43  0.44  0.57  0.47  0.53
+[17,]  0.43  0.48  0.55  1.00  0.46  0.41  0.47  0.41  0.44
+[18,]  0.54  0.53  0.43  0.46  1.00  0.48  0.50  0.47  0.53
+[19,]  0.54  0.51  0.44  0.41  0.48  1.00  0.52  0.58  0.51
+[20,]  0.58  0.57  0.57  0.47  0.50  0.52  1.00  0.50  0.50
+[21,]  0.57  0.54  0.47  0.41  0.47  0.58  0.50  1.00  0.44
+[22,]  0.52  0.42  0.53  0.44  0.53  0.51  0.50  0.44  1.00</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># If the data supplied only has 2 levels, a paired comparison is made instead:</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>ex_pair <span class="ot">&lt;-</span> exfm20[exfm20<span class="sc">$</span>transect <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"T01"</span>, <span class="st">"T02"</span>) , ]</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>ex_pair</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,199 × 18
+   cod     transect  tree common.name scientific.name    family   dbh canopy.pos
+   &lt;fct&gt;   &lt;fct&gt;    &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;              &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt;     
+ 1 CAU_A01 T01          2 macucu      Licania guianensis Chrys…  10.3 S         
+ 2 CAU_A01 T01          5 casca seca  Licania canescens  Chrys…  14.6 S         
+ 3 CAU_A01 T01          6 cajuacu     Anacardium spruce… Anaca…  78.8 E         
+ 4 CAU_A01 T01          7 breu branco Protium paniculat… Burse…  14.7 S         
+ 5 CAU_A01 T01          9 breu branco Protium paniculat… Burse…  10.6 E         
+ 6 CAU_A01 T01         10 caramuxi    Pouteria hispida   Sapot…  27.1 C         
+ 7 CAU_A01 T01         12 casca seca  Licania canescens  Chrys…  15.1 E         
+ 8 CAU_A01 T01         13 jatereu     Lecythis idatimon  Lecyt…  16.5 S         
+ 9 CAU_A01 T01         14 jatereu     Lecythis idatimon  Lecyt…  12   S         
+10 CAU_A01 T01         15 parajuba    Manilkara bidenta… Sapot…  38.4 C         
+# ℹ 1,189 more rows
+# ℹ 10 more variables: light &lt;int&gt;, dead &lt;lgl&gt;, Hcom &lt;dbl&gt;, Htot &lt;dbl&gt;,
+#   date &lt;int&gt;, utm.east &lt;dbl&gt;, utm.north &lt;dbl&gt;, vol &lt;dbl&gt;, plot.area &lt;int&gt;,
+#   total.area &lt;int&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">similarity_matrix</span>(ex_pair, <span class="st">"scientific.name"</span>, <span class="st">"transect"</span>, <span class="at">index =</span> <span class="st">"all"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Jaccard
+[1] 0
+
+$Sorensen
+[1] 0</code></pre>
+</div>
+</div>
+</section>
+<section id="to-get-the-aggregation-state-of-species-use-the-species_aggreg-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-get-the-aggregation-state-of-species-use-the-species_aggreg-function">3.6 To get the aggregation state of species, use the <strong>species_aggreg</strong> function:</h5>
+<p><strong>3.6.1. Results interpretation:</strong></p>
+<ul>
+<li><p><strong>Payandeh Index:</strong> A numerical index indicating aggregation, with larger values suggesting more aggregated patterns.</p></li>
+<li><p><strong>Hazen Index:</strong> Similar to Payandeh, it measures clustering or randomness in spatial distribution.</p></li>
+<li><p><strong>Morisita Index:</strong> Values close to 1 suggest a random distribution, while &gt;1 suggests aggregation and &lt;1 indicates uniformity.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"exfm20"</span>)</span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(exfm20)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 18
+  cod   transect  tree common.name scientific.name family   dbh canopy.pos light
+  &lt;fct&gt; &lt;fct&gt;    &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;           &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt;      &lt;int&gt;
+1 CAU_… T01          2 macucu      Licania guiane… Chrys…  10.3 S              2
+2 CAU_… T01          5 casca seca  Licania canesc… Chrys…  14.6 S              2
+3 CAU_… T01          6 cajuacu     Anacardium spr… Anaca…  78.8 E              1
+4 CAU_… T01          7 breu branco Protium panicu… Burse…  14.7 S              2
+5 CAU_… T01          9 breu branco Protium panicu… Burse…  10.6 E              3
+6 CAU_… T01         10 caramuxi    Pouteria hispi… Sapot…  27.1 C              2
+# ℹ 9 more variables: dead &lt;lgl&gt;, Hcom &lt;dbl&gt;, Htot &lt;dbl&gt;, date &lt;int&gt;,
+#   utm.east &lt;dbl&gt;, utm.north &lt;dbl&gt;, vol &lt;dbl&gt;, plot.area &lt;int&gt;,
+#   total.area &lt;int&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the aggregation indexes of species:</span></span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a><span class="fu">species_aggreg</span>(exfm20, <span class="st">"scientific.name"</span>, <span class="st">"transect"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 172 × 7
+   especie               Payandeh Pay.res    Hazen Haz.res      Morisita Mor.res
+   &lt;fct&gt;                    &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;  
+ 1 Abarema cochleata          0.9 Regular      18  Not aggrega…      0   Rare   
+ 2 Abarema jupunba            0.9 Regular      19  Not aggrega…      0   Rare   
+ 3 Abuta grandifolia         16   Aggregated  337. Aggregated       11.9 Aggreg…
+ 4 Aiouea sp.                 9.5 Aggregated  200  Aggregated       10.4 Aggreg…
+ 5 Ambelania acida           10   Aggregated  210  Aggregated       22   Aggreg…
+ 6 Anacardium spruceanum      9.3 Aggregated  195. Aggregated        7.7 Aggreg…
+ 7 Aniba canelilla            9.1 Aggregated  191  Aggregated       18   Aggreg…
+ 8 Aniba parviflora          10   Aggregated  210  Aggregated       22   Aggreg…
+ 9 Annona ambotay             1   Random       21  Not aggrega…      0   Rare   
+10 Annona sp.                 9   Aggregated  190  Aggregated        6.8 Aggreg…
+# ℹ 162 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="to-get-the-bias-of-an-estimator-in-percentage-use-the-bias_per-function" class="level5">
+<h5 class="anchored" data-anchor-id="to-get-the-bias-of-an-estimator-in-percentage-use-the-bias_per-function">3.7 To get the bias of an estimator in percentage, use the bias_per function:</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"exfm11"</span>)</span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(exfm11)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  STRATA  PLOT    TH TH_EST1 TH_EST2 TH_EST3
+  &lt;fct&gt;  &lt;int&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1 2          1  23.8    24.5    23.8    23.8
+2 2          1  23.8    23.2    21.7    21.9
+3 2          1  24.7    24.5    23.8    23.8
+4 2          1  23.3    23.5    22.3    22.4
+5 2          1  24.3    24.5    23.8    23.8
+6 2          1  22.4    23.9    22.8    22.9</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bias of an estimator, given the data frame and quoted variable names:</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bias_per</span>(exfm11, <span class="co">#data frame</span></span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>         <span class="st">"TH"</span>, <span class="co">#Quoted name of the variable representing the observed values in the data frame.</span></span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>         <span class="st">"TH_EST3"</span>) <span class="co">#Quoted name of the variable representing the estimated values in the data frame</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1795328</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bias of an estimator, given the vectors for observed and estimated values:</span></span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bias_per</span>(<span class="at">y =</span> exfm11<span class="sc">$</span>TH, <span class="at">yhat =</span> exfm11<span class="sc">$</span>TH_EST3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1795328</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="maryelas-notes" class="level3">
+<h3 class="anchored" data-anchor-id="maryelas-notes">Maryela’s Notes:</h3>
+<p>These are some of the functions that I personally found useful or interesting, but the package contains many more. I recommend checking out the manual (supplementary material) for more information. It is easy to understand and each feature comes with its explanation of how to use it.</p>
+</section>
+<section id="supplementary-material" class="level3">
+<h3 class="anchored" data-anchor-id="supplementary-material">Supplementary material:</h3>
+<ul>
+<li><p><a href="https://cran.r-project.org/package=forestmangr">https://CRAN.R-project.org/package=forestmangr</a></p></li>
+<li><p>Kershaw, John A., Jr, Ducey, M. J., Beers, T. W., &amp; Husch, B. (2016).&nbsp;<em>Forest Mensuration</em>&nbsp;(Fifth edition.). Wiley. <a href="https://onlinelibrary.wiley.com/doi/book/10.1002/9781118902028">DOI: 10.1002/9781118902028</a></p></li>
+<li><p>Maryela’s Slides: <a href="https://drive.google.com/file/d/1Jz1iy2sxz1SALbIIHA41unalvFAySvpM/view?usp=sharing" class="uri">https://drive.google.com/file/d/1Jz1iy2sxz1SALbIIHA41unalvFAySvpM/view?usp=sharing</a></p></li>
+</ul>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
