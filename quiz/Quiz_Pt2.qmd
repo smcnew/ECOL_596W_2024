@@ -33,38 +33,36 @@ You also have a separate data frame called *brightness.csv* where each row lists
 
 ```{r}
 # Answer 
- 
 
-# Google? y/n
+# Google? N
+
 ```
 
 #### Wrangle your data
 
-You realize that you want to add brightness information onto your main swallows data frame. Join these data frames using nest_id as your key variable. Describe how you would check to make sure this join worked as intended.
+You realize that you want to add brightness information onto your main swallows data frame. Join these data frames using nest_id as your key variable. Describe how you would check to make sure this join worked as intended.undefined
 
 ```{r}
 #Answer
 
-# Google? y/n
+
+# Google? Y
+
 ```
 
 Inspect your combined data frame. Do some sort of quick sanity check on each column to catch any obvious entry errors. Correct as necessary
 
 ```{r}
 # Answer
+# Google N
 
-
-# Google y/n
 ```
 
 Create a new column called prop_fledged that contains the proportion of nestlings that fledged from each nest.
 
 ```{r}
 #Answer
-
-
-
-# Google? y/n
+# Google? yes. extensively. this took me 30 minutes since it wouldn't let me use the tidyverse mutate
 ```
 
 #### Explore the data
@@ -74,25 +72,20 @@ What was the mean proportion of nestlings fledged in each treatment?
 ```{r}
 # Answer 
 
-
-
-# Google? y/n
+# Google?
 ```
 
 Create a plot showing fledging success differences between treatments
 
 ```{r}
-#Answer
+# Answer
+# Google? N
 
-
-# Google? y/n
 ```
 
 Is there any evidence that female brightness influenced fledging success? Create a plot to visually investigate this question.
 
 ```{r}
 #Answer
-
-
-# Google? y/n
+#Google?
 ```
