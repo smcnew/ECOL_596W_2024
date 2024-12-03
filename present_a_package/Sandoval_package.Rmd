@@ -1,0 +1,182 @@
+---
+title: "VCFtools: A Toolkit for Variant Analysis"
+author: "Gena Sandoval"
+date: "2024-12-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## VCFtools Quick Start
+This package allows for variant call format (VCF) file manipulation and statistical analysis (e.g. linkage disequilibrium, allele frequency, Fst).
+
+Article https://pubmed.ncbi.nlm.nih.gov/21653522/
+
+Website https://vcftools.sourceforge.net/
+
+Github page https://github.com/vcftools/vcftools.git
+
+Download page https://vcftools.github.io/downloads.html
+
+Awesome Bioinformatics Resource https://github.com/danielecook/Awesome-Bioinformatics.git
+
+
+## Step 1 Create a new environment
+For the university's HPC system I suggest using micromamba NOT conda.
+Documentation:https://hpcdocs.hpc.arizona.edu/software/popular_software/mamba/#initializing-micromamba
+
+Once micromamba is installed, create an environment with the VCFtools package installed:
+
+micromamba create -n <your_env_name> vcftools
+
+micromamba activate <your_env_name>
+
+## Step 2 Prepare your data
+VCFtools offers a wide range of commands so please make sure that your data is compatible with the commands you would like to run.
+For example, an invariant vcf is required to obtain pairwise heterozygosity.
+
+## Step 3 Run VCFtools
+You can run each command individually in an interactive environment on the HPC or you can set up multiple commands in a single bash script (recommended).
+
+<details>
+<summary>Click to view an example of a bash script that can be used to submit a slurm job to the HPC:</summary>
+
+###
+
+#!/bin/bash
+
+### Set account and partition
+
+#SBATCH --qos=your_qos
+#SBATCH --job-name=VCFtools_summary statistics
+
+#SBATCH --output=%x-%j.out
+
+#SBATCH --account=your_account
+
+#SBATCH --mail-type=ALL
+
+#SBATCH --mail-user=your_email@arizona.edu
+
+#SBATCH --partition=standard
+
+### Allocate time and memory
+
+#SBATCH --ntasks=24
+
+#SBATCH --nodes=1
+
+#SBATCH --ntasks-per-node=24
+
+#SBATCH --mem=64gb
+
+#SBATCH --time=2:00:00
+
+### Load micromamba environment
+
+module load micromamba
+
+micromamba activate your_env_name
+
+module load vcftools 
+
+### Set pathways
+
+cd your_directory
+
+output=your_pathway
+
+vcf=your_pathway
+
+### Select and run VCFtools commands
+
+#Calculate π (nucleotide diversity) in sliding windows of 10,000 sites
+
+vcftools --vcf $vcf --window-pi 10000 --out $output/sliding
+
+###
+
+#Calculate nucleotide diversity (π) for each site in the VCF file
+
+vcftools --vcf $vcf --site-pi --out $output/per_site
+
+###
+
+#Calculate allele frequencies
+
+vcftools --vcf $vcf --freq --out $output/allele_frequencies
+
+###
+
+#Filter allele frequencies by minimum mean depth (DP >= 2)
+
+vcftools --vcf $vcf --min-meanDP 2 --freq --out $output/filtered_allele_frequencies
+
+###
+
+#Filter allele frequencies by per-sample depth filter: (DP >= 2)
+
+vcftools --vcf $vcf --minDP 2 --freq --out $output/filtered_allele_frequencies
+
+###
+
+#Calculate Tajima’s D in windows accross the genome
+
+vcftools --vcf $vcf --TajimaD 10000 --out $output/all_samples
+
+###
+
+#Calculate genome-wide nucleotide diversity (π)
+
+awk 'NR > 1 {split($5, alleles, ":"); freq1 = alleles[2]; maf = (freq1 < 0.5 ? freq1 : 1 - freq1); pi = 2 * maf * (1 - maf); sum += pi; count++} 
+     END {if (count > 0) print "Genome-wide π: ", sum/count; else print "No data"}' $output/allele_frequencies.frq > $output/filtered_genome-wide_pi_output.txt
+     
+###
+
+#Calculate observed heterozygosity (F)
+
+vcftools --vcf $vcf --het --out $output/observed_heterozygosity
+
+###
+
+###FST
+
+vcftools --vcf $vcf --weir-fst-pop populations.txt --out fst_output
+
+###
+
+exit
+
+<summary>Congrats! Now you know a great tool that can be used to obtain basic summary statistics from your variant files. Each command follows a simple structure, doing the heavy lifting and parsing for you. Plus the documentation is great at explaining what each command does. Hope this helps!</summary>
+</details>
+
+### Step 4 Bonus! Visualization in R 
+You can use the outputs generated (e.g., sliding window π, FST, or allele frequencies) for visualization in R. Use libraries like ggplot2 or matplotlib to create informative plots.
+
+<details>
+<summary>Click to view example code for plotting in R:</summary>
+#Install packages
+
+install.packages("ggplot2")
+
+library(ggplot2)
+
+#Ex. Plotting sliding window pairwise heterozygosity (π)
+
+pi_data <- read.table("sliding.pi", header = TRUE)
+ggplot(pi_data, aes(x = Window_Start, y = Pi)) +
+  geom_line() +
+  theme_minimal() +
+  labs(title = "Nucleotide Diversity (π)", x = "Genome Position", y = "Diversity (π)")
+</details>
+  
+### VCFtools for the win!
+
+###
+
+
+
+
+
