@@ -1,0 +1,116 @@
+---
+title: "Quiz 1: Part 2"
+format: html
+editor: visual
+embed-resources: true
+---
+
+\## Part 2: Coding in action
+
+\### Instructions
+
+Please answer these questions in R using whatever syntax makes sense to you. Feel free to use the R help pages and/or notes from class.
+
+**If you use Google or ChatGPT etc. to help you get to an answer, please note so on your answer**
+
+Submit your answers as an html file. Name it "lastname_quiz1.html". Two submission options:\
+1. Email to mcnew\@arizona.edu 2. Create a branch in your forked-and-cloned class repo. Add the html file to the student_contributions/ folder. Submit a pull request to Sabrina (extra credit).
+
+```{r, message = F}
+# load packages and data
+library(dslabs)
+library(dplyr)
+```
+
+#### Load your data:
+
+Load the *swallows.csv* into R, call it swallows. This data frame lists results of an experiment on tree swallows. Each row is a nest. Nests were put into one of two **treatments**: simulated predation (predator), or control (control). Along with treatment you have the following columns:\
+**nest_fate** = whether the nest fledged any young or whether they all died\
+**brood** = number of nestlings\
+**n_fledged** = number of nestlings that fledged.
+
+You also have a separate data frame called *brightness.csv* where each row lists the plumage brightness (a sexual signal) for the female at each nest. Load this one up too.
+
+```{r}
+# Answer
+swallows <- read.csv('../quiz/swallows.csv')
+brightness <- read.csv('../quiz/brightness.csv')
+
+# Google? y/n [n]
+```
+
+#### Wrangle your data
+
+You realize that you want to add brightness information onto your main swallows data frame. Join these data frames using nest_id as your key variable. Describe how you would check to make sure this join worked as intended.
+
+```{r}
+#Answer
+
+bright_swa <- merge(swallows, brightness, by='nestbox')
+
+# Google? y/n [y]
+```
+
+Inspect your combined data frame. Do some sort of quick sanity check on each column to catch any obvious entry errors. Correct as necessary
+
+```{r}
+# Answer
+
+bright_swa <- na.omit(bright_swa)
+
+# Google y/n [n]
+```
+
+Create a new column called prop_fledged that contains the proportion of nestlings that fledged from each nest.
+
+```{r}
+#Answer
+
+bright_swa <- bright_swa %>%
+  mutate(prop_fledged = n_fledged/brood) %>%
+  mutate_all(~replace(., is.nan(.), 0))
+
+
+# Google? y/n [y for dropping NaNs]
+```
+
+#### Explore the data
+
+What was the mean proportion of nestlings fledged in each treatment?
+
+```{r}
+# Answer
+
+bright_swa %>%
+  group_by(treatment) %>%
+  summarize(average = mean(prop_fledged))
+
+# Google? y/n [n]
+```
+
+Create a plot showing fledging success differences between treatments
+
+```{r}
+#Answer
+
+library(ggplot2)
+fledg_plot <- bright_swa %>%
+  ggplot(aes(treatment, prop_fledged)) +
+  geom_violin()
+fledg_plot
+# Google? y/n [n]
+```
+
+Is there any evidence that female brightness influenced fledging success? Create a plot to visually investigate this question.
+
+```{r}
+#Answer
+# There seems to be no relationhsip between brightness and fledging success.The
+# graph depicts no discernable impact of brightness on fledging success.
+
+bright_plot <- bright_swa %>%
+  ggplot(aes(brightness, prop_fledged, color = treatment)) +
+  geom_jitter()
+bright_plot
+# Google? y/n [n]
+```

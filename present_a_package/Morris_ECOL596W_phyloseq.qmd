@@ -1,0 +1,130 @@
+---
+title: "Morris_ECOL596W_phyloseq"
+format: html
+editor: visual
+---
+
+# Package Presentation: phyloseq
+
+## Quick Start Guide for microbiome work
+
+By: Natalie Morris, referencing the [phyloseq vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/phyloseq/inst/doc/phyloseq-analysis.html) and code from Dr. Jenn Houtz
+
+### Import data from Qiime2 and merge into a phyloseq object
+
+#### Library packages
+
+```{r}
+# install phyloseq
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("phyloseq")
+
+# library packages
+library(phyloseq)
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+```
+
+#### Import data into R
+
+```{r}
+
+#ASV table
+unrarefied_ASV_table <- read.csv ("geo_unrarefied_ASV_table.csv", row.names=1) #read in asv table with feature names as rownames
+str (unrarefied_ASV_table) # X obs. of Y variables
+head (unrarefied_ASV_table)
+unrarefied_ASV_table <- as.matrix (unrarefied_ASV_table) #make into a matrix
+
+#taxonomy file
+taxonomy <- read.csv ("taxonomy.csv", row.names=1)
+taxonomy <- separate(taxonomy, Taxon, c("Kingdom","Phylum","Class","Order","Family","Genus","Species"), sep="; ")
+str (taxonomy) # X obs. of  7 variables
+taxonomy <- as.matrix (taxonomy)
+
+#read in tree as a phyloseq object
+phy_tree <- read_tree ("tree.nwk")
+
+#read in metadata file
+metadatafull <- read.csv("metadata_rs_njm.csv") 
+str(metadatafull)  # check sample number
+row.names(metadatafull)<-metadatafull$microbiome_sample_nb
+
+#import all as phyloseq objects
+ASV <- otu_table(unrarefied_ASV_table, taxa_are_rows = TRUE)
+TAX <- tax_table(taxonomy)
+META <- sample_data(metadatafull)
+
+```
+
+#### Merge into a phyloseq object
+
+```{r}
+  rs_phylo <- phyloseq(ASV, TAX, META, phy_tree)
+  rs_phylo
+```
+
+### Remove any taxa not present in at least one sample
+
+```{r}
+rs_phylo <- prune_taxa(taxa_sums(rs_phylo) > 0, rs_phylo)
+```
+
+### Plotting using phyloseq
+
+#### Calculate and plot alpha diversity
+
+```{r}
+alpha = c("Observed", "Chao1", "ACE", "Shannon", "Simpson", "InvSimpson")
+p <- plot_richness(rs_phylo, "rep_status", "mast.x", measures=alpha)
+p 
+```
+
+#### Plot a phylogenetic tree (subset)
+
+```{r}
+rs.b <- subset_taxa(rs_phylo, Order=="Bifidobacteriales")
+plot_tree(rs.b, color="rep_status", shape="mast.x", label.tips="Genus", size="Abundance")
+
+```
+
+#### Create a bar plot of the top (N) taxa
+
+```{r}
+par(mar = c(10, 4, 4, 2) + 0.1) # make more room on bottom margin
+N <- 30
+barplot(sort(taxa_sums(rs_phylo), TRUE)[1:N]/nsamples(rs_phylo), las=2)
+```
+
+#### Create a heat map of specific taxa
+
+```{r}
+gpac <- subset_taxa(rs_phylo, Phylum=="Firmicutes")
+(p <- plot_heatmap(gpac, "NMDS", "bray", "rep_status", "Family"))
+plot_heatmap(gpac)
+```
+
+#### Plot a network to look at the connectedness of samples
+
+```{r}
+plot_net(rs_phylo, maxdist=0.4, color="rep_status", shape="mast.x")
+```
+
+#### Create a PCA plot to show sample similarity
+
+```{r}
+library(ggforce)
+
+ordu = ordinate(rs_phylo, "PCoA", "bray", weighted=FALSE)
+P <- plot_ordination(rs_phylo, ordu, color="rep_status")
+pca_bray <- P + geom_point(alpha=0.5) + #alpha controls transparency and helps when points are overlapping
+  theme_bw() +
+  theme(text = element_text(size = 14), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  geom_mark_ellipse(aes(color = rep_status,
+                        label= rep_status),
+                    expand = unit(0.5,"mm"))
+
+pca_bray
+```
