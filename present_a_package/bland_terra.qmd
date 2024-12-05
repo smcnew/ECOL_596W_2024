@@ -1,0 +1,186 @@
+---
+title: "Terra"
+author: "Tanner Bland"
+format: html
+editor: visual
+---
+
+## Present-a-Package: terra
+
+[Terra](https://github.com/rspatial/terra "Rspatial: Terra | GitHub") is a daughter package within the [rspatial](https://github.com/rspatial "Rspatial | GitHub") family. This package includes several (pretty awesome) tools for interpreting and manipulating spatial data. Terra is designed to assist in the manipulation, creation, and analysis of spatial datasets known as rasters.
+
+Rasters are depicted as grids on a coordinate plane, with coordinate values mapped to unique value(s). The simplest raster would be an empty grid, while a more complex raster would have coordinate data; and even more complex, coordinates mapped to specimen metadata, or a prediction value from a model. Values mapped to coordinates are depicted as colors, typically with warmer, more saturated colors representing more significant values.
+
+Rasters are utilized in biology to study spatial data, particularly for occcurrence and bioclimatic data. By comparing the rates of presence and absence between pixels in a raster, we can predict the likelihood of a species occurring in any other grid space.
+
+[Geodata](https://github.com/rspatial/geodata "Rspatial: Geodata | GitHub") is another daughter package in the rspatial family, used for accessing and downloading various geographic data from public databases (e.g.: GBIF, WorldClim, etc.). This includes species occurrences, elevation, soil type, crop cover/species, human population density, administrative boundaries, etc. This works really well with terra for developing models.
+
+Terra allows you to develop models that can predict species presence. There are various options for analysis, including generalized linear models, principle component analysis, Random Forest, and several other spatial modeling strategies.
+
+```{r}
+library(terra)
+library(geodata)
+library(fields)
+library(predicts)
+```
+
+Let's plot some rasters using some example files that we get with terra. We will also download a set of bioclimatic variables to make a model down the road. This is based on the [rspatial](https://rspatial.org) vignettes, and a spatial modeling tutorial by [Jeff C. Oliver](https://jcoliver.github.io/learn-r/011-species-distribution-models.html).
+
+```{r}
+#read in raster 'meuse.tif'
+filename <- system.file("ex/meuse.tif", package = 'terra')
+r <- rast(filename)
+plot(r, main = 'SpatRaster from file')
+```
+
+We can use any raster file we'd like, as long as we have a set of coordinates and values assigned to those coordinates, the possibilities are endless!
+
+Example with map:
+
+```{r}
+r <-rast(system.file("ex/meuse.tif", package="terra"))
+ra <- aggregate(r, 10)
+xy <- data.frame(xyFromCell(ra, 1:ncell(ra)))
+v <- values(ra)
+tps <- Tps(xy, v)
+x <- rast(r)
+
+# use thin plate spline (TPS) interpolation model to predict values at all locations
+p <- interpolate(x, tps)
+p <- mask(p, r)
+plot(p)
+```
+
+Example with R logo:
+
+```{r}
+#load in logo file
+logo <- rast(system.file("ex/logo.tif", package="terra"))
+
+#assign nonsense predictor data (based on color)
+names(logo) <- c("red", "green", "blue")
+p <- matrix(c(48, 48, 48, 53, 50, 46, 54, 70, 84, 85, 74, 84, 95, 85,
+   66, 42, 26, 4, 19, 17, 7, 14, 26, 29, 39, 45, 51, 56, 46, 38, 31,
+   22, 34, 60, 70, 73, 63, 46, 43, 28), ncol=2)
+a <- matrix(c(22, 33, 64, 85, 92, 94, 59, 27, 30, 64, 60, 33, 31, 9,
+   99, 67, 15, 5, 4, 30, 8, 37, 42, 27, 19, 69, 60, 73, 3, 5, 21,
+   37, 52, 70, 74, 9, 13, 4, 17, 47), ncol=2)
+xy <- rbind(cbind(1, p), cbind(0, a))
+
+# extract predictor values for points
+e <- extract(logo, xy[,2:3])
+
+# combine with response
+v <- data.frame(cbind(pa=xy[,1], e))
+
+#build a model, here with glm
+model <- glm(formula=pa~., data=v)
+
+#predict to a raster
+r1 <- predict(logo, model)
+plot(r1)
+points(p, bg='blue', pch=21)
+points(a, bg='red', pch=21) 
+```
+
+Finally, let's try downloading some data from [WorldClim](https://worldclim.org/ "WorldClim") and [GBIF](https://www.gbif.org/ "GBIF") to develop a real-life model.
+
+```{r}
+#create a directory to house climatic data
+dir.create(path = 'occ_data')
+
+#download data using the worldclim_global function
+bioclim_data <- worldclim_global(var = 'bio',
+                                 res = 2.5,
+                                 path = 'data/')
+
+#download GBIF records using the sp_occurrence function
+p_minima_occ <- sp_occurrence('Perdita', 'minima', removeZeros=TRUE, ntries=5, nrecs=300)
+
+#find and save geographic extent of coordinates to crop our global climate data to the area of interest
+max_lat <- ceiling(max(p_minima_occ$lat))
+min_lat <- floor(min(p_minima_occ$lat))
+max_lon <- ceiling(max(p_minima_occ$lon))
+min_lon <- floor(min(p_minima_occ$lon))
+
+geographic_extent <- ext(x = c(min_lon, max_lon, min_lat, max_lat))
+```
+
+Now lets get our data ready for our model. First, we will need to generate a background of randomly sampled points as a baseline for where we don't think we'd find a species.
+
+```{r}
+#crop the size of the bioclim raster to match the region surrounding the occurrences
+sample_extent <- geographic_extent * 1.25
+
+#crop bioclim_data
+bioclim_data <- crop(x = bioclim_data, y = sample_extent)
+
+plot(bioclim_data[[1]])
+```
+
+```{r}
+#create background that is a random sample of points within the range of the bioclim data; this will be used to model absence, a method known as pseudoabsence estimation
+
+#this serves as a baseline for occurrence
+background <- spatSample(x = bioclim_data,
+                             size = 1000,
+                             values = FALSE,
+                             na.rm = TRUE,
+                             xy = TRUE)
+
+#parse the occurrence data from our GBIF data
+presence <- p_minima_occ[, c('lon', 'lat')]
+
+#add a column that specifies a presence value of 1 (present) or 0 (absent) for modelling later
+presence$pa <- 1
+
+#create our absence data 
+absence <- as.data.frame(background)
+colnames(absence) <- c('lon', 'lat')
+absence$pa <- 0
+
+#finish creating our datasets
+all_points <- rbind(presence, absence)
+
+#finally add climate data to points
+bioclim_extract <- extract(x = bioclim_data,
+                           y = all_points[, c("lon", "lat")],
+                           ID = FALSE)
+
+#add the point and climate datasets together
+points_climate <- cbind(all_points, bioclim_extract)
+
+#identify columns that are latitude & longitude
+drop_cols <- which(colnames(points_climate) %in% c("lon", "lat"))
+
+#remove the geographic coordinates from the data frame
+points_climate <- points_climate[, -drop_cols]
+```
+
+Finally, let's gather our testing data and build a model!
+
+```{r}
+#create a fold vector to tell the program how to interpret presence and climate data together
+fold <- folds(x = points_climate,
+              k = 5,
+              by = points_climate$pa)
+
+testing <- points_climate[fold == 1, ]
+training <- points_climate[fold != 1, ]
+
+#let's build our model!
+glm_model <- glm(pa ~ ., data = training, family = binomial())
+
+#get predicted values from the model
+glm_predict <- predict(bioclim_data, glm_model, type = "response")
+
+#print predicted values
+plot(glm_predict)
+
+#...and let's also print some stats
+glm_eval <- pa_evaluate(p = testing[testing$pa == 1, ],
+                        a = testing[testing$pa == 0, ],
+                        model = glm_model,
+                        type = "response")
+glm_eval@stats
+```
