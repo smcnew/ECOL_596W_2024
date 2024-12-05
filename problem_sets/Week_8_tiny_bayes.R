@@ -4,13 +4,13 @@
 # What proportion p of a planet's surface is water?
 # Toss a globe 12 times, what do you find?
 water <- 7
-land <- 5
+land <- 4
 total_toss <- water + land
 
 
 # dbinom will give us the probability
 # of seeing W waters for any hypothesized p
-dbinom(water, size = total_toss, prob = 0.8)
+dbinom(water, size = total_toss, prob = 0.63)
 
 # Let's say we have no idea how much water on earth there is, so we'd like to
 # simulate a range of possibilities ranging from p = 0 (all land) to p = 1 (all water)

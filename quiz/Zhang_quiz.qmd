@@ -1,5 +1,5 @@
 ---
-title: "Quiz 1: Part 2"
+title: "Zhang Quiz 1: Part 2"
 format: html
 editor: visual
 embed-resources: true
@@ -32,14 +32,22 @@ Load the *swallows.csv* into R, call it swallows. This data frame lists results 
 
 You also have a separate data frame called *brightness.csv* where each row lists the plumage brightness (a sexual signal) for the female at each nest. Load this one up too.
 
-```{r}
-# Answer 
- swallows<-read.csv("swallows.csv", header = TRUE)
- brightness<-read.csv("brightness.csv", header = TRUE)
+1.  <div>
 
-# Google? y/n
- n
-```
+    1.  <div>
+
+        ```{r}
+        # Answer 
+         swallows<-read.csv("swallows.csv", header = TRUE)
+         brightness<-read.csv("brightness.csv", header = TRUE)
+
+        # Google? y/n
+         #n
+        ```
+
+        </div>
+
+    </div>
 
 #### Wrangle your data
 
@@ -50,7 +58,7 @@ You realize that you want to add brightness information onto your main swallows 
 comb_data <- swallows %>%
   left_join(brightness, by = "nestbox")
 # Google? y/n
-n
+#n
 ```
 
 Inspect your combined data frame. Do some sort of quick sanity check on each column to catch any obvious entry errors. Correct as necessary
@@ -75,7 +83,7 @@ comb_new2 <- comb_new %>%
   mutate(prop_fledged = ifelse(brood>0, n_fledged/brood, NA))
 
 # Google? y/n
-n
+#n
 ```
 
 #### Explore the data
@@ -90,7 +98,7 @@ comb_new2 %>%
 
 
 # Google? y/n
-y
+#y
 ```
 
 Create a plot showing fledging success differences between treatments
@@ -103,7 +111,7 @@ ggplot(comb_new2, aes(x = treatment, y = prop_fledged)) +
        title = "fledging success differences between treatments")
 
 # Google? y/n
-n
+#n
 ```
 
 Is there any evidence that female brightness influenced fledging success? Create a plot to visually investigate this question.
@@ -113,13 +121,12 @@ Is there any evidence that female brightness influenced fledging success? Create
 # Convert a column to numeric
 comb_new2$brightness<- as.numeric(comb_new2$brightness)
 
-correlation <- cor.test(x = brightness, y = prop_fledged, method = "pearson")
-print(correlation)
+
 
 ggplot(data.frame(comb_new2), aes(x = brightness, y = prop_fledged)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE)
 
 # Google? y/n
-n
+#n
 ```
