@@ -1,0 +1,52 @@
+---
+title: "CalvoAlcaniz_Esquisse"
+author: "Emiliano-CalvoAlcaniz"
+date: "2024-12-02"
+output: html_document
+---
+
+## Esquisse - A Data Visualization Package
+
+Esquisse is a package used to do (relatively basic) data visualization when messing around with a new dataset. You can fiddle with the X and Y variables, color breakdown, names, etc of the graph. You can then get an output that will recreate the plot in ggplot2. Here is a link to the github page: <https://dreamrs.github.io/esquisse/>.
+
+Here is a link to the vignette page: <https://cran.r-project.org/web/packages/esquisse/vignettes/get-started.html>.
+
+First step is to install and load in the package. If you are going to output something with ggplot2, you'll probably want to load that in as well:
+
+```{r}
+install.packages("esquisse")
+install.packages("ggplot2")
+
+library(esquisse)
+library(ggplot2)
+
+```
+
+### Running Esquisse
+
+Getting the GUI to come up is very easy, you simply run the esquisser() function with the dataset you're interested in.
+
+For instance, if you wanted to mess with the iris dataset that I used in my presentation:
+
+```{r}
+esquisse::esquisser(iris)
+```
+
+I have found that it always gives me an error saying "there is no package called 'plotly'" but it doesn't seem to actually affect anything, so I would ignore it.
+
+This will open up the GUI, which you can then mess with. That's basically the extent of the coding you do with this package, the rest is dragging and dropping variables in the menu.
+
+Once you finish messing around, you can copy the code (bottom right button) and it'll give you an output. For example, this is the output I got using that iris dataset:
+
+```{r}
+ggplot(iris) +
+  aes(
+    x = Sepal.Length,
+    y = Petal.Length,
+    colour = Species,
+    size = Petal.Width
+  ) +
+  geom_point() +
+  scale_color_hue(direction = 1) +
+  theme_minimal()
+```

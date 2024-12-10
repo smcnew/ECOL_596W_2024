@@ -1,0 +1,134 @@
+---
+title: "Quiz 1: Part 2"
+format: html
+editor: visual
+embed-resources: true
+---
+
+## Part 2: Coding in action
+
+### Instructions
+
+Please answer these questions in R using whatever syntax makes sense to you. Feel free to use the R help pages and/or notes from class.
+
+**If you use Google or ChatGPT etc. to help you get to an answer, please note so on your answer**
+
+Submit your answers as an html file. Name it "lastname_quiz1.html". Two submission options:\
+1. Email to mcnew\@arizona.edu 2. Create a branch in your forked-and-cloned class repo. Add the html file to the student_contributions/ folder. Submit a pull request to Sabrina (extra credit).
+
+```{r, message = F}
+# load packages and data 
+library(dslabs)
+library(dplyr)
+library(ggplot2)
+```
+
+#### Load your data:
+
+Load the *swallows.csv* into R, call it swallows. This data frame lists results of an experiment on tree swallows. Each row is a nest. Nests were put into one of two **treatments**: simulated predation (predator), or control (control). Along with treatment you have the following columns:\
+**nest_fate** = whether the nest fledged any young or whether they all died\
+**brood** = number of nestlings\
+**n_fledged** = number of nestlings that fledged.
+
+You also have a separate data frame called *brightness.csv* where each row lists the plumage brightness (a sexual signal) for the female at each nest. Load this one up too.
+
+### SMM note: For your data to be reproducible, you should include code that shows exactly what you did and allows the reader to run the same analysis that you did. I'm going to add in code here to show you what that would look like. Note, "rendering" the document produces a nicely formatted html document that a reader can open in their browser and see the code step by step
+
+```{r}
+# Answer
+#I used the "open data" function on R 
+
+# Let's do this in code rather than the GUI for reproducibility 
+swallows <- read.csv("../quiz/swallows.csv")  
+brightness <- read.csv("../quiz/brightness.csv")
+
+
+```
+
+#### Wrangle your data
+
+You realize that you want to add brightness information onto your main swallows data frame. Join these data frames using nest_id as your key variable. Describe how you would check to make sure this join worked as intended.undefined
+
+```{r}
+#Answer
+
+total <- merge(brightness, swallows, by="nestbox")
+
+# How I checked the dataframe 
+View(total)
+
+# Used google? y/n?
+```
+
+Inspect your combined data frame. Do some sort of quick sanity check on each column to catch any obvious entry errors. Correct as necessary
+
+```{r}
+# Meredith answer this question
+```
+
+Create a new column called prop_fledged that contains the proportion of nestlings that fledged from each nest.
+
+```{r}
+#Answer
+
+total$prop_fledged <- with(total, brood / n_fledged) 
+#I then tidied it up by removing the Na and replacing INF with SMM...?)
+
+# Google? yes. extensively. this took me 30 minutes since it wouldn't let me use the tidyverse mutate
+```
+
+#### Explore the data
+
+What was the mean proportion of nestlings fledged in each treatment?
+
+### SMM note: please answer this programmatically, and report the mean prop per treatment.
+
+```{r}
+# Answer 
+
+#the mean proportion of nestlings fledged was 1.484
+
+#I used summary(total) to get the different stats for each column, had to rename as "View(na.omit(total))" 
+
+# Google? not this time!
+```
+
+Create a plot showing fledging success differences between treatments
+
+### SMM note:  I went ahead and cleaned this up for you, it runs now. 
+
+```{r}
+#Answer
+
+#ggplot(na.omit(total))
+ggplot(data = na.omit(total), mapping = aes(treatment, n_fledged))
+ggplot() +
+ geom_point(mapping = aes(x = treatment, y = n_fledged), data = na.omit(total )) +
+     geom_point(
+         mapping = aes(x = treatment, y = n_fledged), data = na.omit(total),
+         colour = 'red', size = 3
+     )
+ 
+# Google? no!
+```
+
+Is there any evidence that female brightness influenced fledging success? Create a plot to visually investigate this question.
+
+### SMM note: go ahead and clean up this code so that it renders correctly. 
+
+```{r}
+#Answer
+
+#Female brightness seems to matter on both ends: darker females and lighter females along the spectrum will have more chicks that fledge, but females in the middle will see a decrease in the number of chicks successfully fledged 
+
+#first I made a scatterplot using this: ggplot() +
+#+     geom_point(mapping = aes(x = brightness, y = n_fledged), data = na.omit(total)) +
+#+     geom_point(
+#+         mapping = aes(x = brightness, y = n_fledged), data = na.omit(total),
+#+         colour = 'red', size = 3
+
+#Then I added a trend line to see if it mattered by doing this: ggplot(na.omit(total), aes(x=brightness, y=n_fledged)) + geom_point() + geom_smooth()
+
+
+# Google? yes, so much!
+```

@@ -1,0 +1,102 @@
+---
+title: "Quiz 1: Part 2"
+format: html
+editor: visual
+embed-resources: true
+---
+
+## Part 2: Coding in action
+
+### Instructions
+
+Please answer these questions in R using whatever syntax makes sense to you. Feel free to use the R help pages and/or notes from class.
+
+**If you use Google or ChatGPT etc. to help you get to an answer, please note so on your answer**
+
+Submit your answers as an html file. Name it "lastname_quiz1.html". Two submission options:\
+1. Email to mcnew\@arizona.edu 2. Create a branch in your forked-and-cloned class repo. Add the html file to the student_contributions/ folder. Submit a pull request to Sabrina (extra credit).
+
+```{r, message = F}
+# load packages and data 
+library(dslabs)
+library(dplyr)
+library(ggplot2)
+```
+
+#### Load your data:
+
+Load the *swallows.csv* into R, call it swallows. This data frame lists results of an experiment on tree swallows. Each row is a nest. Nests were put into one of two **treatments**: simulated predation (predator), or control (control). Along with treatment you have the following columns:\
+**nest_fate** = whether the nest fledged any young or whether they all died\
+**brood** = number of nestlings\
+**n_fledged** = number of nestlings that fledged.
+
+You also have a separate data frame called *brightness.csv* where each row lists the plumage brightness (a sexual signal) for the female at each nest. Load this one up too.
+
+```{r}
+# Answer 
+brightness <- read.csv("../quiz/brightness.csv")
+swallows <- read.csv("../quiz/swallows.csv")
+
+# Google? n
+```
+
+#### Wrangle your data
+
+You realize that you want to add brightness information onto your main swallows data frame. Join these data frames using nest_id as your key variable. Describe how you would check to make sure this join worked as intended.
+
+```{r}
+#Answer
+birds <- merge(brightness, swallows)
+# Google? y
+```
+
+Inspect your combined data frame. Do some sort of quick sanity check on each column to catch any obvious entry errors. Correct as necessary
+
+```{r}
+# Answer
+str(birds)
+head(birds)
+
+# Google n
+```
+
+Create a new column called prop_fledged that contains the proportion of nestlings that fledged from each nest.
+
+```{r}
+#Answer
+prop_fledged <- mutate(birds, rate = n_fledged/brood*100)
+
+
+# Google? n
+```
+
+#### Explore the data
+
+What was the mean proportion of nestlings fledged in each treatment?
+
+```{r}
+# Answer 
+mean(prop_fledged$rate, na= TRUE)
+
+
+# Google? y
+```
+
+Create a plot showing fledging success differences between treatments
+
+```{r}
+#Answer
+num_treatment<- as.numeric(birds$treatment)
+prop_fledged |> ggplot() + geom_point(aes(num_treatment, prop_fledged$rate))
+
+# Google? y
+```
+
+Is there any evidence that female brightness influenced fledging success? Create a plot to visually investigate this question.
+
+```{r}
+#Answer
+#No, there is no evidence
+birds |> ggplot() + geom_point(aes(brightness, prop_fledged$rate))
+# Google? n
+```
