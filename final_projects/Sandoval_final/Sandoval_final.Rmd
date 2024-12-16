@@ -1,0 +1,405 @@
+---
+title: "Final Project"
+author: "Gena Sandoval"
+date: "12-17-2024"
+output: html_document
+---
+
+## Bat Species Diversity Analysis
+
+#### Revealing trends of bat species diversity and numbers in select roosting areas of Tucson, AZ.
+
+### Data set
+Data: https://github.com/GenaSandoval/Sandoval_ECOL596W_final.git/datasets/raw_bat_collection_data_2024.csv
+
+Note: 
+
+terms_key.csv is a simple text file explaining the abbreviated terms found in the metadata file.
+
+site_info.csv gives details on the type of habitat each site is and their disturbance level based on human activity and natural event occurrences.
+
+### Main Question
+How do environmental variables (e.g., habitat type, disturbance levels) influence bat species diversity and abundance across different roosting sites in Tucson, AZ?
+
+### Experimental design
+#### Study: 
+Our study focus is on genomic adaptation in Myotis bats but our sampling efforts are focused on previously recorded bat roosting sites in Tucson, AZ, which vary in habitat type and disturbance levels. These sites were selected based on their accessibility, and their believed presence of specific bat species.
+
+#### Data Collection: 
+The data comes from fieldwork conducted at various roosting sites, with additional information provided in accompanying metadata files (e.g., site_info.csv, terms_key.csv). Bats were captured at each site through mist netting above a body of water. The main data set includes categories such as location, date, and species counts. Trait measurements is limited to our study species of Myotis mainly due to time restraints and efficiency of processing. We have also recorded associated environmental variables for each site and made note of the possible disturbance of human activity.
+
+#### Variables:
+Species Diversity: Number of species observed at each site (species richness).
+Environmental Variables: Habitat type (e.g., urban, desert, riparian), disturbance level (e.g., human activity, natural events), and GPS coordinates (latitude and longitude) for each site.
+
+#### Statistical Methods: 
+Species diversity will be correlated with environmental variables through various methods, including:
+
+Canonical Correspondence Analysis (CCA) to examine the relationship between species composition and environmental factors.
+Principal Component Analysis (PCA) for dimensionality reduction.
+Linear models to predict species count based on environmental variables.
+Control Variables: Disturbance level and habitat type will be treated as independent variables to assess their influence on species diversity, while controlling for other factors such as location.
+
+#### Experimental limitations
+Disclaimer: This data set was not intentionally created for this type of project. The data comes from our field records of every bat we caught within the 2024 sampling season. These records are typically transformed into generalized counts of how many individuals of a species was caught in a specific jurisdiction for government agency data reports. Data in some columns are limited as we are only required to report a minimum of the location and species for each individual captured but we try to record the age, sex, reproductive status, and time for each individual as well. The number of sites is also limited as we are restricted to local roosts based on our permits. Overall, this data set is very limited but should still be sufficient enough to do simple analyses.
+
+
+### R script
+
+##### If you do not already have these packages downloaded, please do so before proceeding. 
+library(readr)
+
+library(ggplot2)
+
+library(tidyverse)
+
+library(dplyr)
+
+library(leaflet)
+
+library(vegan)
+
+
+<details>
+<summary> Click here if you have troubles with your packages not downloading properly (like I did). </summary>
+
+First try running each command separately rather than in chunks.
+
+library(readr)
+
+library(ggplot2)
+
+library(tidyverse)
+
+library(dplyr)
+
+library(leaflet)
+
+Then depending on what error you are recieving you may need to update your R or download a package's dependencies. The following commands helped make sure the packages were downloaded and would run.
+
+install.packages("devtools")
+devtools::install_github("r-lib/conflicted")
+
+if (!requireNamespace("dplyr", quietly = TRUE)) {
+  install.packages("dplyr")
+}
+
+library(dplyr)
+
+install.packages('leaflet')
+
+if (!requireNamespace("leaflet", quietly = TRUE)) {
+  install.packages("leaflet")
+}
+
+library(leaflet)
+
+install.packages("vegan")
+
+library(vegan)
+
+</details>
+
+###
+
+##### Open and check data file
+
+bat_data <- read.csv("raw_bat_collection_data_2024.csv", header = TRUE)
+
+View(raw_bat_collection_data_2024)
+
+###
+
+<details>
+<summary> Click here for optional commands to check the structure, column names, and sample rows of the data. </summary>
+str(bat_data_simple)
+
+names(bat_data_simple)
+
+head(bat_data_simple)
+</details>
+
+###
+
+##### View terms key
+
+terms_key <- read_csv("terms_key.csv")
+
+View(terms_key)
+
+##### View site information
+
+site_info <- read_csv("site_info.csv")
+
+View(site_info)
+
+##### Simplify raw metadata file
+
+bat_data_simple = subset(bat_data, select = -c(county, team, permit, mass_g, forearm_mm, ear_mm, tragus_mm, Notes))
+
+View(bat_data_simple)
+
+#### Now that the data set has been cleaned up, we can start parsing out the information we need to make our figures.
+
+#### First let's see which site had the most species captured.
+
+### Species Richness Graph
+##### Summarize species counts by site
+
+species_summary <- bat_data_simple %>%
+  group_by(site, species) %>%
+  summarise(count = n(), .groups = 'drop')
+  
+View(species_summary)
+
+##### Summarize total species richness by site
+richness_by_site <- species_summary %>%
+  group_by(site) %>%
+  summarise(richness = n_distinct(species))
+  
+View(richness_by_site)
+
+##### Create bar plot for site richness
+
+ggplot(richness_by_site, aes(x = site, y = richness)) +
+  geom_col(fill = "darkgreen") +
+  theme_minimal() +
+  labs(title = "Species Richness by Site", x = "Site", y = "Number of Species")
+
+### Before we can make our map with leaflet we need to split the GPS column, group the sites according to their coordinates, and add the species count data.
+
+### Species Density Map
+
+##### Split the GPS column into two seperate columns for latitude and longitude
+
+bat_data_simple <- bat_data_simple %>%
+  separate(GPS, into = c("latitude", "longitude"), sep = ", ", convert = TRUE)
+  
+View(bat_data_simple)
+
+##### Extract the coordinates for each site
+
+site_coordinates <- bat_data_simple %>%
+  select(site, latitude, longitude) %>%
+  distinct()
+  
+View(site_coordinates)
+
+<details>
+<summary> Click here if you have issues involving duplicates of sites (like I did).
+Duplicates can arise due to slight errors in GPS coordinates likely due to human error. In this data set there were many duplicates, however, when I check the file manually it seemed to be the same coordinate, so either I missed the error or there is a different underlying issue. </summary> 
+
+#Find which sites has multiple coordinates 
+duplicate_sites <- bat_data_simple %>%
+  select(site, latitude, longitude) %>%
+  distinct() %>%
+  group_by(site) %>%
+  summarise(coord_count = n()) %>%
+  filter(coord_count > 1)
+print(duplicate_sites)
+
+#Average the latitude and longitude for sites with multiple coordinates (only doing this because I am sure the coordinates are the same for the duplicates)
+site_coordinates <- bat_data_simple %>%
+  select(site, latitude, longitude) %>%
+  group_by(site) %>%
+  summarise(
+    latitude = mean(latitude, na.rm = TRUE),
+    longitude = mean(longitude, na.rm = TRUE)
+  )
+View(site_coordinates)
+</details>
+
+###
+
+##### Add site coordinates to species summary data
+
+species_summary <- species_summary %>%
+  left_join(site_coordinates, by = "site")
+  
+View(species_summary)
+
+##### Use the species summary count data to obtain total number of species per site
+site_coordinates <- site_coordinates %>%
+  left_join(species_summary %>%
+              group_by(site) %>%
+              summarise(total_species = n_distinct(species)),
+            by = "site")
+            
+View(site_coordinates)
+
+#### Create an interactive map using leaflet
+##### This R package is really cool as it allows you to make an interactive map of your data. Documentation Link: https://rstudio.github.io/leaflet/ 
+
+leaflet(site_coordinates) %>%
+  addTiles() %>%
+  addCircleMarkers(
+    ~longitude, ~latitude,
+    radius = ~total_species * 2,
+    popup = ~paste("Site:", site, "<br>", "Species Richness:", total_species),
+    color = "blue",
+    fillOpacity = 0.7
+  ) %>%
+  addLegend("bottomright", colors = "blue", labels = "Species Richness", title = "Legend")
+
+###  Analysis of Variance (ANOVA) Test
+
+##### Test if species count varies by site
+
+species_anova <- aov(count ~ site, data = species_summary)
+
+summary(species_anova)
+
+### Linear Model
+##### Fit a linear model for a specific species
+
+##### We work with Myotis bats so being able to estimate best locations to capture specific species would be ideal.
+
+lm_result <- lm(count ~ latitude + longitude, 
+                data = subset(species_summary, species == "MYVE"))
+                
+summary(lm_result)
+
+##### Join species data with environmental data
+
+species_env_data <- species_summary %>%
+  left_join(site_info, by = "site")
+
+##### Fit a linear model for one species
+
+lm_result <- lm(count ~ habitat + disturbance_level, 
+                data = subset(species_env_data, species == "MYVE"))
+                
+summary(lm_result)
+
+### Canonical Correspondence Analysis (CCA)
+##### Uses the vegan package (The package Meredith presented!)
+
+##### Create species matrix
+
+species_matrix <- species_summary %>%
+  pivot_wider(names_from = species, values_from = count, values_fill = 0) %>%
+  column_to_rownames(var = "site")
+  
+View(species_matrix)
+
+##### Create environment matrix
+
+env_matrix <- site_info %>%
+  filter(site %in% rownames(species_matrix)) %>%
+  column_to_rownames(var = "site")
+  
+View(env_matrix)
+
+##### Filter the data to ensure alignment between species and environmental data
+
+species_matrix_filtered <- species_matrix[row.names(species_matrix) %in% row.names(env_matrix), ]
+
+View(species_matrix_filtered)
+
+env_data_filtered <- env_matrix[row.names(env_matrix) %in% row.names(species_matrix), ]
+
+View(env_data_filtered)
+
+##### Perform Canonical Correspondence Analysis (CCA) on filtered data
+
+cca_model_single_variable <- cca(species_matrix_filtered[1:3, -c(1, 2)] ~ disturbance_level, data = env_data_filtered[1:3, ])
+
+summary(cca_model_single_variable)
+
+plot(cca_model_single_variable, display = c("species", "sites"))
+
+### Principle Component Aanalysis (PCA) Plot
+
+##### Run PCA on the species matrix (excluding non-species columns)
+
+pca_result <- prcomp(species_matrix_filtered[, -c(1, 2)], scale. = TRUE)
+
+summary(pca_result)
+
+biplot(pca_result)
+
+### Data Interpretation
+Overall, there were challenges with the data set that complicated the analyses. One key issue was the lack of environmental variables, particularly quantifiable ones like temperature or average rainfall, which may have affected the results. For example, in the linear model, when both environmental factors were included, the results were not meaningful. All residuals were zero, and there were issues with data fitting, suggesting that the variables used were not varied enough to provide useful insights. However, the linear model with only GPS coordinates showed that neither latitude (p = 0.63) nor longitude (p = 0.30) significantly predicted bat counts, indicating that location alone does not explain the variation in bat captures, which sounds reasonable. The ANOVA test, which examined whether the number of individuals captured differed by site, and showed a significant difference (p = 0.042), suggesting that site location does affect species counts which supports our earlier, more simple approach of using the counts to create a species richness graph.
+
+As for the last two analyses, I suspected that the data set was too small and lacked important factors to accurately depict the relationship between species density and site disturbance. But the CCA results indicated that disturbance level explained ~62% of the variation in species composition, showing it as a significant factor. The remaining ~38% of the variation likely stems from other unaccounted factors missing from the data set. The PCA analysis revealed that the first two components together explained nearly 75% of the variation (proportion of variance: PC1 = ~0.43, PC2 = ~0.32), suggesting that these components capture the most important ecological factors influencing species distributions whether or not that is accurate would depend on additional information.
+
+### BONUS FIGURES
+##### These were just for fun because I was curious.
+
+#### Do more male or females bats get caught?
+##### Group bat counts by sex
+
+sex_summary <- bat_data_simple %>%
+  group_by(sex) %>%
+  summarise(count = n(), .groups = 'drop')
+  
+View(sex_summary)
+
+##### Create a bar plot for sex ratio
+
+ggplot(sex_summary, aes(x = sex, y = count, fill = sex)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  labs(title = "Female vs. Male Bat Captures", x = "Sex", y = "Number of Bats") +
+  theme_minimal() +
+  scale_fill_manual(values = c("pink", "blue"))
+
+#### What time do we tend to catch the most bats?
+##### Convert capture_time to POSIXct format
+
+bat_data_simple$time <- as.POSIXct(bat_data_simple$time, format="%H:%M")
+
+str(bat_data_simple$capture_time)
+
+##### Extract the hour of capture
+
+bat_data_simple$capture_hour <- as.numeric(format(bat_data_simple$time, "%H"))
+
+head(bat_data_simple$capture_hour)
+
+##### Summarise the counts of bat captures by hour
+
+capture_counts_by_hour <- bat_data_simple %>%
+  group_by(capture_hour) %>%
+  summarise(capture_count = n(), .groups = 'drop')
+
+##### Create line plot
+
+ggplot(capture_counts_by_hour, aes(x = capture_hour, y = capture_count)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "red", size = 3) + 
+  theme_minimal() +
+  labs(title = "Bat Captures by Hour", x = "Hour of Capture", y = "Number of Captures")
+
+#### Which locations had the most Myotis species?
+##### Filter for Myotis
+
+myotis_data <- bat_data_simple %>%
+  filter(str_detect(species, "^MY"))
+
+##### Summarize the counts of Myotis by site
+
+myotis_count_by_site <- myotis_data %>%
+  group_by(site) %>%
+  summarise(count = n(), .groups = 'drop')
+
+##### Sort the data to identify the sites with the most individuals
+myotis_count_by_site_sorted <- myotis_count_by_site %>%
+  arrange(desc(count))
+  
+View(myotis_count_by_site_sorted)
+
+##### Create a bar plot
+
+ggplot(myotis_count_by_site_sorted, aes(x = reorder(site, count), y = count)) +
+  geom_bar(stat = "identity", fill = "lightblue") +
+  coord_flip() +
+  theme_minimal() +
+  labs(
+    title = "Number of Myotis Bats Captured by Site",
+    x = "Site",
+    y = "Number of Captures"
+  )
+
+### Data Interpretation 
+Based on the results, it appears that during this past sampling season, we captured more females than males, the highest number of bats was typically around 8 pm, and the majority of Myotis individuals were found at two locations: Ina Bridge and Cienega Creek. One possible explanation for the higher number of females is that the sites may be near maternity colonies. However, since the difference between male and female captures was not drastically different, it is also possible that this variation could simply be due to chance. Regarding the time of capture, the peak capture time around 8 pm is consistent with the typical summer sunset time of 7:30-8 pm, and bats often emerge shortly after sunset, leading to a surge in captures. Lastly, the majority of Myotis individuals were caught at Ina Bridge, which is understandable given that the tunnels there are known to house a large maternity colony. However, it is less clear why Cienega Creek had a higher number of Myotis captures compared to the Sabino locations or the Southwest site. One possibility is that Cienega Creek may provide slightly warmer conditions, which may be more favorable for the species.
+
