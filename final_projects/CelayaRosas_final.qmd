@@ -5,9 +5,7 @@ format: html
 editor: visual
 ---
 
-This document belongs to the repository: <https://github.com/maryelacelaya/ECOL_596_Finalproject_Maryela.git>
-
-For more information, please consult.
+This document belongs to the repository:<https://github.com/maryelacelaya/ECOL_596_Finalproject_Maryela.git>
 
 ## PART 1: Data description
 
