@@ -1,0 +1,84 @@
+---
+title: "Addison's Final Project Summary"
+author: "BTLNDR"
+date: "2024-12-14"
+output: html_document
+---
+
+This file outlines everything for my final project. I'm using the same branch as the Present a Package, so if that makes things weird, let me know via email.
+
+## Introduction
+
+My line of investigation stems from some anecdotal stories that pallid bats (*Antrozous pallidus*) have been known to eat canyon bats (*Parastrellus hesperus*). While undocumented, this wouldn't be entirely outside the realm of possibility; pallids have established a very broad flexibility in diet. Their diet primarily consists of arthropods (specializing in scorpions and other ground-dwelling arthropods), but they have also been shown to consume nectar, fruit and according to some accounts, small rodents and lizards. If they were to eat canyon bats as well, this would be a rare (but not unheard of) example of bats eating other bats.
+
+This claim is further substantiated by the fact that canyon bats emerge quite early from their roosts (earlier than any other bat species in the area), being visible in the dusk sky while the sun is still somewhat above the horizon. Having said all this, my question, then, is:
+
+***Are canyon bats preyed upon by pallid bats?***
+
+## Methodology
+
+I will be using field observations collected in the lab from 2020 to 2024 and comparing the times each species is caught. Catch time will serve as a proxy for activity, and if there is a significant lack of overlap between the activity of pallid and canyon bats, I will fail to reject the hypothesis that pallid bats prey upon canyon bats. If, however, there is significant overlap, then I am potentially able to reject the hypothesis, depending on sampling effort and the like.
+
+I will calculate two statistics on catch times:
+
+1.  A **Mann-Whitney U test** that compares the median of a continuous variable between two different groups. This test doesn't assume a normal distribution, which is a fair assessment since field work involves setting nets over water, and bat activity near water is concentrated toward the start of the night.
+
+2.  A **Bhattacharyya coefficient**, which calculates the probability of overlap between two distributions (in this case, catch time of pallid bats and that of canyon bats).
+
+Additionally, I will create graphs that split up catch times by reproductive status, because for some reason that I have neglected to write down and can't retrace my logic, I proposed that pregnant bats might have a different distribution of active times.
+
+## Results
+
+For overall catch times, the Mann-Whitney U test yields a p-value of 0.249. This value is highly insignificant, indicating a large degree of overlap.
+
+The Bhattacharyya coefficient reinforces this, being 0.533 (the probability of there being overlap between the two species is roughly equivalent to a coin flip).
+
+Graphs can be seen in the GitHub repo. Upon inspection, the graphs follow this trend as well.
+
+For the reproductive status graphs, there doesn't appear to be any clear trend that has substantial power. There may be some difference in pregnant bats, but the data points are so few and I can't remember why I wanted to look at that category, so I didn't apply any statistics to those groups. It likely had something to do with pregnancy being a confounder on active time??
+
+-   *Antrozous pallidus* (ANPA) total n: 16
+
+-   *Parastrellus hesperus* (PAHE) total n: 81
+
+-   Total pregnant females: n=22 (ANPA = 10, PAHE = 12)
+
+-   Total lactating females: n=3 (ANPA = 2, PAHE = 1)
+
+-   Total non-reproductive females: n=11 (ANPA = 0, PAHE = 11)
+
+-   Total females labeled as "pregnant/lactating": n=5 (ANPA = 1, PAHE = 4)
+
+## Conclusions
+
+Firstly, the data is so noisy with regard to reproductive status that no solid conclusions can be drawn one way or another; more individuals of each status would need to be collected to make any strong statement.
+
+Beyond this, though, I am comfortable rejecting the hypothesis that pallid bats prey upon canyon bats, at least to the extent that it would influence time of activity for both species. If there is any substance to the anecdotes, which I am not totally discounting, then predation would be infrequent at best, occurring only if a canyon bat is grounded (since pallid bats tend to catch prey on the ground) and if the pallid is desperate and hungry enough.
+
+## Repository Contents
+
+If you want to check out my investigations yourself, here are the contents of the GitHub Repo (which you can access [here](https://github.com/thebatlander/pallids-and-canyons/tree/main))...
+
+### README.md
+
+A standard README that pretty much reiterates everything I'm saying in this whole section.
+
+### Data
+
+2020_2024_bat_sampling - Sheet1.csv
+
+This is a .csv that contains all the data points I used in my analysis. It spans all the observations made by the Enard lab between 2020 and 2024, inclusive.
+
+labeled_activity_times.png
+
+This is the graph with all the main times of activity observed in the data, split up by species and with the results of the statistical tests included as overlays.
+
+activity_by_female_reproductive_status.png
+
+This is a collection of graphs that show activity times between the two species, split up according to female reproductive status (males were excluded in this analysis).
+
+### Scripts
+
+the_main_script.R
+
+This is the one script where everything is done. Everything in the script is pretty heavily annotated, so this (along with the README) will be fairly bare when it comes to discussing what I actually did; this can be seen in the script.
