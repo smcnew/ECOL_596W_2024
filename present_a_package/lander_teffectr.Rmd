@@ -1,0 +1,208 @@
+---
+title: "TEffectR Intro Markdown"
+author: "BTLNDR"
+date: "2024-12-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+---
+title: "TEffectR Quick Start Guide"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: false
+execute:
+  eval: false
+---
+
+## Introduction
+
+This is a user guide to get you started on the R package TEffectR! The paper can be found in [PeerJ](https://doi.org/10.7717/peerj.8192):
+
+> Karakülah G, Arslan N, Yandım C, Suner A. 2019. TEffectR: an R package for studying the potential effects of transposable elements on gene expression with linear regression model. PeerJ 7:e8192
+
+The source code is available on [GitHub](https://github.com/karakulahg/TEffectR).
+
+## Getting Started
+
+This user guide assumes you are implementing the package in RStudio. You should have both R and RStudio up to date.
+
+### Prerequisites
+
+First, ensure you have `devtools` installed:
+
+```{r}
+#| label: install-devtools
+install.packages("devtools")
+```
+
+::: callout-note
+It should be noted that I had to download devtools on my local machine and install it directly into RStudio.
+:::
+
+```{r}
+#| label: load-devtools
+library(devtools)
+```
+
+### Dependencies
+
+TEffectR requires the following dependencies:
+
+-   dplyr
+-   GenomicRanges
+-   biomaRt
+-   biomartr
+-   Rsamtools
+-   edgeR
+-   limma
+-   rlist
+-   stringr
+
+You can install and load dependencies like this:
+
+```{r}
+#| label: install-dependencies
+install.packages("dplyr")
+library(dplyr)
+# Repeat for other CRAN packages
+```
+
+### Installing TEffectR
+
+Install and load TEffectR using these commands:
+
+```{r}
+#| label: install-teffectr
+devtools::install_github("karakulahg/TEffectR")
+library(TEffectR)
+```
+
+## Running TEffectR
+
+### 1. Retrieve RepeatMasker annotations
+
+First, you need to download the RepeatMasker annotation file from the [RepeatMasker Genomic Datasets](https://www.repeatmasker.org/genomicDatasets/RMGenomicDatasets.html) for your organism of interest, or elsewhere (following . Upon loading it into RStudio, use this command:
+
+```{r}
+#| label: load-repeatmasker
+repeatmasker.annotation <- TEffectR::rm_format(
+  filepath = "~/directorypath/organism.fa.out.gz"
+)
+```
+
+The human genome will be used as an example from here on out. This command takes the annotation from RepeatMasker and extracts the genomic location of each TE along with its associated information (class of repeat, etc.).
+
+### 2. Retrieve raw gene counts
+
+Following this, you need to give TEffectR raw gene counts based on RNA-seq data. This is done in the form of a gene count matrix, which you can assemble from any publically available dataset, or from your own data.
+
+Using the base data (for example, [this dataset](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE103001) that compares RNA-seq between normal and tumor tissue from breast cancer patients), you can run it through the HISAT2-StringTie-Ballgown pipeline to generate the counts in the form of a matrix. (More information and instructions can be found [here](https://www.nature.com/articles/nprot.2016.095)).
+
+With the matrix handy, read it into R:
+
+```{r}
+#| label: read-matrix
+gene_counts <- read.csv("gene_count_matrix.csv", row.names = 1, header = T, stringsAsFactors = F)
+```
+
+### 3. Retrieve gene location information
+
+Now that you've got the gene counts into R, you need to retrieve the genomic locations of the genes included. TEffectR uses Ensembl, which is accessible through `biomaRt`.
+
+I'll explain each argument of the command in more detail after putting it here:
+
+```{r}
+#| label: access-ensembl
+gene.annotation <- get_intervals(x = rownames(gene_counts), assembly="hg_38", ID.type = "ensembl_gene_id", URL="http://dec2014.archive.ensembl.org")
+```
+
+The arguments for the command:
+
+-   `rownames` is the argument where you define the location of the counts matrix, and specifically, tell TEffectR where to look to retrieve either gene names or IDs, depending on the data you use (it doesn't matter which, just make sure you keep it the same as `ID.type`)
+-   `assembly` is the genome you're using on Ensembl. In this example, it's hg38. For Mus musculus, you may put mm10. Or something else for other species.
+-   `ID.type` must be `ensembl_gene_name` (e.g., "APOBEC3B"), `ensembl_gene_id` (e.g., "ENSG##########"), or `ensembl_transcript_id` (e.g., "ENST##########") according to which type of naming your gene counts matrix uses
+-   `URL` refers to the version of Ensembl you want to access. If you don't know, you can use `biomaRt::listEnsemblArchives()` to get a list of possible versions.
+
+### 4. Generate overlap information
+
+Now that you have the gene location information as well as the TE annotations, you can run a function to see the amount of overlap between gene and TE!
+
+```{r}
+#| label: retrieve-overlaps
+overlaps <- TEffectR::get_overlaps(g=gene.annotation, r=repeatmasker.annotation, strand = "strandness", distance = 5000, repeat_type = "LTR")
+```
+
+-   `strand` determines whether or not genes and TEs must occur on the same strand of DNA
+-   `distance` refers to the maximum distance tolerated between gene start sites and TE start sites. This number can be positive (for finding TEs upstream of the gene start site) or negative (for finding TEs downstream of the gene)
+-   `repeat_type` allows you to define which class of TE you're focused on
+
+### 5. Count overlap information
+
+::: callout-note
+You're getting closer to the end result! This next step can take a good deal of time, just be aware...
+:::
+
+At this point, you've gotten the overlaps figured out. To output those into a useful format for the remainder of the pipeline, you need to create BAM files with individual paths for each range that you want overlap information for:
+
+```{r}
+#| label: BAM-list
+BAM.list <- c("~/Path2Directory/SRR5962198/SRR5962198_unique_sorted.bam", "~/Path2Directory/SRR5962199/SRR5962199_unique_sorted.bam", "~/Path2Directory/SRR5962200/SRR5962200_unique_sorted.bam", "~/Path2Directory/SRR5962201/SRR5962201_unique_sorted.bam", "~/Path2Directory/SRR5962202/SRR5962202_unique_sorted.bam", "~/Path2Directory/SRR5962203/SRR5962203_unique_sorted.bam", "~/Path2Directory/SRR5962204/SRR5962204_unique_sorted.bam", "~/Path2Directory/SRR5962205/SRR5962205_unique_sorted.bam", "~/Path2Directory/SRR5962206/SRR5962206_unique_sorted.bam", "~/Path2Directory/SRR5962207/SRR5962207_unique_sorted.bam", "~/Path2Directory/SRR5962208/SRR5962208_unique_sorted.bam", "~/Path2Directory/SRR5962209/SRR5962209_unique_sorted.bam", "~/Path2Directory/SRR5962210/SRR5962210_unique_sorted.bam", "~/Path2Directory/SRR5962211/SRR5962211_unique_sorted.bam", "~/Path2Directory/SRR5962212/SRR5962212_unique_sorted.bam", "~/Path2Directory/SRR5962213/SRR5962213_unique_sorted.bam", "~/Path2Directory/SRR5962214/SRR5962214_unique_sorted.bam", "~/Path2Directory/SRR5962215/SRR5962215_unique_sorted.bam", "~/Path2Directory/SRR5962216/SRR5962216_unique_sorted.bam", "~/Path2Directory/SRR5962217/SRR5962217_unique_sorted.bam", "~/Path2Directory/SRR5962218/SRR5962218_unique_sorted.bam", "~/Path2Directory/SRR5962219/SRR5962219_unique_sorted.bam", "~/Path2Directory/SRR5962220/SRR5962220_unique_sorted.bam", "~/Path2Directory/SRR5962221/SRR5962221_unique_sorted.bam", "~/Path2Directory/SRR5962222/SRR5962222_unique_sorted.bam", "~/Path2Directory/SRR5962223/SRR5962223_unique_sorted.bam", "~/Path2Directory/SRR5962224/SRR5962224_unique_sorted.bam", "~/Path2Directory/SRR5962225/SRR5962225_unique_sorted.bam", "~/Path2Directory/SRR5962226/SRR5962226_unique_sorted.bam", "~/Path2Directory/SRR5962227/SRR5962227_unique_sorted.bam", "~/Path2Directory/SRR5962228/SRR5962228_unique_sorted.bam", "~/Path2Directory/SRR5962229/SRR5962229_unique_sorted.bam", "~/Path2Directory/SRR5962230/SRR5962230_unique_sorted.bam", "~/Path2Directory/SRR5962231/SRR5962231_unique_sorted.bam", "~/Path2Directory/SRR5962232/SRR5962232_unique_sorted.bam", "~/Path2Directory/SRR5962233/SRR5962233_unique_sorted.bam", "~/Path2Directory/SRR5962234/SRR5962234_unique_sorted.bam", "~/Path2Directory/SRR5962235/SRR5962235_unique_sorted.bam", "~/Path2Directory/SRR5962236/SRR5962236_unique_sorted.bam", "~/Path2Directory/SRR5962237/SRR5962237_unique_sorted.bam", "~/Path2Directory/SRR5962238/SRR5962238_unique_sorted.bam", "~/Path2Directory/SRR5962239/SRR5962239_unique_sorted.bam", "~/Path2Directory/SRR5962240/SRR5962240_unique_sorted.bam", "~/Path2Directory/SRR5962241/SRR5962241_unique_sorted.bam")
+```
+
+And likewise, you want the gene count information from step 2...
+
+```{r}
+#| label: rnaseq-data
+SampleName.list <- colnames(gene_counts)
+```
+
+This command will take the data from `gene_counts` and sort it according to the ranges given in the `BAM.list` you constructed above...
+
+```{r}
+#| label: count-expression-overlaps
+TE.counts <- TEffectR::count_repeats(bamlist = BAM.list, namelist = SampleName.list, ranges=overlaps)
+```
+
+As stated before, this step can take a considerable amount of time, depending on the number of ranges you're wanting information on. IT SHOULD ALSO BE NOTED: only those RNA-seq reads with 100% overlap with TEs will be included in the BAM files.
+
+### 6. Aggregate the counts
+
+This next command will take these TE counts and calculate the total number of RNA-seq reads that have the TE of interest within the distance you specified earlier (with the `distance` parameter) from the gene of interest.
+
+```{r}
+#| label: sum-TEs-in-range
+SumOfTEs <- TEffectR::summarize_repeat_counts(counts = TE.counts, namelist = SampleName.list)
+```
+
+### 7. Visualize the data
+
+At this point, you can run the `apply_lm` function to see correlations, or you can add covariates if you want to run predictions with more than just TE expression as the single predictor. To include other covariates, you need to create a dataframe that includes them:
+
+```{r}
+#| label: make-covariate-df
+df.covariates <- data.frame(tissue_type=c(rep("Normal", 22), rep("Tumor", 22)), patient=c(c(1:22), c(1:22)))
+```
+
+In this example dataframe, you are including patient number and tissue type (normal or cancerous) as covariates. Once you're happy with your covariate dataframe...
+
+```{r}
+#| label: visualize-correlations
+results <- TEffectR::apply_lm(gene.annotation = gene.annotation, gene.counts = gene_counts, repeat.counts = SumOfTEs, covariates = df.covariates, prefix = "LTR-5kb")
+```
+
+-   `covariates` can also be excluded and/or given a `NULL` value
+-   `prefix` is the title; here, we use the family of TEs (`LTR`) and the window of distance from the gene start
+
+And with that, you get three outputs: 1. A .tsv file with the p-value of each gene/TE pairing, signficant level of any covariates you included and their respective adjusted R-squared values 2. Another .tsv with log2(CPM) values of genes and TEs included in the linear model (LM) 3. A group of all the plots that contain a significant relationship between gene expression and TE expression.
+
+## Formatting considerations
+
+If you're using some other program to create TE counts, the authors of this package recommend you adhere to their specified formatting for the inputs you give TEffectR from those programs. Those specific formats are included [here](https://github.com/karakulahg/TEffectR?tab=readme-ov-file), at point 11.
+
+And that is everything you should need to get TEffectR up and running! Have a great time, and enjoy!
