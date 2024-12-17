@@ -1,5 +1,5 @@
 ---
-title: "Quiz 1: Part 2"
+title: "Zhang Quiz 1: Part 2"
 format: html
 editor: visual
 embed-resources: true
@@ -32,45 +32,39 @@ Load the *swallows.csv* into R, call it swallows. This data frame lists results 
 
 You also have a separate data frame called *brightness.csv* where each row lists the plumage brightness (a sexual signal) for the female at each nest. Load this one up too.
 
-```{r}
-# Answer 
-<<<<<<< HEAD
- swallows<-read.csv("swallows.csv", header = TRUE)
- brightness<-read.csv("brightness.csv", header = TRUE)
+1.  <div>
 
-# Google? y/n
- n
-=======
+    1.  <div>
 
-# Google? N
+        ```{r}
+        # Answer 
+         swallows<-read.csv("swallows.csv", header = TRUE)
+         brightness<-read.csv("brightness.csv", header = TRUE)
 
->>>>>>> e9ed7c218b5f16ad1e5e2dd79299ac6bf25301d5
-```
+        # Google? y/n
+         #n
+        ```
+
+        </div>
+
+    </div>
 
 #### Wrangle your data
 
-You realize that you want to add brightness information onto your main swallows data frame. Join these data frames using nest_id as your key variable. Describe how you would check to make sure this join worked as intended.undefined
+You realize that you want to add brightness information onto your main swallows data frame. Join these data frames using nest_id as your key variable. Describe how you would check to make sure this join worked as intended.
 
 ```{r}
 #Answer
-<<<<<<< HEAD
 comb_data <- swallows %>%
   left_join(brightness, by = "nestbox")
 # Google? y/n
-n
-=======
-
-
-# Google? Y
-
->>>>>>> e9ed7c218b5f16ad1e5e2dd79299ac6bf25301d5
+#n
 ```
 
 Inspect your combined data frame. Do some sort of quick sanity check on each column to catch any obvious entry errors. Correct as necessary
 
 ```{r}
 # Answer
-<<<<<<< HEAD
 str(comb_data)
 summary(comb_data)
 colSums(is.na(comb_data))
@@ -78,26 +72,18 @@ comb_new <- comb_data %>%
   filter(!is.na(brightness))
 # Google y/n
 #y for NA values
-=======
-# Google N
-
->>>>>>> e9ed7c218b5f16ad1e5e2dd79299ac6bf25301d5
 ```
 
 Create a new column called prop_fledged that contains the proportion of nestlings that fledged from each nest.
 
 ```{r}
 #Answer
-<<<<<<< HEAD
 
 comb_new2 <- comb_new %>%
   mutate(prop_fledged = ifelse(brood>0, n_fledged/brood, NA))
 
 # Google? y/n
-n
-=======
-# Google? yes. extensively. this took me 30 minutes since it wouldn't let me use the tidyverse mutate
->>>>>>> e9ed7c218b5f16ad1e5e2dd79299ac6bf25301d5
+#n
 ```
 
 #### Explore the data
@@ -106,24 +92,18 @@ What was the mean proportion of nestlings fledged in each treatment?
 
 ```{r}
 # Answer 
-<<<<<<< HEAD
 comb_new2 %>%
   group_by(treatment) %>%
   summarize(mean_fledged = mean(prop_fledged, na.rm = TRUE))
 
 
 # Google? y/n
-y
-=======
-
-# Google?
->>>>>>> e9ed7c218b5f16ad1e5e2dd79299ac6bf25301d5
+#y
 ```
 
 Create a plot showing fledging success differences between treatments
 
 ```{r}
-<<<<<<< HEAD
 #Answer
 ggplot(comb_new2, aes(x = treatment, y = prop_fledged)) +
   geom_boxplot() +
@@ -131,32 +111,22 @@ ggplot(comb_new2, aes(x = treatment, y = prop_fledged)) +
        title = "fledging success differences between treatments")
 
 # Google? y/n
-n
-=======
-# Answer
-# Google? N
-
->>>>>>> e9ed7c218b5f16ad1e5e2dd79299ac6bf25301d5
+#n
 ```
 
 Is there any evidence that female brightness influenced fledging success? Create a plot to visually investigate this question.
 
 ```{r}
 #Answer
-<<<<<<< HEAD
 # Convert a column to numeric
 comb_new2$brightness<- as.numeric(comb_new2$brightness)
 
-correlation <- cor.test(x = brightness, y = prop_fledged, method = "pearson")
-print(correlation)
+
 
 ggplot(data.frame(comb_new2), aes(x = brightness, y = prop_fledged)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE)
 
 # Google? y/n
-n
-=======
-#Google?
->>>>>>> e9ed7c218b5f16ad1e5e2dd79299ac6bf25301d5
+#n
 ```
