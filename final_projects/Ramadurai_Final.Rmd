@@ -24,7 +24,7 @@ The goal of this project is to examine the trends in my sleep data from the Oura
 
 I will be using the data from the Oura ring from July 2024 to December 2024 to analyze these trends. 
 
-The link to my Github repo for this project is [here](https://github.com/samyuktha-ramadurai/My_Oura_data.git).
+The link to my Github repo for this project is [here](https://github.com/samyuktha-ramadurai/Sleep_data_analysis.git).
 
 ## Loading Data and Libraries
 
