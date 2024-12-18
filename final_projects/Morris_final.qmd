@@ -1,0 +1,401 @@
+---
+title: "njm_rot1"
+format: html
+editor: visual
+---
+
+# Rotation 1: Exploring links between maternal microbiota and reproductive outcomes in wild red squirrels (*Tamiasciurus hudsonicus*)
+
+## By: Natalie J. Morris
+
+## *Modeling and plotting red squirrel reproductive phenotypes and alpha microbial diversity across reproductive status and mast years*
+
+[Githib Repository](https://github.com/nj-morris/Rotation1)
+
+## Load packages, import and organize data
+
+```{r, warning=FALSE, message=FALSE}
+# library packages
+library(dplyr)
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(ggplot2)
+library(gtsummary)
+library(kableExtra)
+
+
+# Read in metadata with alpha diversity values
+alphaData <- read.csv("rs_micro_alphaData.csv")
+
+# Reorder factors to biological order
+alphaData$season <- factor(alphaData$season, levels=c("early spring", "late spring", "summer", "fall"))
+alphaData$rep_status <- factor(alphaData$rep_status, levels=c("non-breeding", "pregnant", "lactating"))
+alphaData$mast.x <- factor(alphaData$mast.x, levels=c("non-mast", "mast"))
+
+# Designate as factors
+alphaData$squirrel_id.x <- as.factor(alphaData$squirrel_id.x)
+alphaData$litter_id <- as.factor(alphaData$litter_id)
+alphaData$year.x <- as.factor(alphaData$year.x)
+alphaData$mast.x <- as.factor(alphaData$mast.x)
+
+# Filter data by reproductive status
+  # alphaDataA for modeling date of birth and litter size at birth
+    # Non-Breeding/Pregnancy microbial diversity
+alphaDataA <- alphaData %>% 
+  filter(rep_status != "lactating")
+  # alphaDataB for modeling average growth rate and juvenile survival
+      # Pregnancy/Lactation microbial diversity
+alphaDataB <- alphaData %>% 
+  filter(rep_status != "non-breeding")
+
+# Set ggplot theme
+theme_set(theme_bw())
+```
+
+## Modeling + Plotting
+
+### Birth Date of Litter
+
+#### Birth Date of Litter: Model
+
+```{r}
+# Linear mixed model with random effects, three way interaction
+mod_shannon_bd <- lmer(bdate ~ scale(ShannonT)*rep_status*mast.x + mother_grid + season + scale(spr_density) + scale(mother_age) + (1|squirrel_id.x) + (1|year.x), data = alphaDataA) 
+
+# Check residuals
+qqnorm(resid(mod_shannon_bd))
+
+summary(mod_shannon_bd, ddf = "Kenward-Roger")
+
+# Formatted lmm output table
+tbl_regression(mod_shannon_bd, exponentiate = FALSE, pvalue_fun = label_style_pvalue(digits = 3),
+) |>
+  bold_p(t = 0.05) |>
+  bold_labels() |>
+  italicize_levels()
+```
+
+```{r}
+# Look at pairwise relationships of model
+emm_bdS <- emmeans(mod_shannon_bd, pairwise ~ rep_status * mast.x)
+emm_bdS
+
+# Formatted emmeans output table
+contrast_df <- as.data.frame(emm_bdS$contrasts)
+contrast_df %>%
+  kable(caption = "Pairwise Comparisons of `emmeans`") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+#### Birth Date of Litter: Plot
+
+```{r}
+# Extract model predictions for birth date
+alphaDataA$predicted_bdate <- predict(mod_shannon_bd)  # Includes random effects
+
+# Set colors for alphaDataA
+spring_palette <- c("#56B4E9", "#009E73")
+
+# Plot model predictions
+ggplot(alphaDataA, aes(x = scale(ShannonT), y = bdate, color = rep_status, fill = rep_status)) +
+  geom_point(alpha = 0) +  # remove observed data points
+  geom_smooth(method = "lm", aes(y = predicted_bdate), 
+              se = TRUE, linewidth = 1, linetype = "solid", alpha = 0.2) +  # Trend line with CI
+  facet_wrap(~mast.x, labeller = labeller(mast.x = c("non-mast" = "Non-Mast", "mast" = "Mast"))
+  ) +  # Facet by mast.x levels
+  scale_color_manual(values = spring_palette, name = "Reproductive Status") +  # Spring colors for lines
+  scale_fill_manual(values = spring_palette, name = "Reproductive Status") +   # Matching spring colors for 
+  labs(
+    x = "Shannon Diversity Index (Scaled (Tukey))",
+    y = "Birth Date (Predicted)",
+  ) +
+  theme_minimal(base_size = 14) +  # Minimal theme with larger text
+  theme(
+    legend.position = "bottom",  # Move legend 
+    legend.title = element_text(size = 12, face = "bold"),  # Bold legend title
+    legend.text = element_text(size = 12),  # Adjust legend text size
+    strip.text = element_text(size = 12, face = "bold"),  # Bold facet labels
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),  # Centered title
+    axis.title = element_text(size = 14),  # Adjust axis title size
+    axis.text = element_text(size = 12), # Adjust axis text size 
+    panel.grid.minor = element_blank(), panel.grid.major = element_blank(),
+    axis.line = element_line(color = "black", linewidth  = 0.5), 
+    panel.border = element_rect(color = "black", linewidth  = 0.5, fill = NA)  # Add border between facets
+    
+  )
+```
+
+#### Birth Date of Litter: Interpretation
+
+Earlier dates of birth were predicted by greater microbial diversity, which did not differ across reproductive status or mast years.
+
+### Litter Size at Birth
+
+#### Litter Size at Birth: Model
+
+```{r}
+# Linear mixed model with random effects, three way interaction
+mod_shannon_ls <- lmer(litter_size ~ scale(ShannonT)*rep_status*mast.x + mother_grid + season
+                       + scale(spr_density) + scale(mother_age) + (1|squirrel_id.x) + (1|year.x), data = alphaDataA) 
+
+# Check residuals 
+qqnorm(resid(mod_shannon_ls))
+
+summary(mod_shannon_ls, ddf = "Kenward-Roger")
+
+# Formatted lmm output table
+tbl_regression(mod_shannon_ls, exponentiate = FALSE, pvalue_fun = label_style_pvalue(digits = 3),
+) |>
+  bold_p(t = 0.05) |>
+  bold_labels() |>
+  italicize_levels()
+```
+
+```{r}
+# Look at pairwise relationships of model
+emm_lsS <- emmeans(mod_shannon_ls, pairwise ~ rep_status * mast.x)
+emm_lsS
+
+# Formatted emmeans output table
+contrast_df <- as.data.frame(emm_bdS$contrasts)
+contrast_df %>%
+  kable(caption = "Pairwise Comparisons of `emmeans`") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+#### Litter Size at Birth: Plot
+
+```{r}
+# Extract model predictions for litter size
+alphaDataA$predicted_ls <- predict(mod_shannon_ls)  # Includes random effects
+
+# Set colors for alphaDataA
+spring_palette <- c("#56B4E9", "#009E73")
+
+# Plot model predictions
+ggplot(alphaDataA, aes(x = scale(ShannonT), y = litter_size, color = rep_status, fill = rep_status)) +
+  geom_point(alpha = 0) +  # Observed data points
+  geom_smooth(method = "lm", aes(y = predicted_ls), 
+              se = TRUE, linewidth = 1, linetype = "solid", alpha = 0.2) +  # Trend line with CI
+  facet_wrap(~mast.x, labeller = labeller(mast.x = c("non-mast" = "Non-Mast", "mast" = "Mast"))) +  # Facet by mast.x levels
+  scale_color_manual(values = spring_palette, name = "Reproductive Status") +  # Spring colors for lines
+  scale_fill_manual(values = spring_palette, name = "Reproductive Status") +   # Matching spring colors for CI
+  labs(
+    x = "Shannon Diversity Index (Scaled (Tukey))",
+    y = "Litter Size (Predicted)",
+  ) +
+  theme_minimal(base_size = 14) +  # Minimal theme with larger text
+  theme(
+    legend.position = "bottom",  # Move legend 
+    legend.title = element_text(size = 12, face = "bold"),  # Bold legend title
+    legend.text = element_text(size = 12),  # Adjust legend text size
+    strip.text = element_text(size = 12, face = "bold"),  # Bold facet labels
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),  # Centered title
+    axis.title = element_text(size = 14),  # Adjust axis title size
+    axis.text = element_text(size = 12), # Adjust axis text size 
+    panel.grid.minor = element_blank(), panel.grid.major = element_blank(),
+    axis.line = element_line(color = "black", linewidth  = 0.5), 
+    panel.border = element_rect(color = "black", linewidth  = 0.5, fill = NA)  # Add border between facets
+)
+```
+
+#### Litter Size at Birth: Interpretation
+
+There was not a strong trend of alpha diversity predicting litter size, however this relationship differed across mast and non-mast years, but not reproductive status.
+
+### Growth Rate of Litter (Avg)
+
+#### Growth Rate of Litter: Model
+
+```{r}
+# Linear mixed model with random effects, three way interaction
+mod_shannon_gr <- lmer(avg_growth_litter ~ scale(ShannonT)*rep_status*mast.x + mother_grid + season
+                       + scale(spr_density) + scale(mother_age) + (1|squirrel_id.x) + (1|year.x), data = alphaDataB) 
+
+# Check residuals
+qqnorm(resid(mod_shannon_gr))
+
+summary(mod_shannon_gr, ddf = "Kenward-Roger")
+
+# Formatted lmm output table
+tbl_regression(mod_shannon_gr, exponentiate = FALSE, pvalue_fun = label_style_pvalue(digits = 3),
+) |>
+  bold_p(t = 0.05) |>
+  bold_labels() |>
+  italicize_levels()
+```
+
+```{r}
+# Look at pairwise relationships of model
+emm_grS <- emmeans(mod_shannon_gr, pairwise ~ rep_status * mast.x)
+emm_grS
+
+# Formatted emmeans output table
+contrast_df <- as.data.frame(emm_grS$contrasts)
+contrast_df %>%
+  kable(caption = "Pairwise Comparisons of `emmeans`: Growth Rate") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+#### Growth Rate of Litter: Plot
+
+```{r}
+# Extract model predictions for growth rate
+alphaDataB$predicted_gr <- NA  # Initialize the column with NA
+alphaDataB$predicted_gr[complete.cases(alphaDataB[c("avg_growth_litter", "ShannonT", "rep_status", "mast.x", "mother_grid", "season", "spr_density", "mother_age")])] <- predict(mod_shannon_gr)
+
+# Specify colors for alphaDataB
+spring_palette <- c("#009E73", "#CC79A7" )
+
+# Plot model predictions
+ggplot(alphaDataB, aes(x = scale(ShannonT), y = avg_growth_litter, color = rep_status, fill = rep_status)) +
+  geom_point(alpha = 0) +  # Observed data points
+  geom_smooth(method = "lm", aes(y = predicted_gr), 
+              se = TRUE, linewidth = 1, linetype = "solid", alpha = 0.2) +  # Trend line with CI
+  facet_wrap(~mast.x, labeller = labeller(mast.x = c("non-mast" = "Non-Mast", "mast" = "Mast"))) +  # Facet by mast.x levels
+  scale_color_manual(values = spring_palette, name = "Reproductive Status") +  # Spring colors for lines
+  scale_fill_manual(values = spring_palette, name = "Reproductive Status") +   # Matching spring colors for CI
+  labs(
+    x = "Shannon Diversity Index (Scaled (Tukey))",
+    y = "Growth Rate (Predicted)",
+  ) +
+  theme_minimal(base_size = 14) +  # Minimal theme with larger text
+  theme(
+    legend.position = "bottom",  # Move legend 
+    legend.title = element_text(size = 12, face = "bold"),  # Bold legend title
+    legend.text = element_text(size = 12),  # Adjust legend text size
+    strip.text = element_text(size = 12, face = "bold"),  # Bold facet labels
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),  # Centered title
+    axis.title = element_text(size = 14),  # Adjust axis title size
+    axis.text = element_text(size = 12), # Adjust axis text size 
+    panel.grid.minor = element_blank(), panel.grid.major = element_blank(),
+    axis.line = element_line(color = "black", linewidth  = 0.5), 
+    panel.border = element_rect(color = "black", linewidth  = 0.5, fill = NA)  # Add border between facets
+  )
+
+```
+
+#### Growth Rate: Interpretation
+
+The trend shows faster growth rate (averaged) of litters with lower microbial diversity in non-mast years at both pregnant and lactating sampling time points, but this relationship diverged in mast years, where faster growth rate was predicted by greater microbial diversity during pregnancy.
+
+### Juvenile Survival (survived first winter)
+
+#### Juvenile Survival: Model
+
+```{r}
+# Linear mixed model with random effects, three way interaction
+mod_shannon_jsLMM <-lmer(juv_survived ~ scale(ShannonT)*rep_status*mast.x + scale(mother_age) + mother_grid +
+                            scale(spr_density) + season + offset(log(litter_size)) + (1|squirrel_id.x) + (1|year.x), data = alphaDataB)
+
+# Check residuals
+qqnorm(resid(mod_shannon_jsLMM))
+
+summary(mod_shannon_jsLMM)
+
+# Formatted lmm output table
+tbl_regression(mod_shannon_jsLMM, exponentiate = FALSE, pvalue_fun = label_style_pvalue(digits = 3),
+) |>
+  bold_p(t = 0.05) |>
+  bold_labels() |>
+  italicize_levels()
+```
+
+```{r}
+# Look at pairwise relationships of model
+emm_jsS <- emmeans(mod_shannon_jsLMM, pairwise ~ rep_status * mast.x)
+emm_jsS
+
+emmeans(mod_shannon_jsLMM, ~ scale(ShannonT) | rep_status * mast.x)
+
+
+# Formatted emmeans output table
+contrast_df <- as.data.frame(emm_jsS$contrasts)
+contrast_df %>%
+  kable(caption = "Pairwise Comparisons of `emmeans`: Juvenile Survival") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+#### Juvenile Survival: Plot
+
+```{r}
+# Extract model predictions for juvenile survival
+alphaDataB$predicted_js <- NA  # Initialize the column with NA
+alphaDataB$predicted_js[complete.cases(alphaDataB[c("juv_survived", "ShannonT", "rep_status", "mast.x", 
+                                                  "mother_grid", "season", "spr_density", "mother_age")])] <- 
+  predict(mod_shannon_jsLMM)
+
+# Plot model predictions
+ggplot(alphaDataB, aes(x = scale(ShannonT), y = juv_survived, color = rep_status, fill = rep_status)) +
+  geom_point(alpha = 0) +  # Observed data points
+  geom_smooth(method = "lm", aes(y = predicted_js), 
+              se = TRUE, linewidth = 1, linetype = "solid", alpha = 0.2) +  # Trend line with CI
+  facet_wrap(~mast.x, labeller = labeller(mast.x = c("non-mast" = "Non-Mast", "mast" = "Mast"))) +  # Facet by mast.x levels
+  scale_color_manual(values = spring_palette, name = "Reproductive Status") +  # Spring colors for lines
+  scale_fill_manual(values = spring_palette, name = "Reproductive Status") +   # Matching spring colors for CI
+  labs(
+    x = "Scaled(Shannon Diversity Index (Tukey))",
+    y = "Juvenile Survival (Predicted)",
+  ) +
+  theme_minimal(base_size = 14) +  # Minimal theme with larger text
+  theme(
+    legend.position = "bottom",  # Move legend 
+    legend.title = element_text(size = 12, face = "bold"),  # Bold legend title
+    legend.text = element_text(size = 12),  # Adjust legend text size
+    strip.text = element_text(size = 12, face = "bold"),  # Bold facet labels
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),  # Centered title
+    axis.title = element_text(size = 14),  # Adjust axis title size
+    axis.text = element_text(size = 12), # Adjust axis text size 
+    panel.grid.minor = element_blank(), panel.grid.major = element_blank(),
+    axis.line = element_line(color = "black", linewidth  = 0.5), 
+    panel.border = element_rect(color = "black", linewidth  = 0.5, fill = NA)  # Add border between facets
+  )
+```
+
+#### Juvenile Survival: Interpretation
+
+There was a trend of greater juvenile survival with lower microbial alpha diversity during pregnancy and greater microbial alpha diversity during lactation. This relationship did not significantly differ across non-mast and mast years, but was significantly different across reproductive status only in mast years.
+
+### Alpha diversity over sampling timeline: Plot
+
+```{r}
+# Plot raw alpha diversity across days since parturition of each individual reproductive attempt #
+alphaData %>%
+  ggplot(aes(x = days_since_part, y = Shannon)) +
+  geom_line(aes(group = litter_id, color = litter_id), alpha = 0.75) +                  # Individual trajectories with transparency
+  geom_point(aes(color = litter_id), alpha = 0.5) +                                    # Individual data points with transparency
+  geom_smooth(aes(group = 1),                                                          # Overall trend line across all individuals
+              method = "loess", 
+              color = "black", 
+              se = TRUE,                    # Add confidence interval around trend line
+              linetype = "dashed") +
+  scale_color_viridis_d() +  
+  # Add shaded ranges
+  annotate("rect", xmin = -89, xmax = -35, ymin = -Inf, ymax = Inf, fill = "#56B4E9", alpha = 0.1) + # Non-Breeding phase
+  annotate("rect", xmin = -35, xmax = 0, ymin = -Inf, ymax = Inf, fill = "#009E73", alpha = 0.1) + # Parturition phase
+  annotate("rect", xmin = 0, xmax = 70, ymin = -Inf, ymax = Inf, fill = "#CC79A7", alpha = 0.1) + # Lactating phase
+  annotate("rect", xmin = 71, xmax = Inf, ymin = -Inf, ymax = Inf, fill = "#56B4E9", alpha = 0.1) + # Lactating phase
+  # Add labels for ranges
+  annotate("text", x = -60, y = max(alphaData$Shannon) * 1.1, label = "Non-Breeding", color = "#56B4E9") +
+  annotate("text", x = -20, y = max(alphaData$Shannon) * 1.1, label = "Pregnant", color = "#009E73") +
+  annotate("text", x = 35, y = max(alphaData$Shannon) * 1.1, label = "Lactating", color = "#CC79A7") +
+  annotate("text", x = 85, y = max(alphaData$Shannon) * 1.1, label = "Non-Breeding", color = "#56B4E9") +
+  labs(x = "Days Since Parturition", 
+       y = "Shannon Gut Microbial Diversity", 
+       title = "Shannon Diversity Across Days Since Birth") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        legend.title = element_text(size = 12, face = "bold"),  # Bold legend title
+        legend.text = element_text(size = 12),                 # Adjust legend text size
+        plot.title = element_text(size = 14, face = "bold", hjust = 0.5),  # Centered title
+        axis.title = element_text(size = 14), 
+        axis.text = element_text(size = 12),  
+        panel.grid.minor = element_blank(), 
+        panel.grid.major = element_blank(),
+        axis.line = element_line(color = "black", linewidth  = 0.5))
+```
+
+#### Alpha diversity over sampling timeline: Interpretation
+
+Across individuals and days since parturition (birth), alpha diversity varied. There was no clear strategy–some individuals' microbial diversity decreased and others increased, while some remained largely stable and others changed for portions of the sampling timeline.
