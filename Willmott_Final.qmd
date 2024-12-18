@@ -1,0 +1,420 @@
+---
+title: "MW_FinalProject"
+author: "Meredith WIllmott"
+format: html
+
+[Check out my GitHub repository](https://github.com/leafhopping/MWFinal/tree/main)
+
+This project uses iNaturalist Research Grade observations of Cicadellidae (leafhoppers) across Arizona. It creates a grid over Arizona using the packages sf and rnaturalearth before joining the iNaturalist data to the grid (which I have set to correlate to a grid cell size of 0.1 degrees), then calculates species richness in each grid cell, and prints a list of the most commonly observed species. 
+
+When I finished my observations for species richness across Arizona, I wanted to see if the species richness would be significantly different by county. I used data from the US Census Bureau to identify which counties had the highest species abundances and diversities. The counties with the highest abundance also had the highest diversity. These counties were in the southern region of the state, which is consistent with expectations for diversity within the region. 
+
+I ran the same analyses for datasets on all Auchenorrhyncha, and found no statistical difference between counties. I do not belive that this is an accurate assessment of biodiversity, but it is an accurate assessment of how citizen science is biased in certain taxa. 
+
+I'm actually going to use this code with different datasets across taxa to try and see if observation is correlated with size, I'm sure it is but couldn't find anything to do with it. 
+---
+
+## Cicadellidae Diversity Across Arizona: do citizen science observations reflect known patterns of biodiversity?
+
+```{r setup, include=FALSE]}
+  #install the packages you need and import/inspect/clean your data
+library(tidyverse)        #cleansdata
+library(sf)               # For spatial data
+library(rnaturalearth)    # defines and loads the arizona boundary
+library(rnaturalearthhires)
+library(ggplot2)          #visualizes data
+library(dplyr)            # Data manipulation
+library(devtools)         #if you need to download data from rnaturalearth to set geographic boundaries, this will help you access the GIT repos
+  
+#to download data from iNaturalist, go to the "Explore" page, and then go to "Filters". Click "Export" and then adjust your filters. You cannot export over 200,000 observations or you will need to go through GBIF for larger amounts of data. The file will be exported as a csv, but I transformed it into an .xls and used the "import dataset" option on R. 
+  
+#view your data
+head(Cicdata) 
+
+#clean your data, filter rows by lat/long and species name
+Cicdata_clean <- Cicdata %>%
+    filter(!is.na(latitude), !is.na(longitude), !is.na(taxon_species_name)) %>%
+    mutate(taxon_species_name = as.factor(taxon_species_name))
+
+#check that data cleaning worked
+
+summary(Cicdata)
+
+```
+
+Following is code that will create a grid across Arizona using rnaturalearth and sf. Then, it will join this grid to the iNaturalist data and identify species richness per 0.1 degrees. Once you have executed this code block, you can determine the most commonly observed species.
+
+```{r}
+#now create a grid across Arizona, this uses the rnaturalearth package, and will use the coordinates from iNaturalist to look at species richness by region. It is important to check each validation step of this chunk, as the spatial scaling was difficult to align to the iNaturalist data. 
+
+usa <- ne_states(country = "united states of america", returnclass = "sf")
+arizona <- usa %>% filter(name == "Arizona")  #this will fetch parameters for the country and state that your data encompasses, but if you want to check for another state you can input those data in the same format
+
+Cicdata_sf <- st_as_sf(Cicdata_clean, coords = c("longitude", "latitude"), crs = 4326) #this converts your data into a spatial frame that you can use with the sf package
+
+#now you're ready to create your grid! the following commands create an approximate grid of 50km per square within Arizona and you can use this frame to observe the biodiversity across spatial areas 
+
+arizona_bbox <- c(xmin = -114.818, xmax = -109.045, ymin = 31.332, ymax = 37.004) 
+
+#create a grid over Arizona's boundaries, make sure that the polygons are CLOSED by repeating the first coordinates at the end of the list so that they form a loop, then use 'print' to check that the coordinates are both valid and closed
+
+arizona_polygon <- st_sfc(st_polygon(list(cbind(c(arizona_bbox[1], arizona_bbox[2], arizona_bbox[2], arizona_bbox[1], arizona_bbox[1]),
+                                               c(arizona_bbox[3], arizona_bbox[3], arizona_bbox[4], arizona_bbox[4], arizona_bbox[3])))))
+st_crs(arizona_polygon) <- 4326
+
+#ensure your Polygon is valid- this is important if you change the cell size; a polygon is a specific type of geometry within an sf object (a sequence of coordinates) that form a closed loop. Changing the grain of the polygon can create error.
+
+arizona_polygon <- st_simplify(arizona_polygon, dTolerance = 0.0001)
+arizona_polygon <- st_make_valid(arizona_polygon)
+
+
+#by printing your polygon, you ensure that all cells are closed
+
+print(arizona_polygon)
+
+#hopefully your polygon is solid, and now you can clean the grid and remove empty or invalid polygons; it makes all remaining geometries spatially usable
+
+arizona_grid <- arizona_grid[st_is_valid(arizona_grid) & !st_is_empty(arizona_grid)]
+arizona_grid <- st_make_valid(arizona_grid)
+
+#join the iNaturalist data to the Arizona grid, then view the biodiversity by grid cell
+
+#intersect your grid with the state boundaries of Arizona to trim the final shape, if you miss this step then your data will be represented on a rectangle 
+
+arizona_grid <- st_intersection(arizona_grid, arizona_polygon)
+
+arizona_grid_sf <- st_sf
+
+arizona_grid_sf <- st_sf(grid_id = 1:length(arizona_grid), geometry = arizona_grid)
+
+arizona_grid_sf <- arizona_grid_sf[st_is_valid(arizona_grid_sf$geometry), ]
+
+species_richness <- st_join(arizona_grid_sf, Cicdata_sf) %>%
+  group_by(grid_id) %>%
+  summarize(richness = n_distinct(taxon_species_name, na.rm = TRUE))
+
+```
+
+```{r}
+
+#determine the most commonly observed species
+
+#the following counts the number of observations by species
+
+top_species <- Cicdata %>%
+  group_by(taxon_species_name) %>%
+  summarize(observation_count = n()) %>%
+  arrange(desc(observation_count)) %>%
+  filter(!is.na(taxon_species_name))
+
+#this will show you the top 10 most observed species
+
+top_10_species <- top_species %>% slice_head(n = 10)
+print(top_10_species)
+
+#this will help you visualize the top 10 species and how commonly they occur
+
+
+```
+
+Great! Now hopefully you have a list of the most commonly observed species. Take a look at which ones are the most observed- what do they have in common? Why? For this dataset, my most commonly observed leafhoppers were large, colorful, and (from personal experience) slow moving. This holds true to many citizen science observations for smaller insects (insects in general)
+
+Now, we will use the Arizona state boundaries in rnaturalearth to plot the results of our species richness within the physical boundary of Arizona.
+
+Try visualizing your data now, using ggplot2 to plot species richness by grid cell.
+
+```{r}
+
+#use rnaturalearth to obtain the Arizona state boundaries. If you prefer a more simplistic visualization, you can omit this next line of code and move onto plotting grid results, which will give you a rectangular approximation of species diversity
+
+arizona_boundaries <- ne_states(country = "United States of America", returnclass = "sf") %>%
+  filter(name == "Arizona")
+
+#the following command will plot your grid results within the physical boundaries of the state, with a gradient radiating out from red-green from most-least diversity.
+
+ggplot() +
+  geom_sf(data = species_richness, aes(fill = richness), color = "white", size = 0.2) +
+  scale_fill_gradient(low = "lightgreen", high = "darkred", na.value = "grey90") +
+  geom_sf(data = arizona_boundaries, fill = NA, color = "white", size = 1) +
+  labs(title = "Species Richness in Arizona (0.1 Degree Grid Cells)",
+       fill = "Richness") +
+  theme_minimal() +
+  theme(axis.text = element_blank(), 
+        axis.ticks = element_blank(), 
+        axis.title = element_blank(),
+        plot.title = element_text(hjust = 0.5, size = 16))
+
+```
+
+I used the R package "tigris" to define different counties in AZ to see if there was a significant difference in leafhopper diversity between counties, so that I could run an ANOVA. tigris uses geographic data from the US Census Bureau's TIGER.
+
+```{r}
+
+#the following code installs tigris, and helps store the downloaded data. I was recommended tigris by an old friend who works in GIS, and he walked me through how to use the data in a couple of different datasets. 
+ install.packages("tigris")
+ options(tigris_use_cache = TRUE)
+ arizona_counties <- counties(state = "AZ", cb = TRUE)
+ 
+#this part gave me a ton of trouble- make sure that the CRS (coordinate reference system) is the same size for both the richness and the counties. So that all of your lat/long data are the same length, and you aren't looking at the CRS between both datasets on a different scale 
+ 
+species_richness <- st_transform(species_richness, crs = 4326)  # Transform species richness to CRS 4326
+arizona_counties <- st_transform(arizona_counties, crs = 4326)
+
+#ok, now that they are the same size you can join them together
+
+species_richness_with_county <- st_join(species_richness, arizona_counties, join = st_intersects)
+
+#the rest of the code will group these data together and analyze species richness by county, while removing any counties that do not have diversity data associated with them
+
+species_richness_by_county <- species_richness_with_county %>%
+  group_by(NAME) %>%
+  summarize(richness = sum(richness, na.rm = TRUE))
+
+species_richness_by_county <- species_richness_by_county %>%
+  filter(!is.na(richness) & richness > 0)
+ 
+#next, plot species richness across counties by using ggplot2 to visualize the patterns in your data.
+ 
+ 
+ library(ggplot2)
+
+ggplot(species_richness_by_county, aes(x = NAME, y = richness)) +
+  geom_boxplot() +
+  labs(title = "Species Richness by County", x = "County", y = "Species Richness") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+#you can run a test to see if there is significant variation between counties for your taxa through running an linear model test- in tigris the column "NAME" means county
+lm_result <- lm(richness ~ NAME, data = species_richness_by_county)
+summary(lm_result)
+ 
+```
+
+```{r}
+#try to create a map of diversity by county instead of diversity by cell size, like the previous map. I am not sure if you need to load the different counties every single time, but if I don't it gives me an error message, so better safe than sorry!
+
+arizona_counties <- counties(state = "AZ", cb = TRUE)
+arizona_counties <- st_transform(arizona_counties, 4326)
+
+#convert to the sf object again and join each observation spatially to each county
+Cicdata_sf <- st_as_sf(Cicdata, coords = c("longitude", "latitude"), crs = 4326)
+Cicdata_with_county <- st_join(Cicdata_sf, arizona_counties, join = st_intersects)
+
+#Summarize the data for abundance and diversity by county, then join them back to the county spatial data
+
+species_richness_by_county_Cicdata <- Cicdata_with_county %>%
+  st_drop_geometry() %>% 
+  group_by(NAME) %>% 
+  summarize(
+    abundance = n(), 
+    diversity = n_distinct(taxon_species_name, na.rm = TRUE))
+
+arizona_counties <- arizona_counties %>%
+  left_join(species_richness_by_county_Cicdata, by = "NAME")
+
+#map the abundance using ggplot to look at the abundances of Cicadellidae, the colors should be the same with light green = lowest values, dark red = highest values
+
+ggplot(arizona_counties) +
+  geom_sf(aes(fill = abundance), color = "white") +
+  scale_fill_gradient(low = "lightgreen", high = "darkred", name = "Abundance") +
+  labs(
+    title = "Leafhopper Abundance in Different AZ Counties",
+    subtitle = "Based on iNaturalist Research Grade Observations",
+    fill = "Abundance"
+  ) +
+  theme_minimal()
+
+#map the diversity using ggplot to look at the abundances of Cicadellidae, the colors should be the same with light green = lowest values, dark red = highest values
+
+ggplot(arizona_counties) +
+  geom_sf(aes(fill = diversity), color = "white") +
+  scale_fill_gradient(low = "lightgreen", high = "darkred", name = "Diversity") +
+  labs(
+    title = "Leafhopper Diversity by County in Arizona",
+    subtitle = "Based on iNaturalist Research Grade Observations",
+    fill = "Diversity"
+  ) +
+  theme_minimal()
+
+```
+
+There was no significant difference in species richness between counties, and no significant F value. This was a little disappointing. I decided to run the same project for all of the suborder Auchenorrhyncha (which contains leafhoppers) to see if the geographic diversity of this group across Arizona mirrored the distribution of Cicadellidae.
+
+```{r}
+#the following chunk repeats the code in the previous chunks, but for data on all Auchenorrhyncha
+
+#import hoppersdata, I used the "import data" function in R, and then I renamed my data because hopperdata sounded better
+
+hopperdata_sf <- st_as_sf(hoppersdata, coords = c("longitude", "latitude"), crs = 4326)
+arizona_counties <- counties(state = "AZ", cb = TRUE)
+
+#before, we had to make sure the crs for our cicadellidae and the counties were the same, as we had to join them spatially, using the lat/long to assign iNaturalist observations to the counties as delineated by tigris
+hopperdata_sf <- st_transform(hopperdata_sf, crs = st_crs(arizona_counties))
+hopperdata_by_county <- st_join(hopperdata_sf, arizona_counties, join = st_intersects)
+
+#next we repeat our code for total abundance, as measured by observation, per county. We are still using "NAME" column for county in tigris data
+
+abundance_by_county <- hopperdata_by_county %>%
+  st_drop_geometry() %>%
+  group_by(NAME) %>%
+  summarize(abundance = n()) %>%
+  arrange(desc(abundance))
+
+#calculate diversity by county again
+
+diversity_by_county <- hopperdata_by_county %>%
+  st_drop_geometry() %>%
+  group_by(NAME) %>%
+  summarize(diversity = n_distinct(taxon_species_name, na.rm = TRUE)) %>%
+  arrange(desc(diversity))
+
+#merge the diversity and abundance data with counties again, if you run into an error with this then make sure your crs are the same for hopperdata and counties 
+
+arizona_counties_abundance <- arizona_counties %>% left_join(abundance_by_county, by = "NAME")
+
+arizona_counties_diversity <- arizona_counties %>% left_join(diversity_by_county, by = "NAME")
+
+#clean the data, replace NA with o for counties that do not have recorded observations
+
+arizona_counties_abundance$abundance[is.na(arizona_counties_abundance$abundance)] <- 0
+arizona_counties_diversity$diversity[is.na(arizona_counties_diversity$diversity)] <- 0
+
+#plot the abundance by county
+
+ggplot(arizona_counties_abundance) +
+  geom_sf(aes(fill = abundance), color = "white", size = 0.2) +
+  scale_fill_gradient(low = "lightgreen", high = "darkred", na.value = "grey90") +
+  labs(title = "Hopper Abundance by County in Arizona",
+       fill = "Abundance",
+       caption = "Based on iNaturalist Research Grade Observations") +
+  theme_minimal() +
+  theme(axis.text = element_blank(), axis.ticks = element_blank())
+
+#plot the diversity by county
+
+ggplot(arizona_counties_diversity) +
+  geom_sf(aes(fill = diversity), color = "white", size = 0.2) +
+  scale_fill_gradient(low = "lightgreen", high = "darkred", na.value = "grey90") +
+  labs(title = "Hopper Species Diversity by County in Arizona",
+       fill = "Diversity",
+       caption = "Based on iNaturalist Research Grade Observations") +
+  theme_minimal() +
+  theme(axis.text = element_blank(), axis.ticks = element_blank())
+
+#check which counties have the highest abundance
+
+abundance_by_county %>% top_n(5, abundance)
+
+#check which counties have the highest diversity
+
+diversity_by_county %>% top_n(5, diversity)
+
+
+
+```
+
+```{r}
+#ok, now we have visualized this data, we can compare the diversity in each group using the r package vegan
+
+library(vegan)
+
+#combine the different columns to contain the family, genus, and species names. Do this for both datasets. This will create a column in the dataset for "species" that will help you calculate the diversity indices using the r package vegan
+
+hoppersdata$species <- paste(hoppersdata$taxon_genus_name, hoppersdata$taxon_species_name)
+
+Cicdata$species <- paste(Cicdata$taxon_genus_name, Cicdata$taxon_species_name)
+
+#find the diversity indices for hoppersdata and Cicadata
+
+hoppers_richness <- table(hoppersdata$species)
+hoppers_shannon <- diversity(hoppers_richness, index = "shannon")
+hoppers_simpson <- diversity(hoppers_richness, index = "simpson")
+hoppers_richness_count <- length(hoppers_richness)
+
+cic_richness <- table(Cicdata$species)
+cic_shannon <- diversity(cic_richness, index = "shannon")
+cic_simpson <- diversity(cic_richness, index = "simpson")
+cic_richness_count <- length(cic_richness)
+
+#print the results in a table by creating a dataframe
+
+diversity_results <- data.frame(
+    Dataset = c("Hoppersdata", "Cicdata"),
+    Shannon = c(hoppers_shannon, cic_shannon),
+    Simpson = c(hoppers_simpson, cic_simpson),
+    Richness = c(hoppers_richness_count, cic_richness_count)
+)
+
+# Print the results as a table
+print(diversity_results)
+
+#visualize your results using barplots to compare the different diversity indices
+
+#Shannon
+barplot(diversity_data$Shannon, names.arg = diversity_data$Dataset,
+        col = "darkred", main = "Shannon Index",
+        ylab = "Shannon Index")
+
+#Simpson
+barplot(diversity_data$Simpson, names.arg = diversity_data$Dataset,
+        col = "lightgreen", main = "Simpson Index",
+        ylab = "Simpson Index")
+
+#Species Richness
+barplot(diversity_data$Richness, names.arg = diversity_data$Dataset,
+        col = "green", main = "Species Richness",
+        ylab = "Species Richness")
+
+```
+
+These results indicate that there is lower species richness in Cicadellidae than for Auchenorrhyncha in general, which is intuitive because Cicadellidae is only one family within the suborder Auchenorrhyncha. The dataset is focused on a smaller number of species. Interestingly, the Simpson index shows that even though there are fewer species recorded for Cicadellidae, the relative abundance is the same. This could be due to sampling bias based on where people are observing insects, and the types of insects within this suborder that people tend to observe and upload. The bias involved in community structure is especially prevalent in small hemipterans, as the distribution of species identified to research grade within iNaturalist is going to require more expertise than other clades.\
+\
+Because Auchenorrhyncha is a larger group than Cicadellidae, I wanted to test for significant differences between Arizona counties in terms of Auchenorrhyncha diversity as a whole.
+
+```{r}
+#we are still using the tigris, sf, and dplyr libraries
+
+#make sure you are still in the tigris shapefile for the different AZ counties
+
+arizona_counties <- counties(state = "AZ", cb = TRUE)
+
+#now convert all the hoppersdata to sf so you can spatially scale it to the level of the county, ensuring that your crs are still the same 
+hoppersdata_sf <- st_as_sf(hoppersdata, coords = c("longitude", "latitude"), crs = 4326)
+
+hoppersdata_sf <- st_transform(hoppersdata_sf, st_crs(arizona_counties))
+hoppersdata_sf <- st_join(hoppersdata_sf, arizona_counties)
+
+#check that your data inclydes all the values you want- it should have the NAME value that holds the county name information in the tigris database
+head(hoppersdata_sf)
+
+#now create a species count for each county, this will group the data according to county and then count how often each species occurs within the county. This will result in a new dataframe that has a numerical value for each species in each county.
+
+hoppersdata_count <- hoppersdata_sf %>%
+  mutate(species = paste(taxon_genus_name, taxon_species_name)) %>%
+  group_by(NAME, species) %>%
+  summarise(count = n(), .groups = "drop")
+head(hoppersdata_count)
+
+#now use vegan again for the diversity function when calculating the diversity indices by abundance
+
+library(vegan)
+
+diversity_by_county <- hoppersdata_count %>%
+  group_by(NAME) %>%
+  summarise(
+    richness = n_distinct(species),
+    shannon = diversity(count, index = "shannon"),
+    simpson = diversity(count, index = "simpson"),
+    .groups = "drop"
+  )
+
+#to test for a statistical difference between counties, I used Kruskal-Wallis to interpret my results, based on the lack of variation within Shannon Index Values
+
+diversity_by_county_clean <- diversity_by_county %>%
+  filter(!is.na(shannon))
+
+kruskal.test(shannon ~ NAME, data = diversity_by_county_clean)
+
+
+```
+
+The Kruskal-Wallis test resulted in a p value of 0.4497. This indicates that there is no statistically significant difference across counties in Arizona. This was initially surprising to me, but citizen science is often biased in how it reports diversity. Especially, as I've mentioned, for smaller and less easily observed insect taxa. The lack of statistical difference between sites could be due to the observable diversity being in larger and more charismatic insects in Auchenorrhyncha such as Cicadas, similarly to in the Cicadellidae dataset.
