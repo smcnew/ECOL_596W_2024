@@ -1,0 +1,594 @@
+---
+title: "Ramadurai_Final"
+author: "Samyuktha Ramadurai"
+date: "2024-12-18"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Analysis of my sleep data from my Oura ring
+
+The goal of this project is to examine the trends in my sleep data from the Oura ring beyond the graphs and trends seen in the Oura app. I will be looking at the following variables:
+
+- Sleep efficiency
+- Sleep Duration
+- Start of bedtime
+- End of bedtime
+- Different sleep stages
+- Number of instances of low sleep duration
+
+I will be using the data from the Oura ring from July 2024 to December 2024 to analyze these trends. 
+
+The link to my Github repo for this project is [here](https://github.com/samyuktha-ramadurai/My_Oura_data.git).
+
+## Loading Data and Libraries
+
+I will start by loading the data from the Oura ring. The data is stored in a CSV file called `oura_sleep.csv`. 
+The libraries used are tidyverse and lubridate. Lubridate is used to work with dates and times in R.
+
+```{r}
+sleep_dataset <- read.csv("oura_sleep.csv")
+View(sleep_dataset)
+
+head(sleep_dataset)
+
+library(tidyverse)
+library(lubridate)
+
+```
+
+## Data Cleaning
+
+I will start by cleaning the data. The sleep dataset contains the bedtime_start and bedtime_end columns in the format "YYYY-MM-DDTHH:MM:SS-07:00". I will extract the times from these columns and convert them into a time format. I will also convert the day column to a date format and add another column for day of the week. 
+
+```{r}
+sleep <- sleep_dataset %>%
+  mutate(
+    bedtime_start = str_extract(bedtime_start, "(?<=T).+"),  # Extract time after "T"
+    bedtime_start = str_remove(bedtime_start, "-07:00$"),  # Remove the "-07:00" at the end of the bedtime_start string
+    bedtime_start = hms::as_hms(bedtime_start),
+    bedtime_end = str_extract(bedtime_end, "(?<=T).+"),  # Extract time after "T"
+    bedtime_end = str_remove(bedtime_end, "-07:00$"),  # Remove the "-07:00" at the end of the bedtime_end string
+    bedtime_end = hms::as_hms(bedtime_end),
+    day_of_week = as.Date(day, format = "%m/%d/%Y") %>% wday(label = TRUE),
+    total_sleep_duration = total_sleep_duration/3600,
+    deep_sleep_duration = deep_sleep_duration/3600,
+    rem_sleep_duration = rem_sleep_duration/3600,
+    light_sleep_duration = light_sleep_duration/3600,
+    restless_periods = restless_periods/3600,
+    awake_time = awake_time/3600
+    
+  ) 
+
+head(sleep)
+View(sleep)
+
+```
+## Data Analysis
+
+I will now start analyzing the data. I will start by looking at the distribution of the sleep efficiency variable.
+
+```{r}
+p1 <- ggplot(sleep, aes(x = efficiency)) +
+  geom_histogram(binwidth = 5) +
+  labs(title = "Distribution of Sleep Efficiency",
+       x = "Sleep Efficiency (%)",
+       y = "Count") +
+  theme_minimal()
+
+p1
+
+#Exporting plot to png
+ggsave("sleep_efficiency_distribution.png", plot = p1, width = 6, height = 4, units = "in", dpi = 300)
+```
+Now I will look at the distribution of sleep duration.
+
+```{r}
+p2 <- ggplot(sleep, aes(x = total_sleep_duration)) +
+  geom_histogram(binwidth = 0.5) +
+  labs(title = "Distribution of Sleep Duration",
+       x = "Total Sleep Duration (hours)",
+       y = "Count") +
+  theme_minimal()
+
+p2
+
+ggsave("sleep_duration_distribution.png", plot = p2, width = 6, height = 4, units = "in", dpi = 300)
+```
+This looks absurd, with a large number of instances of sleep durations less than 2 hours. Later on in this analysis, I will look at these instances more closely and look at the distribution of sleep duration after filtering out these instances.
+
+### Sleep Efficiency and Duration
+
+First I want to look at the relationship between sleep efficiency and duration. I will create a scatter plot to visualize this relationship.
+
+```{r}
+p3 <- ggplot(sleep, aes(x = total_sleep_duration, y = efficiency)) + 
+  geom_point() + 
+  labs(title = "Sleep Efficiency vs. Sleep Duration",
+       x = "Total Sleep Duration (hours)",
+       y = "Sleep Efficiency (%)") +
+  theme_minimal()
+p3
+
+ggsave("sleep_efficiency_vs_duration.png", plot = p3, width = 6, height = 4, units = "in", dpi = 300)
+```
+It looks like there is a non-linear relationship between sleep efficiency and sleep duration. As sleep duration increases, sleep efficiency also increases, but the relationship is not strictly linear. Sleep efficiency seems to increase rapidly with sleep durations in the intial regime, and then the rate of increase slows down and plateaus.
+
+I will now look at how sleep duration and sleep efficiency vaies with different days of the week. I expect sleep duration and sleep efficiency to be higher on weekends compared to weekdays, and I also expect to see a decrease in duration and efficiency as the week progresses.
+
+To do this, I forst need to calculate the mean sleep duration and efficiency for different days of the week.
+
+```{r}
+mean_efficiency <- sleep|> 
+  group_by(day_of_week) |> 
+  summarise(mean_efficiency = mean(efficiency))
+
+mean_efficiency
+
+mean_duration  <- sleep |> 
+  group_by(day_of_week) |> 
+  summarise(mean_duration = mean(total_sleep_duration))
+
+mean_duration
+```
+Now to visualize this using bar plots:
+
+```{r}
+p4 <- ggplot(mean_efficiency, aes(x = day_of_week, y = mean_efficiency)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Mean Sleep Efficiency by Day of the Week",
+       x = "Day of the Week",
+       y = "Mean Sleep Efficiency") +
+  theme_minimal()
+
+p4
+ggsave("mean_sleep_efficiency_by_day.png", plot = p4, width = 6, height = 4, units = "in", dpi = 300)
+```
+
+```{r}
+p5 <- ggplot(mean_duration, aes(x = day_of_week, y = mean_duration)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Mean Sleep Duration by Day of the Week",
+       x = "Day of the Week",
+       y = "Mean Sleep Duration (hours)") +
+  theme_minimal()
+
+p5
+ggsave("mean_sleep_duration_by_day.png", plot = p5, width = 6, height = 4, units = "in", dpi = 300)
+```
+It looks like sleep duration and sleep efficiency follow the same trend with theb highest values on Saturdays and the values decreasing as the week progresses.
+
+### Bedtime Analysis
+
+I will now look at the trends in my bedtime. I will start by looking at the distribution of my bedtime_start variable, which is the time I go to bed.
+
+```{r}
+p6 <- ggplot(sleep, aes(x = bedtime_start)) +
+  geom_histogram(binwidth = 30*60) +
+  labs(title = "Distribution of start of bedtime",
+       x = "Bedtime",
+       y = "Count") +
+  theme_minimal()
+
+p6
+ggsave("bedtime_start_distribution.png", plot = p6, width = 6, height = 4, units = "in", dpi = 300)
+```
+I seem to be going to bed mostly between 12 AM to 5 AM. There are a also many instances of going to bed in the afternoon/evening.
+
+Now to look at the distribution of the time I wake up (bedtime_end):
+
+```{r}
+p7 <- ggplot(sleep, aes(x = bedtime_end)) +
+  geom_histogram(binwidth = 30*60) +
+  labs(title = "Distribution of end of bedtime",
+       x = "Wake up time",
+       y = "Count") +
+  theme_minimal()
+p7
+ggsave("bedtime_end_distribution.png", plot = p7, width = 6, height = 4, units = "in", dpi = 300)
+```
+I seem to be waking up in the afternoon and evening. There are also many instances of waking up in the morning.
+
+## Splitting the Data into Short-sleep and long-sleep
+
+Having looked at this data, I decided to look at short-sleep data (instances where I slept less than 2 hours) and long-sleep data (slept >2 hours) separately. I decided to do this because of the large number of instances when I went without sleep/with very low sleep, and occasional naps.
+
+```{r}
+sleep_long <- sleep %>%
+  filter(total_sleep_duration > 2)  # Filter out sleep durations less than 2 hours
+
+View(sleep_long)
+head(sleep_long)
+```
+
+```{r}
+sleep_short <- sleep %>%
+  filter(total_sleep_duration <= 2) %>%  # Filter out sleep durations less than 2 hours
+  group_by(day) %>% #Some days have multiple entries, so need summary stats
+  summarise(
+    mean_sleep_duration = mean(total_sleep_duration), 
+    mean_efficiency = mean(efficiency),
+    mean_deep_sleep_duration = mean(deep_sleep_duration),
+    mean_rem_sleep_duration = mean(rem_sleep_duration),
+    mean_light_sleep_duration = mean(light_sleep_duration),
+    mean_restless_periods = mean(restless_periods),
+    mean_awake_time = mean(awake_time)
+    ) %>%
+  mutate(day_of_week = as.Date(day, format = "%m/%d/%Y") %>% wday(label = TRUE)
+  )
+  
+View(sleep_short)
+head(sleep_short)
+```
+
+## Data Analysis- Sleep Long
+
+### Distribution of Sleep Duration
+
+I will now look at the trends in the long-sleep data. I will start by looking at the distribution of sleep duration in the long-sleep data.
+
+```{r}
+p8 <- ggplot(sleep_long, aes(x = total_sleep_duration)) +
+  geom_histogram(binwidth = 0.5) +
+  labs(title = "Distribution of Sleep Duration (Long Sleep)",
+       x = "Total Sleep Duration (hours)",
+       y = "Count") +
+  theme_minimal()
+p8
+ggsave("sleep_duration_distribution_long.png", plot = p8, width = 6, height = 4, units = "in", dpi = 300)
+```
+The distribution of sleep duration in the long-sleep data looks more reasonable compared to the overall data. From the data, it looks like there are two peaks in the distribution, one around 6 hours and another around 8 hours.
+
+### Distribution of Sleep Efficiency
+
+Now I will look at the distribution of sleep efficiency in the long-sleep data.
+
+```{r}
+p9 <- ggplot(sleep_long, aes(x = efficiency)) +
+  geom_histogram(binwidth = 5) +
+  labs(title = "Distribution of Sleep Efficiency (Long Sleep)",
+       x = "Sleep Efficiency (%)",
+       y = "Count") +
+  theme_minimal()
+
+p9
+ggsave("sleep_efficiency_distribution_long.png", plot = p9, width = 6, height = 4, units = "in", dpi = 300)
+```
+This distribution of sleep efficieny looks good, with the average value lying at about 85%.
+
+### Sleep Duration and Efficiency
+
+Now I will look at the relationship between sleep duration and efficiency in the long-sleep data.
+
+```{r}
+p10 <- ggplot(sleep_long, aes(x = total_sleep_duration, y = efficiency)) + 
+  geom_point() + 
+  labs(title = "Sleep Efficiency vs. Sleep Duration (Long Sleep)",
+       x = "Total Sleep Duration (hours)",
+       y = "Sleep Efficiency (%)") +
+  theme_minimal()
+
+p10
+ggsave("sleep_efficiency_vs_duration_long.png", plot = p10, width = 6, height = 4, units = "in", dpi = 300)
+```
+The relationship between sleep duration and efficiency in the long-sleep data looks similar to the overall data in the long-sleep regime. I want to see if there is a correlation between total sleep duration and sleep efficiency in the long-sleep regime using a linear model.
+
+```{r}
+model_long <- lm(efficiency ~ total_sleep_duration, data = sleep_long)
+summary(model_long)
+```
+The p-value of 0.087 suggests that total sleep duration is not a significant predictor of sleep efficiency in the long-sleep regime. The R^2 value of 0.02 suggests that only 2% of the variance in sleep efficiency can be explained by total sleep duration.
+
+### Days of the Week- Sleep Duration
+
+I will now look at how sleep duration varies with different days of the week in the long-sleep data.
+First, let's summarize the data.
+
+```{r}
+mean_duration_long  <- sleep_long |> 
+  group_by(day_of_week) |> 
+  summarise(mean_duration = mean(total_sleep_duration))
+
+mean_duration_long
+ggsave("mean_sleep_duration_by_day_long.png", plot = p11, width = 6, height = 4, units = "in", dpi = 300)
+```
+
+Now to look at the relationship:
+
+```{r}
+p11 <- ggplot(mean_duration_long, aes(x = day_of_week, y = mean_duration)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Mean Sleep Duration by Day of the Week (Long Sleep)",
+       x = "Day of the Week",
+       y = "Mean Sleep Duration (hours)") +
+  theme_minimal()
+
+p11
+ggsave("mean_sleep_duration_by_day_long.png", plot = p11, width = 6, height = 4, units = "in", dpi = 300)
+```
+It looks like sleep duration is highest on Saturdays and decreases as the week progresses in the long-sleep regime.
+
+### Days of the Week- Sleep Efficiency
+
+I will now look at how sleep efficiency varies with different days of the week in the long-sleep data.
+
+Summarizing data:
+
+```{r}
+mean_efficiency_long <- sleep_long|> 
+  group_by(day_of_week) |> 
+  summarise(mean_efficiency = mean(efficiency))
+
+mean_efficiency_long
+```
+
+Now to visualize this using bar plots:
+
+```{r}
+p12 <- ggplot(mean_efficiency_long, aes(x = day_of_week, y = mean_efficiency)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Mean Sleep Efficiency by Day of the Week (Long Sleep)",
+       x = "Day of the Week",
+       y = "Mean Sleep Efficiency") +
+  theme_minimal()
+
+p12
+ggsave("mean_sleep_efficiency_by_day_long.png", plot = p12, width = 6, height = 4, units = "in", dpi = 300)
+```
+This trend differs from the overall data, with sleep efficiency being more or less the same with different days of the week.
+
+Finally, I want to look at different sleep-stages in the long-sleep data.
+
+Here is a pi plot for percentages of different sleep stages
+
+```{r}
+summary_sleep_stages_long <- sleep_long %>%
+  summarise(
+    mean_deep_sleep_duration = mean(deep_sleep_duration),
+    mean_rem_sleep_duration = mean(rem_sleep_duration),
+    mean_light_sleep_duration = mean(light_sleep_duration),
+    mean_restless_periods = mean(restless_periods),
+    mean_awake_time = mean(awake_time)
+  ) 
+
+#flip this dataframe
+summary_sleep_stages_long <- summary_sleep_stages_long %>%
+  pivot_longer(cols = c(mean_deep_sleep_duration, mean_rem_sleep_duration, mean_light_sleep_duration, mean_restless_periods, mean_awake_time),
+               names_to = "Sleep Stage",
+               values_to = "Duration")
+
+summary_sleep_stages_long
+```
+
+Bar plot showing different sleep stage durations
+
+```{r}
+p13 <- ggplot(summary_sleep_stages_long, aes(x = `Sleep Stage`, y = Duration)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Mean Duration of Different Sleep Stages (Long Sleep)",
+       x = "Sleep Stage",
+       y = "Mean Duration (hours)") +
+  scale_x_discrete(labels = c("Deep Sleep",
+                              "REM Sleep",
+                              "Light Sleep",
+                              "Restless Periods",
+                              "Awake Time")) +  
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+  theme_minimal()
+
+p13
+
+ggsave("mean_sleep_stages_long.png", plot = p13, width = 6, height = 4, units = "in", dpi = 300)
+```
+## Data Analysis- Sleep Short
+
+Now I will look at the trends in the short-sleep data (> 2 hours). I will start by looking at the distribution of sleep duration in the short-sleep data.
+
+```{r}
+p14 <- ggplot(sleep_short, aes(x = mean_sleep_duration)) +
+  geom_histogram(binwidth = 0.1) +
+  labs(title = "Distribution of Sleep Duration (Short Sleep)",
+       x = "Mean Sleep Duration (hours)",
+       y = "Count") +
+  theme_minimal()
+
+p14
+ggsave("sleep_duration_distribution_short.png", plot = p14, width = 6, height = 4, units = "in", dpi = 300)
+```
+This data is concerning; it suggests that there were 50 days when I did not sleep at all. To check this, I can compare the dates when I did not get any sleep in the short-sleep data with the long-sleep data to see if the dates are distinct.
+
+```{r}
+sleep_short_no_sleep <- sleep_short %>%
+  filter(mean_sleep_duration <= 0.5)
+
+sleep_short_no_sleep
+
+sleep_long_no_sleep <- sleep_long %>%
+  filter(day %in% sleep_short_no_sleep$day)
+
+sleep_long_no_sleep
+```
+
+The dates do not appear to be distinct. However, I do remember numerous occasions of going without sleep. Since I am only looking at the data sorted by date, a more rigorous analysis would require me to map the period between bedtime_start and bedtime_end to check for how long I went without sleep.
+
+### Distribution of Sleep Efficiency
+
+Now I will look at the distribution of sleep efficiency in the short-sleep data.
+
+```{r}
+p15 <- ggplot(sleep_short, aes(x = mean_efficiency)) +
+  geom_histogram(binwidth = 5) +
+  labs(title = "Distribution of Sleep Efficiency (Short Sleep)",
+       x = "Mean Sleep Efficiency (%)",
+       y = "Count") +
+  theme_minimal()
+
+p15
+
+ggsave("sleep_efficiency_distribution_short.png", plot = p15, width = 6, height = 4, units = "in", dpi = 300)
+```
+The average value of sleep efficiency is pretty low, at about 5%. 
+
+### Sleep Duration and Efficiency
+
+```{r}
+p16 <- ggplot(sleep_short, aes(x = mean_sleep_duration, y = mean_efficiency)) + 
+  geom_point() + 
+  labs(title = "Sleep Efficiency vs. Sleep Duration (Short Sleep)",
+       x = "Mean Sleep Duration (hours)",
+       y = "Mean Sleep Efficiency (%)") +
+  theme_minimal()
+
+p16
+ggsave("sleep_efficiency_vs_duration_short.png", plot = p16, width = 6, height = 4, units = "in", dpi = 300)
+```
+This graph looks like the graph plotted from the complete data in the short-sleep regime. I want to do a linear regression on this data to see if sleep duration predicts sleep efficiency in this regime.
+
+```{r}
+model_short <- lm(mean_efficiency ~ mean_sleep_duration, data = sleep_short)
+summary(model_short)
+```
+The p-value of 0.0001 suggests that mean sleep duration is a significant predictor of mean sleep efficiency in the short-sleep regime. The R^2 value of 0.15 suggests that 15% of the variance in sleep efficiency can be explained by mean sleep duration.
+
+### Days of the Week- Sleep Duration
+
+I will now look at how sleep duration varies with different days of the week in the short-sleep data.
+
+Summarizing data:
+
+```{r}
+mean_duration_short  <- sleep_short |> 
+  group_by(day_of_week) |> 
+  summarise(mean_duration = mean(mean_sleep_duration))
+
+mean_duration_short
+```
+
+Now to look at the relationship:
+
+```{r}
+p17 <- ggplot(mean_duration_short, aes(x = day_of_week, y = mean_duration)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Mean Sleep Duration by Day of the Week (Short Sleep)",
+       x = "Day of the Week",
+       y = "Mean Sleep Duration (hours)") +
+  theme_minimal()
+
+p17
+
+ggsave("mean_sleep_duration_by_day_short.png", plot = p17, width = 6, height = 4, units = "in", dpi = 300)
+```
+### Days of the Week- Sleep Efficiency
+
+I will now look at how sleep efficiency varies with different days of the week in the short-sleep data.
+
+Summarizing data:
+
+```{r}
+mean_efficiency_short <- sleep_short|> 
+  group_by(day_of_week) |> 
+  summarise(mean_efficiency = mean(mean_efficiency))
+
+mean_efficiency_short
+```
+```{r}
+p18 <- ggplot(mean_efficiency_short, aes(x = day_of_week, y = mean_efficiency)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Mean Sleep Efficiency by Day of the Week (Short Sleep)",
+       x = "Day of the Week",
+       y = "Mean Sleep Efficiency") +
+  theme_minimal()
+
+p18
+
+ggsave("mean_sleep_efficiency_by_day_short.png", plot = p18, width = 6, height = 4, units = "in", dpi = 300)
+```
+This data for efficiency and duration is not particularly insightful. Instead, I can look at the number of instances of short sleep in different days of the week.
+
+```{r}
+short_sleep_days <- sleep_short %>%
+  group_by(day_of_week) %>%
+  summarise(count = n())
+
+short_sleep_days
+
+```
+```{r}
+p19 <- ggplot(short_sleep_days, aes(x = day_of_week, y = count)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Number of Instances of Short Sleep by Day of the Week",
+       x = "Day of the Week",
+       y = "Count") +
+  theme_minimal()
+
+p19
+
+ggsave("short_sleep_instances_by_day.png", plot = p19, width = 6, height = 4, units = "in", dpi = 300)
+```
+This data suggests that there is an increasing trend of short-sleep instances as the week progresses; I would expect that to be the case since the workload increases as the week progresses, increasing the chances of all-nighters.
+
+### Sleep Stages- Short Sleep
+
+Finally, I want to look at different sleep-stages in the short-sleep data.
+
+```{r}
+summary_sleep_stages_short <- sleep_short %>%
+  summarise(
+    mean_deep_sleep_duration = mean(mean_deep_sleep_duration),
+    mean_rem_sleep_duration = mean(mean_rem_sleep_duration),
+    mean_light_sleep_duration = mean(mean_light_sleep_duration),
+    mean_restless_periods = mean(mean_restless_periods),
+    mean_awake_time = mean(mean_awake_time)
+  )
+
+#Flip this dataframe
+summary_sleep_stages_short <- summary_sleep_stages_short %>%
+  pivot_longer(cols = c(mean_deep_sleep_duration, mean_rem_sleep_duration, mean_light_sleep_duration, mean_restless_periods, mean_awake_time),
+               names_to = "Sleep Stage",
+               values_to = "Duration")
+
+summary_sleep_stages_short
+
+```
+```{r}
+p20 <- ggplot(summary_sleep_stages_short, aes(x = `Sleep Stage`, y = Duration)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Mean Duration of Different Sleep Stages (Short Sleep)",
+       x = "Sleep Stage",
+       y = "Mean Duration (hours)") +
+  scale_x_discrete(labels = c("Deep Sleep",
+                              "REM Sleep",
+                              "Light Sleep",
+                              "Restless Periods",
+                              "Awake Time")) +  
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme_minimal()
+
+p20
+
+ggsave("mean_sleep_stages_short.png", plot = p20, width = 6, height = 4, units = "in", dpi = 300)
+```
+Comparing this with the sleep-stages in the long-sleep data, it looks like most of the time is spent in deep sleep. 
+
+## Conclusion
+
+I have analyzed my sleep data from the Oura ring from July 2024 to December 2024. I have looked at the trends in sleep efficiency, sleep duration, bedtime, and sleep stages. I have also looked at the trends in my sleep data when split into short-sleep and long-sleep data. 
+
+I found that my sleep duration is higher on weekends compared to weekdays and decreases steadily as the week progresses, but my sleep efficiency is the same across all days of the week. The analysis has also shown that sleep duration is correlated with sleep efficiency in the short-sleep regime, and the number of instances of short-sleep increases as the week progresses. From the sleep-stages analysis, it looks like most of the time is spent in deep sleep in the short-sleep regime, while there is decent amount of time spent in all sleep stages in the long-sleep regime.
+
+
+
+
+
+
+
+
+
+
+
+
